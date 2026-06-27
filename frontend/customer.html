@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MO BY AHMED MAHMOUD — BMW Repair, Modification & Spare Parts</title>
+<meta name="description" content="MO BY AHMED MAHMOUD — Egypt's #1 BMW repair and tuning specialist. Genuine spare parts, professional tuning, easy online booking."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+ <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-primary:#050505;
+  --bg-secondary:#0d0d0d;
+  --bg-card:#111111;
+  --border:#1e1e1e;
+  --accent-blue:#1c6cfc;
+  --accent-cyan:#00c8ff;
+  --accent-silver:#c0c0c0;
+  --accent-gold:#d4a017;
+  --text-primary:#ffffff;
+  --text-secondary:#a0a0a0;
+  --text-muted:#505050;
+  --danger:#ff3333;
+  --success:#00cc66;
+  --radius:16px;
+  --radius-lg:24px;
+  --shadow:0 24px 60px rgba(0,0,0,.5);
+  --container:min(1300px,94vw);
+  --glow-blue:0 0 30px rgba(28,108,252,.4);
+  --glow-cyan:0 0 30px rgba(0,200,255,.35);
+  --glow-gold:0 0 30px rgba(212,160,23,.3);
+
+  /* ── FLUID TYPOGRAPHY ── */
+  --fs-hero:clamp(52px,10vw,120px);
+  --fs-display-lg:clamp(36px,6vw,64px);
+  --fs-display-md:clamp(26px,4vw,40px);
+  --fs-display-sm:clamp(20px,3vw,28px);
+  --fs-body-lg:clamp(15px,2vw,17px);
+  --fs-body:clamp(14px,1.8vw,16px);
+  --fs-sm:clamp(12px,1.5vw,14px);
+  --fs-xs:clamp(11px,1.2vw,12px);
+  --fs-label:clamp(11px,1.5vw,13px);
+
+  /* ── FLUID SPACING ── */
+  --sp-xs:clamp(4px,1vw,6px);
+  --sp-sm:clamp(8px,2vw,12px);
+  --sp-md:clamp(14px,3vw,20px);
+  --sp-lg:clamp(20px,4vw,32px);
+  --sp-xl:clamp(32px,5vw,56px);
+  --sp-2xl:clamp(48px,7vw,80px);
+  --sp-section:clamp(60px,8vw,100px);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden;max-width:100vw}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter','Cairo',sans-serif;overflow-x:hidden;max-width:100vw;cursor:none}
+img{max-width:100%;height:auto}
+
+/* ── CUSTOM CURSOR (desktop / fine-pointer devices only) ── */
+#cursor-dot{display:none;position:fixed;width:10px;height:10px;background:var(--accent-cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:background .2s,transform .1s;box-shadow:0 0 12px var(--accent-cyan);will-change:transform}
+#cursor-ring{display:none;position:fixed;width:32px;height:32px;border:1.5px solid rgba(0,200,255,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .15s ease,width .2s,height .2s,opacity .2s;will-change:transform}
+@media (pointer:fine) and (hover:hover){
+  #cursor-dot,#cursor-ring{display:block}
+  body:not(.cursor-visible) #cursor-dot,body:not(.cursor-visible) #cursor-ring{opacity:0}
+  a,button{cursor:none}
+}
+@media (pointer:coarse){
+  body,a,button{cursor:auto!important}
+}
+
+/* ── TYPOGRAPHY UTILS ── */
+.display{font-family:'Bebas Neue',sans-serif;letter-spacing:2px}
+.tech{font-family:'Rajdhani',sans-serif;letter-spacing:1.5px}
+.arabic{font-family:'Cairo',sans-serif}
+.muted{color:var(--text-secondary)}
+.gold{color:var(--accent-gold)}
+.cyan{color:var(--accent-cyan)}
+.blue{color:var(--accent-blue)}
+.success-text{color:var(--success)}
+
+/* ── LAYOUT ── */
+.container{width:var(--container);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.section{padding:var(--sp-section) 0;position:relative}
+.section+.section{padding-top:clamp(40px,5vw,60px)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;min-width:44px;padding:15px 28px;border-radius:50px;border:1.5px solid transparent;cursor:none;font-weight:600;font-size:15px;letter-spacing:.5px;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s,background .3s,color .3s;position:relative;overflow:hidden;white-space:nowrap}
+.btn::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.07);border-radius:50px;opacity:0;transition:.2s}
+.btn:hover::after{opacity:1}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--accent-blue) 0%,#0f9bff 100%);color:#fff;box-shadow:0 10px 30px rgba(28,108,252,.4)}
+.btn.primary:hover{box-shadow:0 16px 40px rgba(28,108,252,.55)}
+.btn.outline{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05);color:#fff}
+.btn.outline:hover{border-color:var(--accent-cyan);color:var(--accent-cyan);box-shadow:0 0 20px rgba(0,200,255,.2)}
+.btn.gold{background:linear-gradient(135deg,var(--accent-gold),#f5c518);color:#000;box-shadow:0 10px 30px rgba(212,160,23,.35)}
+.btn.whatsapp{background:#0fbf57;color:#fff;box-shadow:0 10px 30px rgba(15,191,87,.35)}
+.btn.whatsapp:hover{background:#0daa4d}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.sm{padding:10px 18px;font-size:13px}
+
+/* Ripple */
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);transform:scale(0);animation:ripple-anim .6s linear;pointer-events:none}
+@keyframes ripple-anim{to{transform:scale(4);opacity:0}}
+
+/* ── CARDS ── */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);transition:all .3s;position:relative}
+.card:hover{border-color:rgba(0,200,255,.25);box-shadow:0 0 40px rgba(0,200,255,.08),var(--shadow);transform:translateY(-4px)}
+
+/* ── INTRO / SPLASH ── */
+#intro{position:fixed;inset:0;z-index:1000;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+#intro.gone{display:none}
+.intro-wrap{text-align:center;position:relative}
+.intro-svg{width:120px;height:120px;display:block;margin:0 auto 24px}
+.intro-svg circle,.intro-svg path,.intro-svg line{transition:stroke-dashoffset .8s ease}
+.intro-mo{font-family:'Bebas Neue';font-size:clamp(72px,14vw,120px);line-height:1;transform:translateX(-140px);opacity:0}
+.intro-sub{font-family:'Rajdhani';font-size:clamp(16px,3vw,22px);letter-spacing:4px;color:var(--accent-silver);opacity:0}
+.intro-tag{font-family:'Cairo';font-size:14px;color:var(--accent-gold);opacity:0;margin-top:8px;letter-spacing:2px}
+#skipIntro{position:absolute;top:24px;left:24px;z-index:1010;font-family:Rajdhani;font-size:12px;letter-spacing:3px;padding:8px 16px;border-radius:50px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;cursor:none}
+#skipIntro:hover{background:rgba(255,255,255,.1)}
+
+/* ── NAVBAR ── */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:500;height:80px;display:flex;align-items:center;transition:height .3s,background .3s,backdrop-filter .3s;background:transparent}
+.navbar.scrolled{height:64px;background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;width:var(--container);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.nav-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+.roundel{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.9);position:relative;flex-shrink:0;overflow:hidden}
+.roundel-inner{position:absolute;inset:6px;border-radius:50%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.roundel-inner span:nth-child(1){background:var(--accent-blue);border-radius:50% 0 0 0}
+.roundel-inner span:nth-child(2){background:#fff;border-radius:0 50% 0 0}
+.roundel-inner span:nth-child(3){background:#fff;border-radius:0 0 0 50%}
+.roundel-inner span:nth-child(4){background:var(--accent-blue);border-radius:0 0 50% 0}
+.brand-text .brand-name{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;line-height:1}
+.brand-text small{font-family:Rajdhani;font-size:11px;letter-spacing:3px;color:var(--text-secondary);display:block}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-family:Rajdhani;font-size:13px;letter-spacing:2.5px;color:var(--text-secondary);transition:.2s;position:relative;text-transform:uppercase}
+.nav-links a:hover{color:#fff}
+.nav-links a::after{content:"";position:absolute;bottom:-6px;left:50%;right:50%;height:2px;background:var(--accent-cyan);transition:left .25s,right .25s;border-radius:2px}
+.nav-links a:hover::after{left:0;right:0}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-phone{display:flex;align-items:center;gap:8px;font-family:Rajdhani;font-size:13px;color:var(--text-secondary);letter-spacing:1px}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;cursor:none;padding:4px;border:none;background:none}
+.hamburger span{display:block;height:2px;background:#fff;border-radius:2px;transition:.3s}
+
+/* Mobile Nav */
+.mobile-nav{position:fixed;inset:0;z-index:490;background:rgba(5,5,5,.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;transform:translateY(-100%);transition:transform .4s cubic-bezier(.77,0,.175,1)}
+.mobile-nav.open{transform:translateY(0)}
+.mobile-nav a{font-family:'Bebas Neue';font-size:clamp(32px,8vw,40px);letter-spacing:4px;color:#fff;text-decoration:none;transition:.2s;padding:8px 0;min-height:56px;display:flex;align-items:center}
+.mobile-nav a:hover{color:var(--accent-cyan)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;min-height:100svh;display:grid;place-items:center;position:relative;overflow:hidden;padding-top:clamp(60px,10vh,80px)}
+.hero-bg-wrap{position:absolute;inset:0;z-index:0}
+.hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hero-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(255,255,255,.015) 3px 4px);pointer-events:none;z-index:1}
+.hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 70% 50%, transparent 30%, rgba(5,5,5,.8) 100%);pointer-events:none;z-index:2}
+.hero-car-bg{position:absolute;right:-2%;top:50%;transform:translateY(-50%);width:65%;opacity:.55;z-index:0;filter:drop-shadow(0 40px 80px rgba(0,0,0,.8))}
+.hero-car-bg img{width:100%;animation:heroCar 8s ease-in-out infinite;transform-origin:center;will-change:transform}
+@keyframes heroCar{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.03) translateY(-10px)}}
+.hero-ambient{position:absolute;inset:0;background:radial-gradient(circle at 20% 60%,rgba(28,108,252,.12) 0%,transparent 45%),radial-gradient(circle at 75% 30%,rgba(0,200,255,.07) 0%,transparent 35%);pointer-events:none;z-index:1;transition:background .1s}
+.speed-lines{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.speed-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,255,.4),transparent);width:0;opacity:0}
+
+.hero-grid{position:relative;z-index:10;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:var(--container)}
+.hero-copy{max-width:620px}
+.overline{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.25);font-family:'Cairo';font-size:13px;color:var(--accent-gold);margin-bottom:20px}
+.hero-headline{font-family:'Bebas Neue';font-size:var(--fs-hero);line-height:.92;margin-bottom:18px;word-break:break-word}
+.hero-headline span.line1,.hero-headline span.line2{display:block}
+.hero-headline span.line2{color:var(--accent-cyan);text-shadow:0 0 50px rgba(0,200,255,.3)}
+.hero-tagline{font-family:'Rajdhani';font-size:clamp(16px,2.5vw,22px);font-style:italic;color:var(--accent-silver);margin-bottom:16px;letter-spacing:1px}
+.hero-desc{font-family:'Cairo';font-size:16px;line-height:2;color:var(--text-secondary);margin-bottom:32px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.hero-stats-mini{display:flex;gap:30px;padding-top:20px;border-top:1px solid var(--border)}
+.hero-stat span{display:block;font-family:'Bebas Neue';font-size:28px;color:var(--accent-cyan)}
+.hero-stat small{font-family:Cairo;font-size:12px;color:var(--text-secondary)}
+
+.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-muted);font-family:Rajdhani;font-size:11px;letter-spacing:3px}
+.scroll-chevron{display:flex;flex-direction:column;gap:3px;animation:scrollBounce 2s ease-in-out infinite}
+.scroll-chevron span{display:block;width:14px;height:14px;border-right:2px solid var(--accent-cyan);border-bottom:2px solid var(--accent-cyan);transform:rotate(45deg)}
+@keyframes scrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* ── STATS BAR ── */
+.stats-bar{background:var(--bg-secondary);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:50px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.stat-item{background:var(--bg-secondary);padding:36px 24px;text-align:center;position:relative}
+.stat-item:not(:last-child)::after{content:"";position:absolute;right:0;top:20%;bottom:20%;width:1px;background:var(--border)}
+.stat-number{font-family:'Bebas Neue';font-size:clamp(52px,6vw,72px);color:var(--accent-cyan);line-height:1;display:block;text-shadow:0 0 30px rgba(0,200,255,.4)}
+.stat-label{font-family:'Cairo';font-size:14px;color:var(--text-secondary);margin-top:6px;display:block}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.garage-visual{border-radius:var(--radius-lg);overflow:hidden;min-height:480px;background:
+  linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.7) 100%),
+  radial-gradient(circle at 30% 40%,rgba(28,108,252,.3) 0%,transparent 40%),
+  radial-gradient(circle at 70% 70%,rgba(0,200,255,.15) 0%,transparent 35%),
+  url('https://images.dealer.com/ddc/vehicles/2021/BMW/M3/Sedan/perspective/front-left/2021_24.png') center/contain no-repeat,#0a0a0a;
+  position:relative;border:1px solid var(--border)}
+.garage-visual-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:32px}
+.garage-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(28,108,252,.15);border:1px solid rgba(28,108,252,.3);border-radius:50px;font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--accent-blue);margin-bottom:12px}
+.kicker{font-family:Rajdhani;font-size:12px;letter-spacing:4px;color:var(--accent-gold);text-transform:uppercase;margin-bottom:12px}
+.section-heading{font-family:'Bebas Neue';font-size:clamp(40px,5vw,64px);line-height:1;margin-bottom:20px}
+.about-body{font-family:Cairo;font-size:16px;line-height:2;color:var(--text-secondary);margin-bottom:28px}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.pill{padding:10px 18px;border:1px solid rgba(255,255,255,.1);border-radius:50px;background:rgba(255,255,255,.04);font-family:Cairo;font-size:14px;transition:.3s}
+.pill:hover{border-color:var(--accent-cyan);color:var(--accent-cyan);background:rgba(0,200,255,.06)}
+
+/* ── SERVICES PREVIEW ── */
+.services-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.svc-card{padding:36px 28px;overflow:hidden}
+.svc-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-line, linear-gradient(90deg,var(--accent-blue),var(--accent-cyan)))}
+.svc-card[data-accent="gold"]::before{background:linear-gradient(90deg,var(--accent-gold),#f5c518)}
+.svc-card[data-accent="cyan"]::before{background:linear-gradient(90deg,var(--accent-cyan),#0080ff)}
+.svc-icon{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;background:rgba(28,108,252,.1);border:1px solid rgba(28,108,252,.2)}
+.svc-card[data-accent="gold"] .svc-icon{background:rgba(212,160,23,.1);border-color:rgba(212,160,23,.2)}
+.svc-card[data-accent="cyan"] .svc-icon{background:rgba(0,200,255,.1);border-color:rgba(0,200,255,.2)}
+.svc-title-en{font-family:'Bebas Neue';font-size:28px;letter-spacing:2px}
+.svc-title-ar{font-family:Cairo;font-size:16px;font-weight:700;color:var(--text-secondary);margin-bottom:16px}
+.svc-bullets{list-style:none;margin-bottom:20px}
+.svc-bullets li{font-family:Cairo;font-size:14px;color:var(--text-secondary);padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.svc-bullets li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-cyan);flex-shrink:0}
+.svc-link{font-family:Rajdhani;font-size:14px;letter-spacing:2px;color:var(--accent-cyan);display:flex;align-items:center;gap:8px;transition:.2s}
+.svc-link:hover{gap:14px}
+
+/* ── TESTIMONIALS ── */
+.testimonials-wrap{overflow:hidden;position:relative}
+.testimonials-track{display:flex;gap:24px;transition:transform .5s cubic-bezier(.4,0,.2,1);will-change:transform}
+.testimonial-card{padding:32px;flex:0 0 calc(33.333% - 16px);min-width:300px}
+.testi-stars{color:var(--accent-gold);font-size:16px;margin-bottom:16px;letter-spacing:2px}
+.testi-quote{font-family:Cairo;font-size:15px;line-height:1.9;color:var(--text-secondary);margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:14px}
+.testi-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent-blue),var(--accent-cyan));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:20px;flex-shrink:0}
+.testi-name{font-family:Rajdhani;font-size:15px;font-weight:700;letter-spacing:1px}
+.testi-car{font-family:Cairo;font-size:12px;color:var(--accent-cyan)}
+.testi-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:32px}
+.testi-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:.3s;cursor:none}
+.testi-dot.active{background:var(--accent-cyan);box-shadow:0 0 10px rgba(0,200,255,.5);width:24px;border-radius:4px}
+.testi-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:transparent;color:#fff;cursor:none;display:flex;align-items:center;justify-content:center;transition:.3s}
+.testi-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+
+/* ── CONTACT INFO ── */
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.contact-card{padding:36px 28px;text-align:center}
+.contact-icon{width:56px;height:56px;border-radius:50%;background:rgba(28,108,252,.1);border:1px solid rgba(28,108,252,.2);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--accent-blue);margin:0 auto 18px}
+.contact-card h3{font-family:Rajdhani;font-size:16px;letter-spacing:2px;margin-bottom:10px}
+.contact-card p{font-family:Cairo;font-size:14px;color:var(--text-secondary);line-height:1.9}
+
+/* ── PRIVACY ── */
+.privacy-strip{background:var(--bg-secondary);border-top:1px solid var(--border);padding:24px 0;text-align:center}
+.privacy-strip p{font-family:Cairo;font-size:13px;color:var(--text-muted);max-width:700px;margin:0 auto}
+
+/* ── FOOTER ── */
+.footer{background:#060606;border-top:1px solid var(--border);padding:64px 0 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;margin-bottom:50px}
+.footer-brand p{font-family:Cairo;font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.8}
+.social-row{display:flex;gap:12px;margin-top:20px}
+.social-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:.3s}
+.social-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan);background:rgba(0,200,255,.06)}
+.footer-col h4{font-family:Rajdhani;font-size:14px;letter-spacing:3px;color:var(--accent-silver);margin-bottom:18px;text-transform:uppercase}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{font-family:Cairo;font-size:14px;color:var(--text-secondary);transition:.2s}
+.footer-col ul li a:hover{color:#fff}
+.newsletter-form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.newsletter-form input{padding:13px 16px;border-radius:50px;border:1px solid var(--border);background:var(--bg-secondary);color:#fff;font-family:Cairo;font-size:14px;outline:none;transition:.3s}
+.newsletter-form input:focus{border-color:var(--accent-cyan)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-muted)}
+.back-top{width:44px;height:44px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:.3s;cursor:none}
+.back-top:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+
+/* ── PRODUCTS SECTION ── */
+.models-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
+.model-card{overflow:hidden;transition:all .35s cubic-bezier(.34,1.56,.64,1)}
+.model-card:hover{transform:translateY(-8px) scale(1.02);border-color:rgba(0,200,255,.4);box-shadow:0 0 40px rgba(0,200,255,.12),var(--shadow)}
+.model-img-wrap{height:170px;overflow:hidden;background:linear-gradient(135deg,#0a0a1a,#0d0d0d);position:relative;display:flex;align-items:center;justify-content:center}
+.model-img-wrap::after{content:"";position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(transparent,var(--bg-card));pointer-events:none}
+.model-img-wrap img{width:90%;height:100%;object-fit:contain;transition:transform .5s;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6))}
+.model-card:hover .model-img-wrap img{transform:scale(1.07)}
+.model-info{padding:20px 18px 18px}
+.model-name{font-family:'Bebas Neue';font-size:26px;letter-spacing:1px;margin-bottom:4px}
+.model-year{font-family:Rajdhani;font-size:13px;letter-spacing:2px;color:var(--text-muted);margin-bottom:12px}
+.model-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{padding:3px 10px;border-radius:50px;font-size:11px;font-family:Rajdhani;letter-spacing:1px;border:1px solid}
+.tag.popular{border-color:rgba(212,160,23,.4);color:var(--accent-gold);background:rgba(212,160,23,.07)}
+.tag.track{border-color:rgba(255,51,51,.4);color:#ff6666;background:rgba(255,51,51,.07)}
+.tag.m-perf{border-color:rgba(0,200,255,.4);color:var(--accent-cyan);background:rgba(0,200,255,.07)}
+.model-card .view-parts{width:100%;text-align:center;font-family:Rajdhani;font-size:13px;letter-spacing:2px}
+
+/* ── PARTS MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:800;display:none;align-items:flex-start;justify-content:center;padding:60px 20px 20px;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);width:min(1100px,100%);max-height:calc(100vh - 80px);overflow-y:auto;position:relative}
+.modal-header{padding:32px 36px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:sticky;top:0;background:var(--bg-secondary);z-index:10}
+.modal-close{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:transparent;color:#fff;cursor:none;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.modal-close:hover{border-color:var(--danger);color:var(--danger)}
+.modal-body{padding:28px 36px 36px}
+.parts-filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.pf-tab{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-family:Rajdhani;font-size:13px;letter-spacing:1.5px;cursor:none;transition:.2s}
+.pf-tab.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff}
+.parts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.part-card{padding:22px;border-radius:var(--radius)}
+.part-category{font-family:Rajdhani;font-size:11px;letter-spacing:3px;color:var(--accent-cyan);margin-bottom:8px;text-transform:uppercase}
+.part-name{font-family:Cairo;font-size:15px;font-weight:700;margin-bottom:8px}
+.part-oem{font-family:'Courier New',monospace;font-size:11px;color:var(--text-muted);margin-bottom:10px}
+.part-price{font-family:'Bebas Neue';font-size:28px;color:var(--accent-gold);margin-bottom:8px}
+.part-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.part-badge{padding:3px 10px;border-radius:50px;font-size:11px;font-family:Rajdhani;letter-spacing:1px}
+.badge-oem{background:rgba(28,108,252,.1);border:1px solid rgba(28,108,252,.3);color:#80b0ff}
+.badge-perf{background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.3);color:var(--accent-cyan)}
+.badge-compat{background:rgba(0,204,102,.1);border:1px solid rgba(0,204,102,.3);color:var(--success)}
+.stock-ok{color:var(--success);font-size:12px;font-family:Rajdhani}
+.stock-wait{color:#ff9900;font-size:12px;font-family:Rajdhani}
+
+/* ── SERVICES SECTION ── */
+.service-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.s-tab{display:inline-flex;align-items:center;min-height:44px;padding:12px 22px;border-radius:50px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:Rajdhani;font-size:13px;letter-spacing:2px;cursor:none;transition:.2s;color:var(--text-secondary)}
+.s-tab.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff;box-shadow:0 8px 24px rgba(28,108,252,.3)}
+.s-tab:hover:not(.active){border-color:rgba(0,200,255,.4);color:var(--accent-cyan)}
+.s-panel{display:none}
+.s-panel.active{display:block}
+
+/* Panel hero */
+.panel-hero{display:flex;align-items:center;flex-wrap:wrap;gap:16px;padding:clamp(20px,4vw,36px);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:32px}
+.panel-hero-icon{font-size:52px;flex-shrink:0}
+.panel-hero-text h2{font-family:'Bebas Neue';font-size:clamp(36px,8vw,56px);line-height:1}
+.panel-hero-text h3{font-family:Cairo;font-size:16px;color:var(--accent-cyan);margin-top:4px}
+.panel-hero-badge{margin-top:12px;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.2);font-family:Rajdhani;font-size:13px;color:var(--accent-cyan);letter-spacing:1px}
+
+/* Checklist */
+.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin:24px 0}
+.check-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);font-family:Cairo;font-size:14px}
+.check-icon{width:28px;height:28px;border-radius:50%;background:rgba(0,204,102,.12);border:1px solid rgba(0,204,102,.3);display:flex;align-items:center;justify-content:center;color:var(--success);font-size:13px;flex-shrink:0}
+.price-tag{margin-top:24px;padding:20px 28px;border-radius:var(--radius);background:linear-gradient(135deg,rgba(28,108,252,.1),rgba(0,200,255,.06));border:1px solid rgba(28,108,252,.2);display:inline-flex;align-items:center;gap:16px}
+.price-tag .amount{font-family:'Bebas Neue';font-size:42px;color:var(--accent-gold)}
+.price-tag .from{font-family:Cairo;font-size:13px;color:var(--text-secondary)}
+
+/* Booking layout */
+.booking-layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:32px}
+.booking-card{padding:clamp(20px,4vw,32px)}
+.booking-form{overflow-anchor:none}
+.booking-card h3{font-family:'Bebas Neue';font-size:36px;margin-bottom:20px}
+.days-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.day-group{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.day-label{padding:10px;background:rgba(28,108,252,.1);font-family:Rajdhani;font-size:12px;letter-spacing:2px;text-align:center;color:var(--accent-blue)}
+.slot-btn{display:flex;align-items:center;justify-content:center;min-height:44px;width:100%;padding:9px;text-align:center;font-family:Rajdhani;font-size:12px;letter-spacing:1px;cursor:none;border:none;background:transparent;color:var(--text-secondary);border-top:1px solid var(--border);transition:.2s}
+.slot-btn:hover,.slot-btn.selected{background:rgba(0,200,255,.08);color:var(--accent-cyan)}
+.slot-btn.selected{font-weight:700;background:rgba(0,200,255,.12);box-shadow:inset 0 0 0 1px rgba(0,200,255,.3)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field.wide{grid-column:1/-1}
+.form-field label{font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase}
+.form-field input,.form-field textarea,.form-field select{padding:13px 16px;min-height:48px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-primary);color:#fff;font-family:Cairo;font-size:16px!important;outline:none;transition:.3s}
+input,textarea,select{font-size:16px}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--accent-cyan);box-shadow:0 0 0 3px rgba(0,200,255,.1)}
+.form-field select{appearance:none;cursor:none}
+.confirm-card{background:linear-gradient(135deg,rgba(0,204,102,.1),rgba(28,108,252,.08));border:1px solid rgba(0,204,102,.3);border-radius:var(--radius-lg);padding:32px;display:none;text-align:center}
+.confirm-card.show{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PAYMENT STEP ── */
+.bk-step-title{font-family:'Bebas Neue';font-size:26px;letter-spacing:1.5px;margin-bottom:20px}
+.bk-back-step{background:none;border:none;color:var(--text-secondary);font-size:13px;cursor:none;display:flex;align-items:center;gap:6px;margin-bottom:16px;letter-spacing:1px;font-family:Rajdhani}
+.bk-back-step:hover{color:#fff}
+
+.payment-methods-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:14px;margin-bottom:20px}
+.payment-method-card{display:flex;flex-direction:column;align-items:center;padding:22px 14px;border-radius:var(--radius);border:1.5px solid var(--border);background:rgba(255,255,255,.03);color:#fff;cursor:none;text-align:center;transition:border-color .2s,background .2s,transform .2s}
+.payment-method-card:hover{border-color:rgba(0,200,255,.4);background:rgba(0,200,255,.05);transform:translateY(-2px)}
+.payment-method-card.active{border-color:var(--accent-cyan);background:rgba(0,200,255,.08);box-shadow:0 0 0 3px rgba(0,200,255,.12)}
+
+.payment-info-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;margin-bottom:16px}
+.payment-detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-family:Cairo;font-size:14px;gap:12px}
+.payment-detail-row:last-of-type{border-bottom:none}
+.payment-detail-row span:first-child{color:var(--text-muted);flex-shrink:0}
+.payment-detail-row span:last-child{font-weight:600;text-align:right}
+.payment-detail-row.account-number span:last-child{font-family:monospace;font-size:15px;color:var(--accent-cyan);letter-spacing:1.5px;display:flex;align-items:center;gap:10px}
+
+.copy-number-btn{background:none;border:1px solid var(--border);color:var(--text-secondary);border-radius:6px;padding:4px 8px;cursor:none;font-size:13px;transition:.2s;flex-shrink:0}
+.copy-number-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+
+.screenshot-dropzone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px 20px;text-align:center;cursor:none;transition:.2s}
+.screenshot-dropzone:hover{border-color:var(--accent-cyan);background:rgba(0,200,255,.04)}
+
+.bk-summary-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-top:20px;text-align:left}
+.bk-summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px;font-family:Cairo}
+.bk-summary-row:last-child{border-bottom:none}
+.bk-summary-row span:first-child{color:var(--text-muted)}
+.bk-summary-row span:last-child{font-weight:600}
+
+@media(max-width:479px){
+  .payment-methods-grid{grid-template-columns:1fr}
+  .payment-method-card{flex-direction:row;justify-content:flex-start;gap:14px;padding:16px;text-align:left}
+  .payment-method-card i{font-size:20px!important;margin-bottom:0!important}
+  .payment-detail-row.account-number{flex-direction:column;align-items:flex-start}
+}
+
+/* ── BOOKING SUCCESS OVERLAY ── */
+.booking-success-overlay{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;cursor:none;padding:20px}
+.booking-success-overlay.show{display:flex;animation:bsoFadeIn .3s ease}
+@keyframes bsoFadeIn{from{opacity:0}to{opacity:1}}
+.bso-content{text-align:center;max-width:440px}
+.bso-check-wrap{margin:0 auto 28px;width:110px;height:110px}
+.bso-check-svg{width:100%;height:100%;display:block;transform-origin:50% 50%}
+.booking-success-overlay.show .bso-check-svg{animation:bsoShake .6s ease .9s}
+.bso-check-circle{stroke:var(--success);stroke-width:4;stroke-dasharray:264;stroke-dashoffset:264;animation:bsoCircleDraw .6s ease forwards}
+.bso-check-tick{stroke:var(--success);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:64;stroke-dashoffset:64;animation:bsoTickDraw .35s ease forwards .55s}
+@keyframes bsoCircleDraw{to{stroke-dashoffset:0}}
+@keyframes bsoTickDraw{to{stroke-dashoffset:0}}
+@keyframes bsoShake{
+  0%,100%{transform:rotate(0)}
+  8%{transform:rotate(-14deg)} 16%{transform:rotate(12deg)} 24%{transform:rotate(0)}
+  32%{transform:rotate(-14deg)} 40%{transform:rotate(12deg)} 48%{transform:rotate(0)}
+  56%{transform:rotate(-14deg)} 64%{transform:rotate(12deg)} 72%{transform:rotate(0)}
+}
+.bso-headline{font-size:36px;color:#fff;margin-bottom:12px}
+.bso-subline{font-family:Cairo;font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:24px}
+.bso-ref{font-size:30px;color:var(--accent-cyan)}
+
+/* ── BOOKINGS HISTORY PANEL ── */
+.bookings-history-panel{margin-top:28px;padding-top:24px;border-top:1px solid var(--border)}
+.bookings-history-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;margin-bottom:14px}
+.bh-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);margin-bottom:10px;flex-wrap:wrap}
+.bh-ref{font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;color:#fff}
+.bh-meta{font-family:Cairo;font-size:12px;color:var(--text-secondary);margin-top:2px}
+.bh-badge{padding:4px 12px;border-radius:50px;font-family:Rajdhani;font-size:11px;letter-spacing:1px;border:1px solid;white-space:nowrap}
+
+/* ── TUNING SECTION ── */
+.glitch-text{position:relative;display:inline-block}
+.glitch-text::before,.glitch-text::after{content:attr(data-text);position:absolute;top:0;left:0;right:0;opacity:.8}
+.glitch-text::before{color:var(--accent-cyan);clip:rect(0,900px,0,0);animation:glitch1 3s infinite}
+.glitch-text::after{color:var(--danger);clip:rect(0,900px,0,0);animation:glitch2 3s infinite .05s}
+@keyframes glitch1{0%,90%,100%{clip:rect(0,900px,0,0)}91%{clip:rect(40px,900px,58px,0);transform:skewX(-5deg) translateX(-3px)}93%{clip:rect(12px,900px,28px,0);transform:skewX(3deg) translateX(2px)}95%{clip:rect(65px,900px,80px,0);transform:skewX(-2deg) translateX(-2px)}}
+@keyframes glitch2{0%,88%,100%{clip:rect(0,900px,0,0)}89%{clip:rect(50px,900px,66px,0);transform:skewX(4deg) translateX(3px)}91%{clip:rect(20px,900px,35px,0);transform:skewX(-3deg) translateX(-2px)}93%{clip:rect(75px,900px,88px,0);transform:skewX(2deg) translateX(2px)}}
+
+.tuning-packages{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:32px 0}
+.tune-card{padding:36px 28px;text-align:center;transition:all .3s}
+.tune-card.featured{border-color:rgba(0,200,255,.4);background:linear-gradient(180deg,rgba(0,200,255,.06),var(--bg-card))}
+.tune-card:hover{transform:translateY(-8px)}
+.stage-label{font-family:'Bebas Neue';font-size:14px;letter-spacing:4px;color:var(--accent-gold);margin-bottom:8px}
+.tune-name{font-family:'Bebas Neue';font-size:clamp(32px,8vw,48px);line-height:1;margin-bottom:16px}
+.tune-hp{font-family:Rajdhani;font-size:20px;color:var(--accent-cyan);font-weight:700;margin-bottom:20px}
+.tune-price{font-family:'Bebas Neue';font-size:42px;color:var(--accent-gold);margin:16px 0}
+.tune-list{list-style:none;margin:20px 0;text-align:left}
+.tune-list li{font-family:Cairo;font-size:14px;color:var(--text-secondary);padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.tune-list li::before{content:"✓";color:var(--success);font-weight:700;flex-shrink:0}
+
+/* Timeline */
+.tuning-timeline{margin:48px 0}
+.timeline-steps{display:flex;gap:0;position:relative;overflow:hidden}
+.timeline-steps::before{content:"";position:absolute;top:24px;left:0;right:0;height:2px;background:var(--border)}
+.timeline-steps::after{content:"";position:absolute;top:24px;left:0;height:2px;background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan));width:0;transition:width 1s ease}
+.timeline-steps.animated::after{width:100%}
+.t-step{flex:1;text-align:center;padding:0 8px}
+.t-step-num{width:48px;height:48px;border-radius:50%;background:var(--bg-card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:20px;margin:0 auto 14px;position:relative;z-index:1;transition:.3s}
+.t-step.done .t-step-num{border-color:var(--accent-cyan);color:var(--accent-cyan);box-shadow:0 0 20px rgba(0,200,255,.3)}
+.t-step-text{font-family:Cairo;font-size:12px;color:var(--text-secondary)}
+
+/* Dyno chart */
+.dyno-wrap{margin:32px 0}
+.dyno-chart{display:flex;gap:60px;align-items:flex-end;padding:32px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);justify-content:center}
+.dyno-bar-group{text-align:center}
+.dyno-bars{display:flex;gap:10px;align-items:flex-end;height:200px}
+.dyno-bar{width:52px;border-radius:6px 6px 0 0;position:relative;transition:height 1s cubic-bezier(.4,0,.2,1)}
+.dyno-bar.before{background:linear-gradient(180deg,rgba(80,80,80,.8),rgba(80,80,80,.3))}
+.dyno-bar.after{background:linear-gradient(180deg,var(--accent-cyan),rgba(0,200,255,.3))}
+.dyno-bar-label{font-family:Rajdhani;font-size:12px;letter-spacing:1px;color:var(--text-muted);margin-top:10px}
+.dyno-group-label{font-family:'Bebas Neue';font-size:18px;color:var(--text-secondary);margin-top:8px}
+
+/* ── EVENTS ── */
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:32px 0}
+.event-card{overflow:hidden}
+.event-img{height:200px;background:linear-gradient(135deg,rgba(28,108,252,.3),rgba(0,200,255,.15),#0d0d0d);position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.event-type-badge{padding:6px 16px;border-radius:50px;font-family:'Bebas Neue';font-size:14px;letter-spacing:3px}
+.badge-track{background:rgba(255,51,51,.15);border:1px solid rgba(255,51,51,.4);color:#ff6666}
+.badge-meet{background:rgba(0,200,255,.12);border:1px solid rgba(0,200,255,.3);color:var(--accent-cyan)}
+.badge-drag{background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.3);color:var(--accent-gold)}
+.event-info{padding:22px}
+.event-name{font-family:'Bebas Neue';font-size:26px;margin-bottom:8px}
+.event-meta{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.event-meta span{font-family:Cairo;font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:8px}
+.event-spots{font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--danger);margin-bottom:16px}
+.event-price{font-family:'Bebas Neue';font-size:32px;color:var(--accent-gold);margin-bottom:16px}
+
+/* ── PICKUP TAB ── */
+.pickup-hero{padding:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:28px}
+.pickup-hero h2{font-family:'Bebas Neue';font-size:clamp(36px,8vw,52px);margin-bottom:8px}
+.delivery-pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.delivery-option{padding:20px;background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius);text-align:center;transition:.3s}
+.delivery-option:hover{border-color:var(--accent-cyan)}
+.delivery-option .price{font-family:'Bebas Neue';font-size:36px;color:var(--accent-gold)}
+.delivery-option .range{font-family:Rajdhani;font-size:13px;color:var(--text-secondary);letter-spacing:1px}
+
+/* ── WA FLOATING ── */
+#wa-float{position:fixed;bottom:28px;left:28px;z-index:600;width:60px;height:60px;border-radius:50%;background:#0fbf57;border:none;cursor:none;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 8px 30px rgba(15,191,87,.45);animation:waPulse 3s ease-in-out infinite}
+@keyframes waPulse{0%,100%{box-shadow:0 8px 30px rgba(15,191,87,.45)}50%{box-shadow:0 8px 50px rgba(15,191,87,.7),0 0 0 12px rgba(15,191,87,.1)}}
+
+/* ── NEON GLOW ── */
+.neon-glow{animation:neonPulse 2.5s ease-in-out infinite}
+@keyframes neonPulse{0%,100%{text-shadow:0 0 20px rgba(0,200,255,.5)}50%{text-shadow:0 0 40px rgba(0,200,255,.9),0 0 80px rgba(0,200,255,.3)}}
+
+/* ── SECTION DIVIDER ── */
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0}
+
+/* ── FETCH STATES ── */
+.fetch-loading{padding:50px 20px;text-align:center;color:var(--text-secondary);font-family:Cairo;font-size:14px}
+.fetch-loading::before{content:"";display:block;width:30px;height:30px;margin:0 auto 14px;border:3px solid var(--border);border-top-color:var(--accent-cyan);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fetch-error{padding:24px;text-align:center;color:#ff8888;background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);border-radius:var(--radius);font-family:Cairo;font-size:14px}
+.fetch-error button{margin-top:12px}
+.form-msg{font-family:Cairo;font-size:13px;margin-top:8px}
+.form-msg.ok{color:var(--success)}
+.form-msg.err{color:var(--danger)}
+
+/* ── RESPONSIVE (breakpoints: xs 0-479 · sm 480-767 · md 768-1023 · lg 1024-1279 · xl 1280+) ── */
+@media(max-width:1279px){
+  .models-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:1023px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-car-bg{opacity:.2}
+  .about-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .contact-grid{grid-template-columns:1fr 1fr}
+  .booking-layout{grid-template-columns:1fr}
+  .tuning-packages{grid-template-columns:1fr 1fr}
+  .events-grid{grid-template-columns:1fr 1fr}
+  .models-grid{grid-template-columns:repeat(3,1fr)}
+  .services-preview-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:767px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .navbar{height:60px}
+  .section{padding:clamp(40px,8vw,70px) 0}
+  .models-grid{grid-template-columns:1fr 1fr}
+  .parts-grid{grid-template-columns:1fr 1fr}
+  .services-preview-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .tuning-packages{grid-template-columns:1fr}
+  .events-grid{grid-template-columns:1fr}
+  .delivery-pricing{grid-template-columns:1fr}
+  .days-grid{grid-template-columns:repeat(2,1fr)}
+  .checklist{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .testimonials-track .testimonial-card{flex:0 0 90%}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .timeline-steps{flex-wrap:wrap;gap:20px}
+  .timeline-steps::before,.timeline-steps::after{display:none}
+  .modal-header,.modal-body{padding:20px}
+  .parts-grid{grid-template-columns:1fr}
+  /* hero: faint bg car, centered copy */
+  .hero-car-bg{opacity:.08}
+  .hero-grid{text-align:center}
+  .hero-cta{justify-content:center}
+  .hero-stats-mini{justify-content:center}
+  /* drop heavy decorative effects to keep mobile smooth */
+  [data-aos]{animation:none!important;transition:none!important}
+  .hero-particles{display:none}
+}
+@media(max-width:479px){
+  .models-grid{grid-template-columns:1fr}
+  .parts-grid{grid-template-columns:1fr}
+  .hero-cta{flex-direction:column}
+  .hero-stats-mini{gap:16px}
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ── MY DASHBOARD ENTRY ── */
+.dash-teaser{display:flex;align-items:center;gap:24px;padding:28px 36px;background:linear-gradient(135deg,rgba(28,108,252,.06) 0%,rgba(0,200,255,.04) 100%);border:1px solid rgba(0,200,255,.18);border-radius:var(--radius-lg);position:relative;overflow:hidden;flex-wrap:wrap;transition:border-color .3s}
+.dash-teaser:hover{border-color:rgba(0,200,255,.35)}
+.dash-teaser::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent-blue),var(--accent-cyan));border-radius:3px 0 0 3px}
+.dash-teaser-icon{font-size:38px;flex-shrink:0;filter:drop-shadow(0 0 14px rgba(0,200,255,.45));animation:dashIconPulse 3s ease-in-out infinite}
+@keyframes dashIconPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(0,200,255,.3))}50%{filter:drop-shadow(0 0 22px rgba(0,200,255,.7))}}
+.dash-teaser-text{flex:1;min-width:200px}
+.dash-teaser-title{font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;margin-bottom:5px;color:#fff}
+.dash-teaser-sub{font-family:Cairo;font-size:14px;color:var(--text-secondary);line-height:1.7}
+.dash-teaser-sub strong{color:var(--accent-cyan);font-weight:600}
+.dash-teaser-sub em{color:var(--accent-gold);font-style:normal;font-weight:600}
+
+.dash-welcome{display:flex;align-items:center;gap:20px;padding:22px 32px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);flex-wrap:wrap;position:relative;overflow:hidden;transition:border-color .3s}
+.dash-welcome:hover{border-color:rgba(0,200,255,.2)}
+.dash-welcome::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent-cyan);border-radius:3px 0 0 3px}
+.dash-welcome-icon{width:50px;height:50px;border-radius:50%;background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.dash-welcome-info{flex:1;min-width:180px}
+.dash-welcome-name{font-family:Cairo;font-size:13px;color:var(--text-secondary);margin-bottom:2px}
+.dash-welcome-name strong{color:#fff;font-weight:700}
+.dash-welcome-car{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;line-height:1.1;margin-bottom:4px}
+.dash-welcome-meta{font-family:Rajdhani;font-size:12px;letter-spacing:1px;color:var(--text-muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dash-welcome-vin{font-family:monospace;font-size:11px;color:var(--accent-cyan);letter-spacing:2px}
+.dash-status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:50px;font-family:Rajdhani;font-size:11px;letter-spacing:1px}
+.dash-status-pill.ready{background:rgba(0,204,102,.1);border:1px solid rgba(0,204,102,.25);color:var(--success)}
+.dash-status-pill.in-service{background:rgba(255,153,0,.1);border:1px solid rgba(255,153,0,.25);color:#ff9900}
+.dash-welcome-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+
+@media(max-width:640px){
+  .dash-teaser{padding:20px;gap:16px}
+  .dash-welcome{padding:18px 20px}
+  .dash-welcome-actions{width:100%;justify-content:flex-end}
+}
+</style>
+</head>
+<body class="cursor-visible">
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- INTRO SPLASH -->
+<div id="intro">
+  <button id="skipIntro">SKIP INTRO</button>
+  <div class="intro-wrap">
+
+    <img src="assets/logo-mo.png" alt="MO by Ahmed Mahmoud" style="width:320px;height:auto;display:block;margin:0 auto 28px">
+
+    <p class="intro-tag" style="letter-spacing:3px;font-family:'Cairo',sans-serif;font-size:13px;color:#d4a017;opacity:0;margin-top:0">
+      WHERE PRECISION MEETS PERFORMANCE
+    </p>
+
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+
+    <a class="nav-brand" href="#home" style="text-decoration:none;display:flex;align-items:center">
+      <img src="assets/logo-mo.png" alt="MO by Ahmed Mahmoud" style="height:54px;width:auto;display:block">
+    </a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#home">HOME</a>
+      <a href="spare-parts.html">SPARE PARTS</a>
+      <a href="#services">SERVICES</a>
+      <a href="#about">ABOUT</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+
+    <div class="nav-right">
+      <div class="nav-phone" style="display:flex;align-items:center;gap:8px">
+        <i class="fa-solid fa-phone" style="color:var(--accent-cyan);font-size:12px"></i>
+        <span id="navPhoneText" style="font-family:Rajdhani;font-size:13px;letter-spacing:1px">+20 1XX XXX XXXX</span>
+      </div>
+      <a class="btn whatsapp sm" id="navWa" href="#" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#home" class="mobile-link">HOME</a>
+  <a href="spare-parts.html" class="mobile-link">SPARE PARTS</a>
+  <a href="#services" class="mobile-link">SERVICES</a>
+  <a href="#about" class="mobile-link">ABOUT</a>
+  <a href="#contact" class="mobile-link">CONTACT</a>
+  <a class="btn whatsapp" href="#" id="mobileWa" style="margin-top:12px"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+</div>
+
+<!-- ═══════════════════════════════════ HERO ═════════════════════════════════ -->
+<section class="hero" id="home" aria-label="Hero">
+  <div class="hero-bg-wrap">
+    <div class="hero-particles" id="particles"></div>
+    <div class="hero-ambient" id="heroAmbient"></div>
+    <div class="hero-scanlines"></div>
+    <div class="hero-vignette"></div>
+    <div class="speed-lines" id="speedLines"></div>
+  </div>
+  <div class="hero-car-bg">
+    <img id="heroCarImg" src="https://images.dealer.com/ddc/vehicles/2022/BMW/M4/Coupe/perspective/front-left/2022_24.png" alt="" role="presentation">
+  </div>
+  <div class="hero-grid">
+    <div class="hero-copy" id="heroCopy">
+      <div class="overline" id="heroOverline" data-aos="fade-down" data-aos-delay="100">🏆 Egypt's #1 BMW Tuning Specialist</div>
+      <h1 class="hero-headline" data-aos="fade-up" data-aos-delay="150">
+        <span class="line1 display" id="heroLine1">MO BY</span>
+        <span class="line2 display neon-glow" id="heroLine2">AHMED MAHMOUD</span>
+      </h1>
+      <div class="hero-tagline" id="heroTagline" data-aos="fade-up" data-aos-delay="200">Where Precision Meets Performance</div>
+      <p class="hero-desc" id="heroDesc" data-aos="fade-up" data-aos-delay="250">
+        Genuine spare parts • Mechanical • Electrical • Professional Tuning
+      </p>
+      <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
+        <a class="btn primary" id="heroCta1" href="#services"><i class="fa-solid fa-calendar-check"></i> Book Your Appointment</a>
+        <a class="btn outline" id="heroCta2" href="spare-parts.html">Browse Our Services</a>
+      </div>
+      <div class="hero-stats-mini" data-aos="fade-up" data-aos-delay="350">
+        <div class="hero-stat"><span id="heroStat1Value">500+</span><small id="heroStat1Label">Happy Clients</small></div>
+        <div class="hero-stat"><span id="heroStat2Value">15+</span><small id="heroStat2Label">Years Experience</small></div>
+        <div class="hero-stat"><span id="heroStat3Value">1000+</span><small id="heroStat3Label">Cars Modified</small></div>
+      </div>
+    </div>
+    <div style="position:relative;z-index:2"></div>
+  </div>
+  <div class="scroll-indicator" aria-hidden="true">
+    <div class="scroll-chevron"><span></span></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+
+<section class="section" id="my-dashboard-entry" style="padding:40px 0">
+  <div class="container">
+    <div id="dashEntryBlock"></div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item" data-aos="fade-up">
+        <strong class="stat-number" id="statClients" data-count="500">0</strong>
+        <span class="stat-label">Happy Clients</span>
+      </div>
+      <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+        <strong class="stat-number" id="statYears" data-count="15">0</strong>
+        <span class="stat-label">Years Experience</span>
+      </div>
+      <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+        <strong class="stat-number" id="statCarsModded" data-count="1000">0</strong>
+        <span class="stat-label">Cars Modified</span>
+      </div>
+      <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+        <strong class="stat-number">24/7</strong>
+        <span class="stat-label">Tech Support</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="garage-visual card" data-aos="fade-right">
+      <div class="garage-visual-overlay">
+        <div class="garage-badge"><i class="fa-solid fa-trophy"></i> EGYPT'S #1 BMW SPECIALIST</div>
+        <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px">Since 2010</div>
+      </div>
+    </div>
+    <div data-aos="fade-left">
+      <div class="kicker">FROM THE GARAGE TO THE TRACK</div>
+      <h2 class="section-heading">Our Story with BMW</h2>
+      <p class="about-body" id="aboutBody">
+        We started our journey with BMW over 15 years ago, driven by a genuine passion for these
+        exceptional cars. We provide mechanical and electrical maintenance, engine modifications, and
+        professional tuning to deliver maximum performance with reliable parts and top-tier customer service.
+      </p>
+      <div class="pill-row">
+        <span class="pill">🔧 Mechanical</span>
+        <span class="pill">⚡ Electrical</span>
+        <span class="pill">🎛️ Tuning</span>
+        <span class="pill">🛒 Spare Parts</span>
+        <span class="pill">🏎️ M Performance</span>
+      </div>
+      <a class="btn primary" href="#contact"><i class="fa-solid fa-arrow-right"></i> Learn More About Us</a>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SERVICES PREVIEW -->
+<section class="section">
+  <div class="container">
+    <div class="kicker" style="text-align:center" data-aos="fade-up">OUR SERVICES</div>
+    <h2 class="section-heading" style="text-align:center;font-size:clamp(48px,6vw,80px)" data-aos="fade-up" data-aos-delay="50">Our Services</h2>
+    <div class="services-preview-grid">
+      <div class="card svc-card" data-accent="blue" data-aos="fade-up" data-aos-delay="0">
+        <div class="svc-icon"><i class="fa-solid fa-bolt"></i></div>
+        <div class="svc-title-en display">QUICK SERVICE</div>
+        <div class="svc-title-ar">Quick service — done in under an hour</div>
+        <ul class="svc-bullets">
+          <li>Oil and filter change</li>
+          <li>Full fluids inspection</li>
+          <li>Battery and alternator check</li>
+          <li>Scanner diagnostics</li>
+        </ul>
+        <a href="#services" class="svc-link tech">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="card svc-card" data-accent="gold" data-aos="fade-up" data-aos-delay="100">
+        <div class="svc-icon" style="background:rgba(212,160,23,.1);border-color:rgba(212,160,23,.2);color:var(--accent-gold)"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <div class="svc-title-en display">FULL SERVICE</div>
+        <div class="svc-title-ar">Comprehensive maintenance — thorough inspection</div>
+        <ul class="svc-bullets">
+          <li>Full brakes & suspension inspection</li>
+          <li>Gearbox & clutch check</li>
+          <li>Wheel alignment</li>
+          <li>Full report with photos</li>
+        </ul>
+        <a href="#services" class="svc-link tech" style="color:var(--accent-gold)">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="card svc-card" data-accent="cyan" data-aos="fade-up" data-aos-delay="200">
+        <div class="svc-icon" style="background:rgba(0,200,255,.1);border-color:rgba(0,200,255,.2);color:var(--accent-cyan)"><i class="fa-solid fa-gauge-high"></i></div>
+        <div class="svc-title-en display">TUNING & MODS</div>
+        <div class="svc-title-ar">Tuning & modification — maximum performance</div>
+        <ul class="svc-bullets">
+          <li>ECU Remap up to +120 HP</li>
+          <li>Exhaust Systems</li>
+          <li>Suspension Upgrades</li>
+          <li>Body Kits & Carbon Fiber</li>
+        </ul>
+        <a href="#services" class="svc-link tech">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SPARE PARTS CTA -->
+<section class="section" id="spare-parts-cta">
+  <div class="container" style="text-align:center">
+    <div class="kicker" data-aos="fade-up">BMW SPARE PARTS</div>
+    <h2 class="section-heading" data-aos="fade-up" data-aos-delay="50">Spare Parts</h2>
+    <p class="muted" style="font-size:16px;margin-bottom:32px;max-width:560px;margin-left:auto;margin-right:auto" data-aos="fade-up" data-aos-delay="100">
+      Browse our full BMW spare parts catalog by series, model and engine — genuine and performance parts, with live pricing and stock.
+    </p>
+    <a href="spare-parts.html" class="btn primary" style="font-size:17px;padding:20px 40px" data-aos="fade-up" data-aos-delay="150">
+      <i class="fa-solid fa-gears"></i> Browse Spare Parts Catalog <i class="fa-solid fa-arrow-right"></i>
+    </a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SERVICES FULL -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="kicker" data-aos="fade-up">BOOK WITH US</div>
+    <h2 class="section-heading" data-aos="fade-up" data-aos-delay="50">Book Your Service</h2>
+    <div class="service-tabs" id="serviceTabs" role="tablist" data-aos="fade-up" data-aos-delay="100">
+      <button class="s-tab active" data-panel="quick" role="tab" aria-selected="true">⚡ Quick Service</button>
+      <button class="s-tab" data-panel="full" role="tab">🛠️ Full Service</button>
+      <button class="s-tab" data-panel="tuning" role="tab">🏎️ Tuning</button>
+      <button class="s-tab" data-panel="pickup" role="tab">🚗 Book Your Service</button>
+      <button class="s-tab" data-panel="events" role="tab">🎪 BMW Events</button>
+    </div>
+    <div id="panel-quick" class="s-panel active"></div>
+    <div id="panel-full" class="s-panel"></div>
+    <div id="panel-tuning" class="s-panel"></div>
+    <div id="panel-pickup" class="s-panel"></div>
+    <div id="panel-events" class="s-panel"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--bg-secondary);border-top:1px solid var(--border)">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:40px" data-aos="fade-up">
+      <div class="kicker">CUSTOMER REVIEWS</div>
+      <h2 class="section-heading">What Our Customers Say</h2>
+    </div>
+    <div class="testimonials-wrap" data-aos="fade-up" data-aos-delay="100">
+      <div class="testimonials-track" id="testiTrack"></div>
+    </div>
+    <div class="testi-nav" id="testiNav"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT INFO -->
+<section class="section" id="contact">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:40px" data-aos="fade-up">
+      <div class="kicker">FIND US</div>
+      <h2 class="section-heading">Get In Touch</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="card contact-card" data-aos="fade-up">
+        <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <h3>LOCATION</h3>
+        <p><span id="contactAddress">[Address Placeholder], Cairo, Egypt</span><br><a id="contactMapsLink" href="https://maps.google.com" target="_blank" style="color:var(--accent-cyan);font-size:13px">View on map →</a></p>
+      </div>
+      <div class="card contact-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="contact-icon" style="background:rgba(212,160,23,.1);border-color:rgba(212,160,23,.2);color:var(--accent-gold)"><i class="fa-regular fa-clock"></i></div>
+        <h3>HOURS</h3>
+        <p id="contactHours">Sat–Thu: 9 AM – 8 PM<br>Friday: 2 PM – 8 PM</p>
+      </div>
+      <div class="card contact-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="contact-icon" style="background:rgba(0,200,255,.1);border-color:rgba(0,200,255,.2);color:var(--accent-cyan)"><i class="fa-solid fa-phone"></i></div>
+        <h3>CONTACT</h3>
+        <p><span id="contactPhoneEmailText">+20 1XX XXX XXXX<br>info@mobybmw.com</span><br>
+          <a id="contactWa" href="#" target="_blank" style="color:#0fbf57;font-size:13px"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<div class="privacy-strip">
+  <div class="container">
+    <p><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);margin-right:8px"></i> <span id="privacyTextSpan">We respect your privacy. Your personal data is kept secure and is never shared with third parties. The full privacy policy is available upon request.</span></p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-name display" style="font-size:32px">MO BY AHMED MAHMOUD</div>
+        <p id="footerTagline">Where Precision Meets Performance<br>BMW specialists since 2010</p>
+        <div class="social-row">
+          <a href="#" id="socialInstagram" class="social-btn" aria-label="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" id="socialTiktok" class="social-btn" aria-label="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" id="socialYoutube" class="social-btn" aria-label="YouTube" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="socialFacebook" class="social-btn" aria-label="Facebook" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>QUICK LINKS</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="spare-parts.html">Spare Parts</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>SERVICES</h4>
+        <ul>
+          <li><a href="#services">Quick Service</a></li>
+          <li><a href="#services">Full Service</a></li>
+          <li><a href="#services">Tuning & Mods</a></li>
+          <li><a href="#services">BMW Events</a></li>
+          <li><a href="#services">Book Your Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>NEWSLETTER</h4>
+        <p style="font-family:Cairo;font-size:13px;color:var(--text-muted);margin-bottom:14px">Subscribe to get the latest offers and events</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" name="email" placeholder="Your email address" aria-label="Email for newsletter" required>
+          <button type="submit" class="btn primary sm">Subscribe</button>
+          <div id="newsletterMsg" style="font-family:Cairo;font-size:12px;display:none"></div>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" id="footerCopy">© 2025 MO BY AHMED MAHMOUD | All Rights Reserved</span>
+      <button class="back-top" id="backTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a id="wa-float" href="#" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+
+<!-- BOOKING SUCCESS OVERLAY -->
+<div id="bookingSuccessOverlay" class="booking-success-overlay">
+  <div class="bso-content">
+    <div class="bso-check-wrap">
+      <svg class="bso-check-svg" viewBox="0 0 100 100">
+        <circle class="bso-check-circle" cx="50" cy="50" r="42" fill="none"/>
+        <path class="bso-check-tick" d="M28 52 L43 67 L74 33" fill="none"/>
+      </svg>
+    </div>
+    <div class="bso-headline display">Booking Confirmed!</div>
+    <div class="bso-subline">Our team will contact you within 2 hours to confirm your appointment.</div>
+    <div class="bso-ref display" id="bsoRefNumber"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════ API CONFIG & STATE ═══════════════════════
+const API = 'http://localhost:3000/api';
+const BACKEND_ORIGIN = 'http://localhost:3000';
+window.appState = {currentService:'quick',selectedSlots:{},bookings:[]};
+let WHATSAPP = '201000000000';
+const wa = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+
+window.testimonials = [];
+window.upcomingEvents = [];
+let pastEvents = [];
+let SETTINGS = {};
+let SERVICE_CONFIG = { quick_service:null, full_service:null, tuning_stages:null, tuning_slots:null, pickup_tiers:null, pickup_slots:null };
+
+async function apiGet(path){
+  const res = await fetch(API + path);
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+async function apiPost(path, body){
+  const res = await fetch(API + path, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+function loadingHTML(){ return '<div class="fetch-loading">Loading...</div>'; }
+function errorHTML(retryFnName){
+  return `<div class="fetch-error">Could not load data — please try again<br><button class="btn outline sm" onclick="${retryFnName}()" style="margin-top:12px">Retry</button></div>`;
+}
+function fmtPrice(n){ return Number(n||0).toLocaleString('en-US') + ' EGP'; }
+
+function aosRefresh(){
+  const y = window.scrollY;
+  AOS.refresh();
+  requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'instant' }));
+}
+
+// ═══════════════════════ CUSTOM CURSOR ═══════════════════════
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  dot.style.left=mx+'px';dot.style.top=my+'px';
+});
+function animCursor(){
+  rx+=(mx-rx)*.15;ry+=(my-ry)*.15;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button,.model-card,.slot-btn,.s-tab,.pf-tab,.testi-btn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='rgba(0,200,255,.7)'});
+  el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(0,200,255,.5)'});
+});
+document.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-visible'));
+document.addEventListener('mouseenter',()=>document.body.classList.add('cursor-visible'));
+
+// ═══════════════════════ INTRO (plays once per session) ═══════════════════════
+(function(){
+  const intro=document.getElementById('intro');
+  const logoEl=intro.querySelector('img');
+  const tagEl=intro.querySelector('.intro-tag');
+
+  function endIntro(){
+    gsap.to(intro,{opacity:0,duration:.5,ease:'power2.in',onComplete:()=>intro.classList.add('gone')});
+  }
+
+  const _introKey='mo_intro_played';
+  if(!sessionStorage.getItem(_introKey)){
+    sessionStorage.setItem(_introKey,'1');
+
+    // Animate in
+    gsap.set(logoEl,{opacity:0,scale:.85,y:10});
+    gsap.set(tagEl,{opacity:0,y:10});
+    gsap.to(logoEl,{opacity:1,scale:1,y:0,duration:.7,delay:.2,ease:'back.out(1.7)'});
+    gsap.to(tagEl,{opacity:1,y:0,duration:.4,delay:.9});
+
+    setTimeout(endIntro,2900);
+    document.getElementById('skipIntro').addEventListener('click',endIntro);
+  } else {
+    intro.classList.add('gone');
+  }
+})();
+
+// ═══════════════════════ NAVBAR ═══════════════════════
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',scrollY>60),{passive:true});
+
+// Hamburger
+const ham=document.getElementById('hamburger');
+const mobileNav=document.getElementById('mobileNav');
+ham.addEventListener('click',()=>{
+  mobileNav.classList.toggle('open');
+  ham.classList.toggle('open');
+});
+document.querySelectorAll('.mobile-link,.mobile-nav .btn').forEach(a=>a.addEventListener('click',()=>{
+  mobileNav.classList.remove('open');ham.classList.remove('open');
+}));
+
+// ═══════════════════════ PARTICLES ═══════════════════════
+(function(){
+  const wrap=document.getElementById('particles');
+  const N=60;
+  for(let i=0;i<N;i++){
+    const p=document.createElement('div');
+    const size=Math.random()*3+1;
+    const x=Math.random()*100;
+    const dur=Math.random()*12+8;
+    const delay=Math.random()*8;
+    const cyan=Math.random()>.6;
+    Object.assign(p.style,{
+      position:'absolute',
+      width:size+'px',height:size+'px',
+      borderRadius:'50%',
+      left:x+'%',bottom:'-10px',
+      background:cyan?'rgba(0,200,255,.6)':'rgba(28,108,252,.5)',
+      boxShadow:`0 0 ${size*4}px ${cyan?'rgba(0,200,255,.4)':'rgba(28,108,252,.3)'}`,
+      animation:`particleFloat ${dur}s linear ${delay}s infinite`
+    });
+    wrap.appendChild(p);
+  }
+  const style=document.createElement('style');
+  style.textContent=`@keyframes particleFloat{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}80%{opacity:.6}100%{transform:translateY(-100vh) scale(.5);opacity:0}}`;
+  document.head.appendChild(style);
+})();
+
+// ═══════════════════════ SPEED LINES ═══════════════════════
+(function(){
+  const wrap=document.getElementById('speedLines');
+  setInterval(()=>{
+    const line=document.createElement('div');
+    const y=Math.random()*80+10;
+    const w=Math.random()*40+20;
+    Object.assign(line.style,{
+      position:'absolute',height:'1px',
+      background:'linear-gradient(90deg,transparent,rgba(0,200,255,.35),transparent)',
+      width:'0%',left:'0',top:y+'%',
+      transition:'width .4s ease, opacity .4s ease',opacity:'1'
+    });
+    wrap.appendChild(line);
+    requestAnimationFrame(()=>{line.style.width=w+'%'});
+    setTimeout(()=>{line.style.opacity='0';setTimeout(()=>line.remove(),400)},600);
+  },3500);
+})();
+
+// ═══════════════════════ AMBIENT LIGHT ON MOUSEMOVE ═══════════════════════
+const heroAmbient=document.getElementById('heroAmbient');
+document.addEventListener('mousemove',e=>{
+  const x=(e.clientX/innerWidth)*100;
+  const y=(e.clientY/innerHeight)*100;
+  heroAmbient.style.background=`
+    radial-gradient(circle at ${x}% ${y}%, rgba(28,108,252,.15) 0%, transparent 40%),
+    radial-gradient(circle at ${100-x}% ${100-y}%, rgba(0,200,255,.08) 0%, transparent 30%)
+  `;
+},{passive:true});
+
+// ═══════════════════════ MAGNETIC BUTTONS ═══════════════════════
+document.querySelectorAll('.btn').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const x=(e.clientX-r.left-r.width/2)*.25;
+    const y=(e.clientY-r.top-r.height/2)*.25;
+    btn.style.transform=`translate(${x}px,${y}px) translateY(-3px)`;
+  });
+  btn.addEventListener('mouseleave',()=>btn.style.transform='');
+});
+
+// ═══════════════════════ RIPPLE EFFECT ═══════════════════════
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('.btn');
+  if(!btn)return;
+  const r=document.createElement('span');
+  r.className='ripple';
+  const rect=btn.getBoundingClientRect();
+  const size=Math.max(rect.width,rect.height)*2;
+  r.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  btn.appendChild(r);
+  setTimeout(()=>r.remove(),600);
+});
+
+// ═══════════════════════ COUNT-UP ═══════════════════════
+const countObs=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting)return;
+    const el=entry.target;
+    const target=+el.dataset.count;
+    let n=0;
+    const step=Math.max(1,Math.ceil(target/60));
+    const t=setInterval(()=>{n+=step;if(n>=target){n=target;clearInterval(t)}el.textContent=n+(target>99?'+':'+')} ,25);
+    countObs.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>countObs.observe(el));
+
+// ═══════════════════════ BOOKING HELPERS ═══════════════════════
+function slotsHTML(type, slotGroups){
+  return `<div class="days-grid">${Object.entries(slotGroups).map(([day,times])=>`
+    <div class="day-group">
+      <div class="day-label">${day}</div>
+      ${times.map(t=>`<button class="slot-btn" data-type="${type}" data-slot="${day} ${t}">${t}</button>`).join('')}
+    </div>`).join('')}</div>`;
+}
+
+function getActiveBookingDiscount(serviceType){
+  const list=window.ALL_DISCOUNTS||[];
+  const now=new Date();
+  return list.find(d=>d.active && d.applies_to==='booking' && String(d.target_id)===String(serviceType) && (!d.expiry_date || new Date(d.expiry_date)>=now)) || null;
+}
+function priceTagHTML(type,price){
+  const discount=getActiveBookingDiscount(type);
+  if(!discount || !price){
+    return `<div class="price-tag" style="margin-bottom:24px">
+      <span class="from">Starting from</span>
+      <span class="amount">${price}</span>
+      <span class="from">EGP</span>
+    </div>`;
+  }
+  const discounted=discount.type==='percent'?Math.max(0,price*(1-discount.value/100)):Math.max(0,price-discount.value);
+  return `<div class="price-tag" style="margin-bottom:24px;flex-wrap:wrap">
+    <span class="from">Starting from</span>
+    <del class="muted" style="font-size:20px">${price}</del>
+    <span class="amount">${Math.round(discounted)}</span>
+    <span class="from">EGP</span>
+    <span class="badge-perf part-badge" style="margin-left:4px">${escapeSimple(discount.label)}</span>
+  </div>`;
+}
+function bookingFormHTML(type,price){
+  return `
+  ${priceTagHTML(type,price)}
+  <form class="booking-form" data-service="${type}" novalidate>
+
+    <!-- STEP 1: Customer Details -->
+    <div class="bk-step" id="bkStep1-${type}">
+      <div class="form-grid">
+        <div class="form-field">
+          <label><i class="fa-solid fa-mobile-screen-button"></i> Mobile Number</label>
+          <input type="tel" name="phone" required placeholder="01X XXXX XXXX" pattern="01[0-9]{9}">
+        </div>
+        <div class="form-field">
+          <label><i class="fa-regular fa-envelope"></i> Email</label>
+          <input type="email" name="email" placeholder="you@example.com">
+        </div>
+        <div class="form-field">
+          <label><i class="fa-solid fa-car"></i> Car Model + Year</label>
+          <input type="text" name="car" required placeholder="BMW M4 2022">
+        </div>
+        ${type==='tuning'?`
+        <div class="form-field">
+          <label><i class="fa-solid fa-gauge-high"></i> Select Tuning Stage</label>
+          <select name="tuning_stage" required>
+            <option value="">Choose a stage</option>
+            ${(window.TUNING_STAGES||[]).map(s=>`<option value="${escapeSimple(s.stage)}">${escapeSimple(s.stage_label||('Stage '+s.stage))} — ${s.contact_only?'Contact Us':fmtPrice(s.price)}</option>`).join('')}
+          </select>
+        </div>`:''}
+        <div class="form-field">
+          <label><i class="fa-regular fa-calendar"></i> Selected Appointment</label>
+          <input type="text" name="slot" readonly placeholder="Choose a slot below" id="slotInput-${type}">
+        </div>
+        <div class="form-field wide">
+          <label><i class="fa-solid fa-wrench"></i> Issue or Service Needed</label>
+          <textarea name="issue" rows="4" placeholder="Describe the issue or service you need..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+        <button type="button" class="btn primary bk-next-step" data-service="${type}">
+          <i class="fa-solid fa-credit-card"></i> Choose Payment Method
+        </button>
+        <a class="btn whatsapp" href="#" data-wa-booking="${type}"><i class="fa-brands fa-whatsapp"></i> Direct WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- STEP 2: Payment Method -->
+    <div class="bk-step bk-step-payment" id="bkStep2-${type}" style="display:none">
+      <button type="button" class="bk-back-step" data-service="${type}">
+        <i class="fa-solid fa-arrow-left"></i> Back
+      </button>
+      <div class="bk-step-title">SELECT PAYMENT METHOD</div>
+
+      <div class="payment-methods-grid" id="payMethods-${type}"></div>
+      <div class="payment-details-panel" id="payDetails-${type}" style="display:none"></div>
+      <input type="hidden" name="payment_method" value="">
+
+      <div class="payment-screenshot-wrap" id="payScreenshotWrap-${type}" style="display:none">
+        <div class="form-field" style="margin-top:20px">
+          <label><i class="fa-solid fa-image"></i> Upload Transfer Screenshot <span style="color:var(--danger)">*</span></label>
+          <div class="screenshot-dropzone" id="screenshotZone-${type}" data-service="${type}">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px;color:var(--text-muted);margin-bottom:10px;display:block"></i>
+            <div style="font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-secondary)">Tap to upload or drag your screenshot here</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:6px">JPG / PNG / WEBP — max 10MB</div>
+          </div>
+          <input type="file" name="payment_screenshot" accept="image/*" id="screenshotInput-${type}" style="display:none">
+          <div class="screenshot-preview" id="screenshotPreview-${type}" style="display:none">
+            <img id="screenshotImg-${type}" src="" alt="Payment screenshot" style="max-width:100%;max-height:220px;border-radius:10px;border:1px solid var(--border);object-fit:contain">
+            <button type="button" class="btn danger sm screenshot-clear" data-service="${type}" style="margin-top:10px"><i class="fa-solid fa-xmark"></i> Remove</button>
+          </div>
+          <div class="field-error" id="screenshotErr-${type}" style="display:none;color:var(--danger);font-size:12px;margin-top:6px">Please upload a screenshot of your payment to confirm your booking.</div>
+        </div>
+        <div style="margin-top:20px">
+          <button type="submit" class="btn primary" style="width:100%"><i class="fa-solid fa-paper-plane"></i> Confirm Booking</button>
+        </div>
+      </div>
+
+      <div id="cashSubmitWrap-${type}" style="display:none;margin-top:20px">
+        <button type="submit" class="btn primary" style="width:100%"><i class="fa-solid fa-paper-plane"></i> Confirm Booking</button>
+      </div>
+
+      <div class="form-msg" id="formMsg-${type}"></div>
+    </div>
+
+    <!-- STEP 3: Confirmation -->
+    <div class="confirm-card" id="confirm-${type}" style="margin-top:20px">
+      <div class="confirm-check">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+          <circle cx="26" cy="26" r="26" fill="rgba(0,204,102,.12)"/>
+          <path d="M15 26l8 8 14-14" stroke="#00cc66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div style="font-family:'Bebas Neue';font-size:30px;color:var(--success);margin:14px 0 4px;letter-spacing:1px">BOOKING CONFIRMED!</div>
+      <div style="font-family:Rajdhani;font-size:13px;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px">BOOKING REFERENCE</div>
+      <div class="booking-ref" style="font-family:'Bebas Neue';font-size:40px;color:var(--accent-cyan)"></div>
+      <div class="bk-summary-card" id="bkSummary-${type}"></div>
+      <p style="color:var(--text-secondary);margin-top:16px;font-size:14px">Our team will contact you within 2 hours to finalise your appointment and confirm the agreed amount.</p>
+    </div>
+  </form>`;
+}
+
+// ─── Render payment method selection cards ───
+function renderPaymentMethods(type){
+  const p=window.MO_PAYMENT||{};
+  const container=document.getElementById(`payMethods-${type}`);
+  if(!container)return;
+  const methods=[];
+  if(p.cash)   methods.push({id:'cash',  icon:'fa-money-bills',           label:'Cash on Visit',  sub:'Pay when you arrive'});
+  if(p.bank)   methods.push({id:'bank',  icon:'fa-building-columns',      label:'Bank Transfer',  sub:p.bankName||'Transfer to our account'});
+  if(p.wallet) methods.push({id:'wallet',icon:'fa-mobile-screen-button',  label:'Mobile Wallet',  sub:p.walletProvider||'InstaPay / Vodafone Cash'});
+  if(!methods.length){
+    container.innerHTML=`<div class="fetch-error">No payment methods available. Please contact us on WhatsApp.</div>`;
+    return;
+  }
+  container.innerHTML=methods.map(m=>`
+    <button type="button" class="payment-method-card" data-method="${m.id}" data-service="${type}">
+      <i class="fa-solid ${m.icon}" style="font-size:26px;color:var(--accent-cyan);margin-bottom:10px;display:block"></i>
+      <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px">${m.label}</div>
+      <div style="font-family:Cairo;font-size:12px;color:var(--text-secondary);margin-top:4px">${escapeSimple(m.sub)}</div>
+    </button>`).join('');
+}
+
+// ─── Show payment details after method selected ───
+function showPaymentDetails(type,method){
+  const p=window.MO_PAYMENT||{};
+  const panel=document.getElementById(`payDetails-${type}`);
+  const screenshotWrap=document.getElementById(`payScreenshotWrap-${type}`);
+  const cashWrap=document.getElementById(`cashSubmitWrap-${type}`);
+  const screenshotInput=document.getElementById(`screenshotInput-${type}`);
+  const form=document.querySelector(`.booking-form[data-service="${type}"]`);
+  if(!panel)return;
+
+  document.querySelectorAll(`#payMethods-${type} .payment-method-card`).forEach(c=>c.classList.toggle('active',c.dataset.method===method));
+  if(form){ const hidden=form.querySelector('[name="payment_method"]'); if(hidden)hidden.value=method; }
+  panel.style.display='block';
+
+  if(method==='cash'){
+    panel.innerHTML=`
+      <div class="payment-info-box" style="border-color:rgba(0,204,102,.3);background:rgba(0,204,102,.05)">
+        <i class="fa-solid fa-circle-info" style="color:var(--success);font-size:18px;margin-bottom:8px;display:block"></i>
+        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--success);margin-bottom:6px">CASH PAYMENT</div>
+        <div style="font-family:Cairo;font-size:14px;color:var(--text-secondary);line-height:1.7">Pay in cash when you arrive at our service center. Our team will confirm the final amount when they contact you.</div>
+      </div>`;
+    screenshotWrap.style.display='none';
+    if(screenshotInput)screenshotInput.value='';
+    cashWrap.style.display='block';
+  } else if(method==='bank'){
+    panel.innerHTML=`
+      <div class="payment-info-box">
+        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--accent-cyan);margin-bottom:14px">BANK TRANSFER DETAILS</div>
+        <div class="payment-detail-row"><span>Bank</span><span>${escapeSimple(p.bankName)}</span></div>
+        <div class="payment-detail-row"><span>Account Holder</span><span>${escapeSimple(p.bankHolder)}</span></div>
+        <div class="payment-detail-row account-number"><span>Account Number</span><span>${escapeSimple(p.bankAccount)} <button type="button" class="copy-number-btn" data-copy="${escapeSimple(p.bankAccount)}" title="Copy"><i class="fa-regular fa-copy"></i></button></span></div>
+        <div style="margin-top:12px;font-family:Cairo;font-size:12px;color:var(--text-muted);line-height:1.7">After transferring, upload your screenshot below. Your booking won't be confirmed until the screenshot is received.</div>
+      </div>`;
+    screenshotWrap.style.display='block';
+    cashWrap.style.display='none';
+  } else if(method==='wallet'){
+    panel.innerHTML=`
+      <div class="payment-info-box">
+        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--accent-gold);margin-bottom:14px">${escapeSimple(p.walletProvider).toUpperCase()} DETAILS</div>
+        <div class="payment-detail-row account-number"><span>Wallet Number</span><span>${escapeSimple(p.walletNumber)} <button type="button" class="copy-number-btn" data-copy="${escapeSimple(p.walletNumber)}" title="Copy"><i class="fa-regular fa-copy"></i></button></span></div>
+        <div style="margin-top:12px;font-family:Cairo;font-size:12px;color:var(--text-muted);line-height:1.7">Send the payment to the wallet number above, then upload your screenshot below.</div>
+      </div>`;
+    screenshotWrap.style.display='block';
+    cashWrap.style.display='none';
+  }
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function checklistHTML(items){
+  return `<div class="checklist">${items.map(item=>`
+    <div class="check-item"><div class="check-icon"><i class="fa-solid fa-check"></i></div><span>${item}</span></div>
+  `).join('')}</div>`;
+}
+
+// ═══════════════════════ SERVICE PANELS (data-driven) ═══════════════════════
+function wireDirectWaLink(type, message){
+  const link = document.querySelector(`[data-wa-booking="${type}"]`);
+  if(link) link.href = wa(message);
+}
+
+function renderQuickPanel(cfg){
+  document.getElementById('panel-quick').innerHTML=`
+    <div class="panel-hero">
+      <div class="panel-hero-icon">⚡</div>
+      <div class="panel-hero-text">
+        <h2 class="display">QUICK SERVICE</h2>
+        <h3>Quick service — done in under an hour</h3>
+        <div class="panel-hero-badge">⏱️ Under an hour</div>
+      </div>
+    </div>
+    <div class="booking-layout">
+      <div>
+        <div class="kicker">What's included in Quick Service</div>
+        ${checklistHTML(cfg.checklist||[])}
+      </div>
+      <div class="card booking-card">
+        <h3>Book Your Appointment</h3>
+        ${slotsHTML('quick',cfg.slots||{})}
+        ${bookingFormHTML('quick',cfg.price)}
+      </div>
+    </div>`;
+  wireDirectWaLink('quick','Hi, I would like to book a Quick Service');
+}
+
+function renderFullPanel(cfg){
+  document.getElementById('panel-full').innerHTML=`
+    <div class="panel-hero">
+      <div class="panel-hero-icon">🛠️</div>
+      <div class="panel-hero-text">
+        <h2 class="display">FULL SERVICE</h2>
+        <h3>Comprehensive maintenance — thorough inspection</h3>
+        <div class="panel-hero-badge" style="color:var(--accent-gold);border-color:rgba(212,160,23,.3);background:rgba(212,160,23,.08)">⏳ 4–6 hours</div>
+      </div>
+    </div>
+    <div class="booking-layout">
+      <div>
+        <div class="kicker">What's included in Full Service</div>
+        ${checklistHTML(cfg.checklist||[])}
+      </div>
+      <div class="card booking-card">
+        <h3>Book Your Appointment</h3>
+        ${slotsHTML('full',cfg.slots||{})}
+        ${bookingFormHTML('full',cfg.price)}
+      </div>
+    </div>`;
+  wireDirectWaLink('full','Hi, I would like to book a Full Service');
+}
+
+const TUNING_STAGE_ORDER=['1','2','2+','custom'];
+function renderTuningPanel(stagesRaw, slots){
+  const stages=(stagesRaw||[]).filter(s=>s.visible!==false).sort((a,b)=>TUNING_STAGE_ORDER.indexOf(String(a.stage))-TUNING_STAGE_ORDER.indexOf(String(b.stage)));
+  window.TUNING_STAGES=stages;
+  const stageCardHTML=(s)=>{
+    const isFeatured=String(s.stage)==='2';
+    const isCustom=String(s.stage)==='custom';
+    const label=s.stage_label||('Stage '+s.stage);
+    const priceBlock = s.contact_only
+      ? `<div class="tune-price">Contact Us</div>`
+      : `<div class="tune-price${isFeatured?' gold':''}">${Number(s.price||0).toLocaleString('en-US')}<small style="font-size:16px"> EGP</small></div>`;
+    const ctaBlock = s.contact_only
+      ? `<a class="btn whatsapp" style="width:100%" href="${wa('I would like to inquire about '+label+' Full Build')}" target="_blank">Contact Us</a>`
+      : `<button type="button" class="btn ${isFeatured?'gold':'primary'} tune-book-btn" data-stage="${escapeSimple(s.stage)}" style="width:100%">Book ${escapeSimple(label)}</button>`;
+    return `
+    <div class="card tune-card${isFeatured?' featured':''}" data-aos="fade-up">
+      <div class="stage-label${isFeatured?' gold':''}">${isCustom?'':'STAGE'}</div>
+      <div class="tune-name display${String(s.stage)==='1'?' cyan':''}" style="${isFeatured?'color:var(--accent-gold)':(isCustom?'color:var(--danger)':'')}">${escapeSimple(isCustom?(s.stage_label||'CUSTOM'):String(s.stage).toUpperCase())}</div>
+      <div class="tune-hp" style="${isCustom?'color:var(--danger)':''}">${escapeSimple(s.hp_label||'')}</div>
+      ${priceBlock}
+      <ul class="tune-list">${(s.features||[]).map(f=>`<li>${escapeSimple(f)}</li>`).join('')}</ul>
+      ${ctaBlock}
+    </div>`;
+  };
+  document.getElementById('panel-tuning').innerHTML=`
+    <div class="panel-hero">
+      <div class="panel-hero-icon">🏎️</div>
+      <div class="panel-hero-text">
+        <h2 class="display"><span class="glitch-text" data-text="TUNING">TUNING</span> & MODS</h2>
+        <h3>Unlock the real performance of your BMW</h3>
+        <div class="panel-hero-badge">🔥 Up to +120 HP</div>
+      </div>
+    </div>
+    <div class="tuning-packages">${stages.map(stageCardHTML).join('')}</div>
+    <div class="tuning-timeline" data-aos="fade-up">
+      <div class="kicker" style="margin-bottom:20px">TUNING PROCESS</div>
+      <div class="timeline-steps" id="tuningTimeline">
+        ${['Diagnostic & Consultation','Hardware Install','Dyno Baseline','ECU Tuning','Final Dyno Test','Delivery'].map((s,i)=>`
+          <div class="t-step">
+            <div class="t-step-num">${i+1}</div>
+            <div class="t-step-text" style="font-size:11px;margin-top:4px;color:var(--text-muted)">${s}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="dyno-wrap" data-aos="fade-up">
+      <div class="kicker" style="margin-bottom:16px">DYNO RESULTS — STAGE 2 EXAMPLE</div>
+      <div class="dyno-chart">
+        <div class="dyno-bar-group">
+          <div class="dyno-bars">
+            <div class="dyno-bar before" style="height:0" data-height="140px"></div>
+            <div class="dyno-bar after" style="height:0" data-height="195px"></div>
+          </div>
+          <div class="dyno-bar-label">HP</div>
+          <div class="dyno-group-label">BMW M4 — 431 → 531 HP</div>
+        </div>
+        <div class="dyno-bar-group">
+          <div class="dyno-bars">
+            <div class="dyno-bar before" style="height:0" data-height="100px"></div>
+            <div class="dyno-bar after" style="height:0" data-height="155px"></div>
+          </div>
+          <div class="dyno-bar-label">TQ</div>
+          <div class="dyno-group-label">BMW M4 — 550 → 680 Nm</div>
+        </div>
+      </div>
+    </div>
+    <div class="card booking-card" style="margin-top:32px;padding:32px">
+      <h3 class="display" style="font-size:36px;margin-bottom:20px">Book a Tuning Session</h3>
+      ${slotsHTML('tuning',slots||{})}
+      ${bookingFormHTML('tuning',(stages.find(s=>String(s.stage)==='1')||{}).price||0)}
+    </div>`;
+  wireDirectWaLink('tuning','Hi, I would like to book a Tuning session');
+  document.querySelectorAll('#panel-tuning .tune-book-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const sel=document.querySelector('#panel-tuning select[name="tuning_stage"]');
+      if(sel)sel.value=btn.dataset.stage;
+      document.querySelector('#panel-tuning .booking-card')?.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+
+  const dynoWrap=document.querySelector('#panel-tuning .dyno-wrap');
+  if(dynoWrap){
+    new IntersectionObserver((entries,obs)=>{
+      if(entries[0].isIntersecting){
+        document.querySelectorAll('#panel-tuning .dyno-bar').forEach(bar=>{
+          bar.style.transition='height 1.2s cubic-bezier(.4,0,.2,1)';
+          bar.style.height=bar.dataset.height;
+        });
+        document.querySelector('#panel-tuning .timeline-steps')?.classList.add('animated');
+        document.querySelectorAll('#panel-tuning .t-step').forEach((s,i)=>setTimeout(()=>s.classList.add('done'),i*200));
+        obs.disconnect();
+      }
+    },{threshold:.3}).observe(dynoWrap);
+  }
+}
+
+function renderPickupPanel(tiersRaw, slots){
+  const tiers=tiersRaw||[];
+  document.getElementById('panel-pickup').innerHTML=`
+    <div class="pickup-hero card">
+      <h2 class="display" style="font-size:clamp(36px,5vw,52px)">Pickup & Delivery</h2>
+      <p class="muted" style="font-size:16px;margin-top:8px">Our team comes to you, picks up your car, fixes it, and brings it back! We cover Greater Cairo and Giza.</p>
+      <div class="delivery-pricing">
+        ${tiers.map(t=>`
+          <div class="delivery-option" ${t.is_free_threshold?'style="border-color:rgba(0,204,102,.3)"':''}>
+            <div class="price" ${t.is_free_threshold?'style="color:var(--success)"':''}>${t.is_free_threshold?'Free':Number(t.price_egp||0).toLocaleString('en-US')}</div>
+            <div class="range" ${t.is_free_threshold?'style="color:var(--success)"':''}>${t.is_free_threshold?`On orders above ${Number(t.threshold_egp||0).toLocaleString('en-US')} EGP`:`EGP | ${t.range_label}`}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="card booking-card" style="padding:32px">
+      <h3 class="display" style="font-size:36px;margin-bottom:20px">Book a Pickup Appointment</h3>
+      ${slotsHTML('pickup',slots||{})}
+      <form class="booking-form" data-service="pickup" novalidate style="margin-top:20px">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Mobile Number</label>
+            <input type="tel" name="phone" required placeholder="01X XXXX XXXX" pattern="01[0-9]{9}">
+          </div>
+          <div class="form-field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com">
+          </div>
+          <div class="form-field">
+            <label>Car Model + Year</label>
+            <input type="text" name="car" required placeholder="BMW M3 2023">
+          </div>
+          <div class="form-field">
+            <label>Selected Appointment</label>
+            <input type="text" name="slot" readonly placeholder="Choose a slot below" id="slotInput-pickup">
+          </div>
+          <div class="form-field wide">
+            <label>Full Address</label>
+            <input type="text" name="address" required placeholder="Street, district, city">
+          </div>
+          <div class="form-field">
+            <label>Service Needed</label>
+            <select name="serviceType">
+              <option value="">Choose a service</option>
+              <option value="Quick Service">Quick Service</option>
+              <option value="Full Service">Full Service</option>
+              <option value="Tuning">Tuning</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Delivery Range</label>
+            <select name="deliveryRange" id="deliveryRange">
+              ${tiers.map(t=>`<option value="${t.is_free_threshold?'Free':Number(t.price_egp||0)+' EGP'}">${t.is_free_threshold?`Order above ${Number(t.threshold_egp||0).toLocaleString('en-US')} EGP — Free`:`${t.range_label} — ${Number(t.price_egp||0).toLocaleString('en-US')} EGP`}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-field wide">
+            <label>Detailed Issue Description</label>
+            <textarea name="issue" rows="4" required minlength="20" placeholder="Describe the issue or service you need in detail..."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn primary" style="margin-top:20px"><i class="fa-solid fa-paper-plane"></i> Confirm Booking</button>
+        <div class="form-msg" id="formMsg-pickup"></div>
+        <div class="confirm-card" id="confirm-pickup" style="margin-top:20px">
+          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--success)">✓ Your request has been received!</div>
+          <div class="booking-ref" style="font-family:'Bebas Neue';font-size:40px;color:var(--accent-cyan);margin:8px 0"></div>
+          <p style="color:var(--text-secondary);font-size:14px">📞 Our team will call you within two hours to confirm and schedule pickup</p>
+        </div>
+      </form>
+    </div>`;
+}
+
+function renderEventsPanel(events, past){
+  events=events||[]; past=past||[];
+  document.getElementById('panel-events').innerHTML=`
+    <div class="panel-hero">
+      <div class="panel-hero-icon">🎪</div>
+      <div class="panel-hero-text">
+        <h2 class="display">BMW EVENTS</h2>
+        <h3>BMW meetups and events in Egypt</h3>
+      </div>
+    </div>
+    <div class="events-grid">
+      ${events.length?events.map(ev=>`
+        <div class="card event-card" data-aos="fade-up">
+          <div class="event-img">
+            <span class="event-type-badge ${ev.badge_class}">${ev.event_type}</span>
+          </div>
+          <div class="event-info">
+            <div class="event-name display">${ev.name}</div>
+            <div class="event-meta">
+              <span><i class="fa-regular fa-calendar"></i> ${ev.event_date}</span>
+              <span><i class="fa-regular fa-clock"></i> ${ev.event_time}</span>
+              <span><i class="fa-solid fa-location-dot"></i> ${ev.location}</span>
+            </div>
+            <div class="event-spots">⚠️ Only ${ev.remaining_spots} spots left out of ${ev.total_spots}</div>
+            <div class="event-price">${Number(ev.price_egp||0).toLocaleString('en-US')} EGP <span style="font-size:14px;color:var(--text-secondary);font-family:Rajdhani">/car</span></div>
+            <a class="btn primary" style="width:100%" href="${wa(`I would like to book a spot at ${ev.name} — ${ev.event_date} ${ev.event_time}`)}" target="_blank">
+              <i class="fa-solid fa-ticket"></i> Book Your Spot
+            </a>
+          </div>
+        </div>`).join(''):'<div class="fetch-error" style="grid-column:1/-1">No upcoming events right now</div>'}
+    </div>
+    <div style="margin-top:48px">
+      <div class="kicker">PAST EVENTS</div>
+      <div class="events-grid" style="margin-top:20px">
+        ${past.length?past.map(ev=>`
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="height:150px;background:${ev.image_url?`url('${ev.image_url}') center/cover no-repeat`:'linear-gradient(135deg,rgba(28,108,252,.2),rgba(0,0,0,.8),var(--bg-card))'};display:flex;align-items:center;justify-content:center;">
+              ${ev.image_url?'':`<span style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:rgba(255,255,255,.4)">${ev.name}</span>`}
+            </div>
+            <div style="padding:16px">
+              <div style="font-size:13px;color:var(--text-muted)">${ev.image_url?ev.name:'View Highlights'}</div>
+            </div>
+          </div>`).join(''):'<div class="fetch-error" style="grid-column:1/-1">No past events</div>'}
+      </div>
+    </div>`;
+}
+
+async function loadServicePanels(){
+  const [quick, full, tuning, tuningSlots, pickup, pickupSlots, eventsUp, eventsPast, discounts] = await Promise.allSettled([
+    apiGet('/service-config/quick_service'), apiGet('/service-config/full_service'),
+    apiGet('/service-config/tuning_stages'), apiGet('/service-config/tuning_slots'),
+    apiGet('/service-config/pickup_tiers'), apiGet('/service-config/pickup_slots'),
+    apiGet('/events?upcoming=true'), apiGet('/events?upcoming=false'),
+    apiGet('/discounts')
+  ]);
+  window.ALL_DISCOUNTS = discounts.status==='fulfilled'?discounts.value:[];
+  if(quick.status==='fulfilled') renderQuickPanel(quick.value.value||{});
+  else document.getElementById('panel-quick').innerHTML=errorHTML('loadServicePanels');
+  if(full.status==='fulfilled') renderFullPanel(full.value.value||{});
+  else document.getElementById('panel-full').innerHTML=errorHTML('loadServicePanels');
+  if(tuning.status==='fulfilled') renderTuningPanel(tuning.value.value||[], tuningSlots.status==='fulfilled'?tuningSlots.value.value:{});
+  else document.getElementById('panel-tuning').innerHTML=errorHTML('loadServicePanels');
+  if(pickup.status==='fulfilled') renderPickupPanel(pickup.value.value||[], pickupSlots.status==='fulfilled'?pickupSlots.value.value:{});
+  else document.getElementById('panel-pickup').innerHTML=errorHTML('loadServicePanels');
+  window.upcomingEvents = eventsUp.status==='fulfilled'?eventsUp.value:[];
+  pastEvents = eventsPast.status==='fulfilled'?eventsPast.value:[];
+  if(eventsUp.status==='fulfilled' || eventsPast.status==='fulfilled') renderEventsPanel(window.upcomingEvents, pastEvents);
+  else document.getElementById('panel-events').innerHTML=errorHTML('loadServicePanels');
+  aosRefresh();
+}
+
+// ═══════════════════════ SERVICE TABS ═══════════════════════
+document.getElementById('serviceTabs').addEventListener('click',e=>{
+  const tab=e.target.closest('.s-tab');
+  if(!tab)return;
+  document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.s-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab.dataset.panel).classList.add('active');
+  aosRefresh();
+});
+
+// ═══════════════════════ SLOT SELECTION ═══════════════════════
+document.addEventListener('click',e=>{
+  const slot=e.target.closest('.slot-btn');
+  if(!slot)return;
+  e.preventDefault();
+  const panel=slot.closest('.s-panel,.card');
+  panel?.querySelectorAll('.slot-btn').forEach(s=>s.classList.remove('selected'));
+  slot.classList.add('selected');
+  const type=slot.dataset.type;
+  const val=slot.dataset.slot;
+  const inp=document.getElementById(`slotInput-${type}`)||panel?.querySelector('[name="slot"]');
+  if(inp)inp.value=val;
+});
+
+// ═══════════════════════ PAYMENT STEP NAVIGATION ═══════════════════════
+document.addEventListener('click',e=>{
+  const nextBtn=e.target.closest('.bk-next-step');
+  if(nextBtn){
+    e.preventDefault();
+    const type=nextBtn.dataset.service;
+    const form=document.querySelector(`.booking-form[data-service="${type}"]`);
+    const phone=form?.querySelector('[name="phone"]');
+    const car=form?.querySelector('[name="car"]');
+    let valid=true;
+    [phone,car].forEach(inp=>{
+      if(inp && !inp.value.trim()){
+        inp.style.borderColor='var(--danger)';
+        inp.addEventListener('input',()=>inp.style.borderColor='',{once:true});
+        valid=false;
+      }
+    });
+    if(phone && phone.value.trim() && !/^01[0-9]{9}$/.test(phone.value.trim())){
+      phone.style.borderColor='var(--danger)';
+      phone.addEventListener('input',()=>phone.style.borderColor='',{once:true});
+      valid=false;
+    }
+    if(!valid){ phone?.focus(); phone?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    document.getElementById(`bkStep1-${type}`).style.display='none';
+    document.getElementById(`bkStep2-${type}`).style.display='block';
+    renderPaymentMethods(type);
+    document.getElementById(`bkStep2-${type}`).scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+
+  const backBtn=e.target.closest('.bk-back-step');
+  if(backBtn){
+    e.preventDefault();
+    const type=backBtn.dataset.service;
+    document.getElementById(`bkStep1-${type}`).style.display='block';
+    document.getElementById(`bkStep2-${type}`).style.display='none';
+    document.getElementById(`bkStep1-${type}`).scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+
+  const methodCard=e.target.closest('.payment-method-card');
+  if(methodCard){
+    e.preventDefault();
+    showPaymentDetails(methodCard.dataset.service,methodCard.dataset.method);
+    return;
+  }
+
+  const zone=e.target.closest('.screenshot-dropzone');
+  if(zone){
+    document.getElementById(`screenshotInput-${zone.dataset.service}`)?.click();
+    return;
+  }
+
+  const clearBtn=e.target.closest('.screenshot-clear');
+  if(clearBtn){
+    const type=clearBtn.dataset.service;
+    const input=document.getElementById(`screenshotInput-${type}`);
+    if(input)input.value='';
+    document.getElementById(`screenshotPreview-${type}`).style.display='none';
+    document.getElementById(`screenshotZone-${type}`).style.display='block';
+    return;
+  }
+
+  const copyBtn=e.target.closest('.copy-number-btn');
+  if(copyBtn){
+    e.preventDefault();
+    navigator.clipboard.writeText(copyBtn.dataset.copy).then(()=>{
+      copyBtn.innerHTML='<i class="fa-solid fa-check"></i>';
+      setTimeout(()=>{copyBtn.innerHTML='<i class="fa-regular fa-copy"></i>';},1800);
+    });
+    return;
+  }
+});
+
+document.addEventListener('change',e=>{
+  const input=e.target.closest('[name="payment_screenshot"]');
+  if(!input)return;
+  const type=input.id.replace('screenshotInput-','');
+  const file=input.files?.[0];
+  if(!file)return;
+  if(file.size>10*1024*1024){
+    const err=document.getElementById(`screenshotErr-${type}`);
+    err.style.display='block';
+    err.textContent='File too large — max 10MB';
+    input.value='';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    document.getElementById(`screenshotImg-${type}`).src=ev.target.result;
+    document.getElementById(`screenshotPreview-${type}`).style.display='block';
+    document.getElementById(`screenshotZone-${type}`).style.display='none';
+    document.getElementById(`screenshotErr-${type}`).style.display='none';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ═══════════════════════ BOOKING SUCCESS OVERLAY ═══════════════════════
+function showBookingSuccessOverlay(refNumber,onDismiss){
+  const overlay=document.getElementById('bookingSuccessOverlay');
+  document.getElementById('bsoRefNumber').textContent=refNumber;
+  overlay.classList.add('show');
+  let dismissed=false;
+  let timer;
+  function dismiss(){
+    if(dismissed)return;
+    dismissed=true;
+    overlay.classList.remove('show');
+    overlay.removeEventListener('click',dismiss);
+    clearTimeout(timer);
+    if(onDismiss)onDismiss();
+  }
+  timer=setTimeout(dismiss,4000);
+  overlay.addEventListener('click',dismiss);
+}
+
+// ═══════════════════════ BOOKINGS HISTORY PANEL ═══════════════════════
+function ensureBookingsHistoryPanel(form){
+  let panel=form.querySelector('.bookings-history-panel');
+  if(panel)return panel;
+  panel=document.createElement('div');
+  panel.className='bookings-history-panel';
+  panel.style.display='none';
+  panel.innerHTML=`<div class="bookings-history-title">Your Bookings</div><div class="bookings-history-list"></div>`;
+  form.appendChild(panel);
+  return panel;
+}
+
+const BOOKING_STATUS_META={
+  pending:{label:'Awaiting Confirmation',bg:'rgba(212,160,23,.12)',border:'rgba(212,160,23,.35)',color:'var(--accent-gold)'},
+  confirmed:{label:'Confirmed',bg:'rgba(0,204,102,.12)',border:'rgba(0,204,102,.35)',color:'var(--success)'},
+  cancelled:{label:'Cancelled',bg:'rgba(255,51,51,.12)',border:'rgba(255,51,51,.35)',color:'var(--danger)'},
+  pay_pending:{label:'⏳ Payment Pending',bg:'rgba(212,160,23,.08)',border:'rgba(212,160,23,.25)',color:'var(--accent-gold)'},
+  pay_confirmed:{label:'✅ Payment Confirmed',bg:'rgba(0,204,102,.08)',border:'rgba(0,204,102,.25)',color:'var(--success)'},
+  pay_rejected:{label:'❌ Payment Rejected',bg:'rgba(255,51,51,.08)',border:'rgba(255,51,51,.25)',color:'var(--danger)'}
+};
+
+async function loadBookingsHistory(panel,phone){
+  const list=panel.querySelector('.bookings-history-list');
+  list.innerHTML=loadingHTML();
+  try{
+    const bookings=await apiGet('/bookings/customer/'+encodeURIComponent(phone));
+    if(!bookings||!bookings.length){
+      list.innerHTML='<div class="muted" style="text-align:center;padding:20px;font-family:Cairo">No bookings found yet.</div>';
+      return;
+    }
+    list.innerHTML=bookings.map(b=>{
+      const sm=BOOKING_STATUS_META[b.status]||BOOKING_STATUS_META.pending;
+      const dateStr=b.slot_datetime||(b.created_at?new Date(b.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—');
+      const pm=(b.payment_status && b.payment_status!=='pending')?BOOKING_STATUS_META['pay_'+b.payment_status]:null;
+      return `
+      <div class="bh-card">
+        <div style="flex:1;min-width:0">
+          <div class="bh-ref">${escapeSimple(b.ref_number)}</div>
+          <div class="bh-meta">${escapeSimple((b.service_type||'').toUpperCase())}${b.tuning_stage?` (${escapeSimple(String(b.tuning_stage).toUpperCase())})`:''} &nbsp;·&nbsp; ${escapeSimple(dateStr)}${b.agreed_amount?` &nbsp;·&nbsp; <span style="color:var(--accent-gold);font-weight:600">${Number(b.agreed_amount).toLocaleString('en-US')} EGP</span>`:''}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+          <span class="bh-badge" style="background:${sm.bg};border-color:${sm.border};color:${sm.color}">${sm.label}</span>
+          ${pm?`<span class="bh-badge" style="background:${pm.bg};border-color:${pm.border};color:${pm.color};font-size:10px">${pm.label}</span>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(err){
+    list.innerHTML='<div class="muted" style="text-align:center;padding:20px;font-family:Cairo">Could not load your bookings.</div>';
+  }
+}
+
+// ═══════════════════════ FORM SUBMIT ═══════════════════════
+document.addEventListener('submit',async e=>{
+  const form=e.target.closest('.booking-form');
+  if(!form)return;
+  e.preventDefault();
+  const data=Object.fromEntries(new FormData(form).entries());
+  const serviceType=form.dataset.service; // 'quick' | 'full' | 'tuning' | 'pickup'
+  const hasPaymentStep=!!form.querySelector('[name="payment_method"]');
+  const method=data.payment_method;
+  const submitBtn=form.querySelector('button[type="submit"]');
+  const msgBox=document.getElementById(`formMsg-${serviceType}`)||form.querySelector('.form-msg')||(()=>{const d=document.createElement('div');d.className='form-msg';form.appendChild(d);return d;})();
+  msgBox.textContent=''; msgBox.className='form-msg';
+
+  if(hasPaymentStep && (method==='bank'||method==='wallet')){
+    const screenshotInput=document.getElementById(`screenshotInput-${serviceType}`);
+    if(!screenshotInput?.files?.length){
+      const err=document.getElementById(`screenshotErr-${serviceType}`);
+      err.style.display='block';
+      err.scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+  }
+
+  if(submitBtn)submitBtn.disabled=true;
+  try{
+    let screenshotUrl=null;
+    if(hasPaymentStep){
+      const screenshotInput=document.getElementById(`screenshotInput-${serviceType}`);
+      if(screenshotInput?.files?.length){
+        const fd=new FormData();
+        fd.append('file',screenshotInput.files[0]);
+        const uploadRes=await fetch(`${API}/uploads/payment-screenshot`,{method:'POST',body:fd});
+        if(!uploadRes.ok)throw new Error('Screenshot upload failed');
+        screenshotUrl=(await uploadRes.json()).url;
+      }
+    }
+
+    const payload={
+      service_type:serviceType,
+      customer_phone:data.phone,
+      customer_email:data.email||'',
+      car_model:data.car,
+      slot_datetime:data.slot||'',
+      issue_description:data.issue||'',
+      address:data.address||'',
+      delivery_range:data.deliveryRange||''
+    };
+    if(serviceType==='tuning')payload.tuning_stage=data.tuning_stage||'';
+    if(hasPaymentStep){
+      payload.payment_method=method||'cash';
+      payload.payment_screenshot_url=screenshotUrl;
+    }
+    const booking=await apiPost('/bookings',payload);
+
+    // Blur any focused field BEFORE hiding its container — hiding a focused
+    // element forces the browser to shift focus to <body>, which can trigger
+    // an unwanted auto-scroll. Blurring first avoids that side effect.
+    document.activeElement?.blur();
+
+    const step1=document.getElementById(`bkStep1-${serviceType}`);
+    const step2=document.getElementById(`bkStep2-${serviceType}`);
+    if(step1)step1.style.display='none';
+    if(step2)step2.style.display='none';
+
+    const card=form.querySelector('.confirm-card');
+    if(card){
+      card.querySelector('.booking-ref').textContent=booking.ref_number;
+      const summary=card.querySelector('.bk-summary-card');
+      if(summary && hasPaymentStep){
+        const payLabel={cash:'Cash on Visit',bank:'Bank Transfer',wallet:'Mobile Wallet'};
+        summary.innerHTML=`
+          <div class="bk-summary-row"><span>Service</span><span>${escapeSimple((serviceType||'').toUpperCase())}</span></div>
+          ${serviceType==='tuning'&&data.tuning_stage?`<div class="bk-summary-row"><span>Tuning Stage</span><span style="color:var(--accent-cyan)">${escapeSimple(String(data.tuning_stage).toUpperCase())}</span></div>`:''}
+          <div class="bk-summary-row"><span>Appointment</span><span>${escapeSimple(data.slot||'To be confirmed')}</span></div>
+          <div class="bk-summary-row"><span>Car</span><span>${escapeSimple(data.car)}</span></div>
+          <div class="bk-summary-row"><span>Payment</span><span style="color:${method==='cash'?'var(--success)':'var(--accent-gold)'}">${payLabel[method]||'—'}</span></div>
+          ${method!=='cash'?`<div class="bk-summary-row"><span>Payment Status</span><span style="color:var(--accent-gold)">⏳ Awaiting confirmation</span></div>`:''}
+          <div class="bk-summary-row"><span>Our team will call</span><span>Within 2 hours</span></div>`;
+      }
+      card.classList.add('show');
+      // Wait one frame so the hide/blur reflow has fully settled before we
+      // issue our own scroll — otherwise a browser-triggered focus/layout
+      // scroll can collide with this one and look like a jarring jump.
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+        });
+      });
+    }
+
+    const phoneForHistory=data.phone;
+    if(phoneForHistory){
+      const panel=ensureBookingsHistoryPanel(form);
+      panel.style.display='block';
+      loadBookingsHistory(panel,phoneForHistory);
+    }
+
+    form.reset();
+    document.querySelectorAll('.slot-btn.selected').forEach(s=>s.classList.remove('selected'));
+  }catch(err){
+    msgBox.textContent='Could not send your booking — '+err.message+'. Please try again or contact us directly on WhatsApp.';
+    msgBox.classList.add('err');
+  }finally{
+    if(submitBtn)submitBtn.disabled=false;
+  }
+});
+
+// ═══════════════════════ NEWSLETTER ═══════════════════════
+document.getElementById('newsletterForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const form=e.target;
+  const emailInput=form.querySelector('input[name="email"]');
+  const msg=document.getElementById('newsletterMsg');
+  const btn=form.querySelector('button[type="submit"]');
+  btn.disabled=true;
+  try{
+    await apiPost('/newsletter',{email:emailInput.value});
+    msg.textContent='You have successfully subscribed ✓';
+    msg.className='form-msg ok';
+    msg.style.display='block';
+    form.reset();
+  }catch(err){
+    msg.textContent='Could not subscribe — please check your email address';
+    msg.className='form-msg err';
+    msg.style.display='block';
+  }finally{
+    btn.disabled=false;
+  }
+});
+
+// ═══════════════════════ TESTIMONIALS SLIDER ═══════════════════════
+async function loadTestimonials(){
+  const track=document.getElementById('testiTrack');
+  track.innerHTML=loadingHTML();
+  try{
+    window.testimonials=await apiGet('/testimonials?visible=true');
+    initTestimonialsSlider();
+  }catch(err){
+    track.innerHTML=errorHTML('loadTestimonials');
+  }
+}
+function initTestimonialsSlider(){
+  const track=document.getElementById('testiTrack');
+  const nav=document.getElementById('testiNav');
+  if(!track||!nav)return;
+  const tData=window.testimonials;
+  if(!tData.length){ track.innerHTML='<div class="fetch-error">No reviews available right now</div>'; nav.innerHTML=''; return; }
+  track.innerHTML=tData.map((t,i)=>`
+    <div class="card testimonial-card">
+      <div class="testi-stars">${'⭐'.repeat(t.stars)}</div>
+      <p class="testi-quote">"${t.quote}"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">${t.name[0]}</div>
+        <div>
+          <div class="testi-name">${t.name}</div>
+          <div class="testi-car">${t.car} | ${t.city}</div>
+        </div>
+      </div>
+    </div>`).join('');
+  
+  let cur=0;
+  const visible=()=>window.innerWidth>=1024?3:window.innerWidth>=768?2:1;
+  const maxSlide=()=>Math.max(0,tData.length-visible());
+  
+  function dots(){
+    nav.innerHTML=`
+      <button class="testi-btn" id="tPrev" aria-label="Previous"><i class="fa-solid fa-chevron-right"></i></button>
+      ${Array.from({length:maxSlide()+1},(_,i)=>`<div class="testi-dot${i===cur?' active':''}" data-i="${i}"></div>`).join('')}
+      <button class="testi-btn" id="tNext" aria-label="Next"><i class="fa-solid fa-chevron-left"></i></button>`;
+    nav.querySelector('#tPrev').addEventListener('click',()=>go(cur-1));
+    nav.querySelector('#tNext').addEventListener('click',()=>go(cur+1));
+    nav.querySelectorAll('.testi-dot').forEach(d=>d.addEventListener('click',()=>go(+d.dataset.i)));
+  }
+  
+  function go(n){
+    cur=Math.max(0,Math.min(n,maxSlide()));
+    const w=track.querySelector('.testimonial-card').offsetWidth+24;
+    track.style.transform=`translateX(${cur*w}px)`;
+    dots();
+  }
+  
+  dots();
+  let timer=setInterval(()=>go((cur+1)%(maxSlide()+1)),5000);
+  track.parentElement.addEventListener('mouseenter',()=>clearInterval(timer));
+  track.parentElement.addEventListener('mouseleave',()=>{timer=setInterval(()=>go((cur+1)%(maxSlide()+1)),5000)});
+  window.addEventListener('resize',()=>go(cur));
+}
+
+// ═══════════════════════ SETTINGS APPLICATION ═══════════════════════
+function setText(id,val){ const el=document.getElementById(id); if(el && val!==undefined && val!==null && val!=='') el.textContent=val; }
+function setHtml(id,val){ const el=document.getElementById(id); if(el && val!==undefined && val!==null && val!=='') el.innerHTML=val; }
+function setDataCount(id,val){ const el=document.getElementById(id); if(el && val!==undefined && val!=='') el.dataset.count=val; }
+
+function applySettings(s){
+  SETTINGS=s;
+  WHATSAPP=s.whatsapp||WHATSAPP;
+  window.MO_PAYMENT={
+    cash:s.payment_cash_enabled!=='false',
+    bank:s.payment_bank_enabled==='true',
+    wallet:s.payment_wallet_enabled==='true',
+    bankAccount:s.payment_bank_account||'',
+    bankName:s.payment_bank_name||'',
+    bankHolder:s.payment_bank_holder||'',
+    walletNumber:s.payment_wallet_number||'',
+    walletProvider:s.payment_wallet_provider||'Vodafone Cash / InstaPay'
+  };
+  const defaultWaMsg='Hi, I would like to inquire about MO BY AHMED MAHMOUD services';
+  document.getElementById('navWa').href=wa(defaultWaMsg);
+  document.getElementById('mobileWa').href=wa(defaultWaMsg);
+  document.getElementById('contactWa').href=wa(defaultWaMsg);
+  document.getElementById('wa-float').href=wa(defaultWaMsg);
+
+  setText('navPhoneText',s.phone);
+  setText('heroOverline',s.hero_overline);
+  setText('heroLine1',s.hero_line1);
+  setText('heroLine2',s.hero_line2);
+  setText('heroTagline',s.hero_tagline);
+  setText('heroDesc',s.hero_desc);
+  setText('heroStat1Value',s.hero_stat1_value); setText('heroStat1Label',s.hero_stat1_label);
+  setText('heroStat2Value',s.hero_stat2_value); setText('heroStat2Label',s.hero_stat2_label);
+  setText('heroStat3Value',s.hero_stat3_value); setText('heroStat3Label',s.hero_stat3_label);
+
+  const cta1=document.getElementById('heroCta1');
+  if(cta1){ if(s.hero_cta1_href)cta1.href=s.hero_cta1_href; if(s.hero_cta1_text)cta1.innerHTML=`<i class="fa-solid fa-calendar-check"></i> ${s.hero_cta1_text}`; }
+  const cta2=document.getElementById('heroCta2');
+  if(cta2){ if(s.hero_cta2_href)cta2.href=s.hero_cta2_href; if(s.hero_cta2_text)cta2.textContent=s.hero_cta2_text; }
+  const carImg=document.getElementById('heroCarImg'); if(carImg && s.hero_car_img) carImg.src=s.hero_car_img;
+
+  setDataCount('statClients',s.stats_clients);
+  setDataCount('statYears',s.stats_years);
+  setDataCount('statCarsModded',s.stats_cars_modded);
+
+  setHtml('aboutBody',s.about_body);
+  setHtml('contactAddress',s.address);
+  const mapsLink=document.getElementById('contactMapsLink'); if(mapsLink && s.maps_url) mapsLink.href=s.maps_url;
+  if(s.hours_weekdays||s.hours_friday) setHtml('contactHours',`${s.hours_weekdays||''}<br>${s.hours_friday||''}`);
+  if(s.phone||s.email) setHtml('contactPhoneEmailText',`${s.phone||''}<br>${s.email||''}`);
+  setHtml('privacyTextSpan',s.privacy_text);
+  setHtml('footerCopy',s.footer_copyright);
+
+  const ig=document.getElementById('socialInstagram'); if(ig && s.social_instagram) ig.href=s.social_instagram;
+  const tk=document.getElementById('socialTiktok'); if(tk && s.social_tiktok) tk.href=s.social_tiktok;
+  const yt=document.getElementById('socialYoutube'); if(yt && s.social_youtube) yt.href=s.social_youtube;
+  const fb=document.getElementById('socialFacebook'); if(fb && s.social_facebook) fb.href=s.social_facebook;
+}
+async function loadSettings(){
+  try{ applySettings(await apiGet('/settings')); }
+  catch(err){ /* keep static fallback content already in the markup */ }
+}
+
+// ═══════════════════════ BACK TO TOP ═══════════════════════
+document.getElementById('backTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// ═══════════════════════ GSAP SCROLL EFFECTS ═══════════════════════
+gsap.registerPlugin(ScrollTrigger);
+
+gsap.utils.toArray('.section-heading').forEach(el=>{
+  gsap.from(el,{
+    clipPath:'inset(0 100% 0 0)',
+    duration:.8,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 85%',once:true}
+  });
+});
+
+gsap.from('.hero-copy',{y:60,opacity:0,duration:1,delay:3,ease:'power3.out'});
+gsap.from('.hero-car-bg',{scale:1.1,opacity:0,duration:1.2,delay:3.1,ease:'power3.out'});
+
+// ═══════════════════════ AOS INIT ═══════════════════════
+AOS.init({duration:700,once:true,offset:60});
+
+// ═══════════════════════ KEYBOARD ACCESSIBILITY ═══════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Tab')document.body.classList.add('kb-nav');
+});
+document.addEventListener('mousedown',()=>document.body.classList.remove('kb-nav'));
+
+// ═══════════════════════ MY DASHBOARD ENTRY ═══════════════════════
+function escapeSimple(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function initDashEntry(){
+  const block = document.getElementById('dashEntryBlock');
+  if (!block) return;
+
+  const savedVIN = localStorage.getItem('mo_vin');
+
+  // ── State A: NOT logged in — subtle animated teaser ──
+  if (!savedVIN) {
+    block.innerHTML = `
+      <div class="dash-teaser" data-aos="fade-up">
+        <div class="dash-teaser-icon">🚗</div>
+        <div class="dash-teaser-text">
+          <div class="dash-teaser-title">Track Your BMW</div>
+          <div class="dash-teaser-sub">
+            Already a customer? Enter your <strong>chassis number (VIN)</strong>
+            to view your <em>service history</em>, car status, and spending — all in one place.
+          </div>
+        </div>
+        <a href="customer-dashboard.html" class="btn outline" style="flex-shrink:0;border-color:rgba(0,200,255,.35);color:var(--accent-cyan);font-size:13px;padding:12px 22px">
+          <i class="fa-solid fa-gauge-high"></i> My Dashboard
+        </a>
+      </div>`;
+    return;
+  }
+
+  // ── State B: logged in — try to load customer data ──
+  let customer = null;
+  try {
+    const cached = sessionStorage.getItem('mo_customer');
+    if (cached) {
+      customer = JSON.parse(cached);
+    } else {
+      const res = await fetch(`${API}/customers/vin/${encodeURIComponent(savedVIN)}`);
+      if (res.ok) {
+        customer = await res.json();
+        sessionStorage.setItem('mo_customer', JSON.stringify(customer));
+      }
+    }
+  } catch (e) { customer = null; }
+
+  // ── State B-fallback: VIN saved but data unavailable ──
+  if (!customer) {
+    block.innerHTML = `
+      <div class="dash-teaser" data-aos="fade-up">
+        <div class="dash-teaser-icon">🚗</div>
+        <div class="dash-teaser-text">
+          <div class="dash-teaser-title">My Dashboard</div>
+          <div class="dash-teaser-sub">View your service history and car status.</div>
+        </div>
+        <a href="customer-dashboard.html" class="btn outline" style="flex-shrink:0;border-color:rgba(0,200,255,.35);color:var(--accent-cyan);font-size:13px;padding:12px 22px">
+          <i class="fa-solid fa-gauge-high"></i> Open Dashboard
+        </a>
+      </div>`;
+    return;
+  }
+
+  // ── State C: logged in + data loaded — welcome strip ──
+  const isReady = customer.car_status !== 'in_service';
+  const statusHtml = isReady
+    ? `<span class="dash-status-pill ready">✅ جاهزة</span>`
+    : `<span class="dash-status-pill in-service">🔧 في الصيانة</span>`;
+
+  const nameHtml = customer.customer_name
+    ? `<div class="dash-welcome-name">مرحباً، <strong>${escapeSimple(customer.customer_name)}</strong></div>`
+    : '';
+
+  block.innerHTML = `
+    <div class="dash-welcome" data-aos="fade-up">
+      <div class="dash-welcome-icon">🚗</div>
+      <div class="dash-welcome-info">
+        ${nameHtml}
+        <div class="dash-welcome-car">${escapeSimple(customer.car_model || 'Your BMW')}</div>
+        <div class="dash-welcome-meta">
+          <span class="dash-welcome-vin">${escapeSimple(customer.vin)}</span>
+          ${statusHtml}
+          <span style="color:var(--accent-gold);font-family:'Bebas Neue';font-size:15px;letter-spacing:1px">
+            ${Number(customer.total_spent_egp || 0).toLocaleString('en-US')} EGP
+          </span>
+        </div>
+      </div>
+      <div class="dash-welcome-actions">
+        <a href="customer-dashboard.html" class="btn primary sm">
+          <i class="fa-solid fa-gauge-high"></i> My Dashboard
+        </a>
+        <button class="btn sm" id="dashSignOut" style="border:1.5px solid rgba(255,51,51,.3);color:#ff6666;background:rgba(255,51,51,.06)">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </div>`;
+
+  document.getElementById('dashSignOut')?.addEventListener('click', () => {
+    localStorage.removeItem('mo_vin');
+    sessionStorage.removeItem('mo_customer');
+    block.innerHTML = '';
+    initDashEntry();
+  });
+}
+
+// ═══════════════════════ INIT: LOAD EVERYTHING FROM THE API ═══════════════════════
+async function init(){
+  await Promise.allSettled([
+    loadSettings(),
+    loadTestimonials(),
+    loadServicePanels(),
+    initDashEntry()
+  ]);
+  aosRefresh();
+}
+init();
+</script>
+
+<style>
+.kb-nav *:focus{outline:2px solid var(--accent-cyan)!important;outline-offset:3px}
+*:not(.kb-nav *){outline:none}
+</style>
+
+</body>
+</html>

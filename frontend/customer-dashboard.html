@@ -1,0 +1,583 @@
+<!-- FILE: customer-dashboard.html | PURPOSE: VIN-based customer self-service dashboard (service status, car readiness, total spending) | DEPENDS ON: backend API at http://localhost:3000/api, customer.html / spare-parts.html (sibling pages) -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>My BMW Dashboard — MO BY AHMED MAHMOUD</title>
+<meta name="description" content="Track your BMW's service status, readiness, and spending with MO BY AHMED MAHMOUD."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<style>
+:root{
+  --bg-primary:#050505;--bg-secondary:#0d0d0d;--bg-card:#111111;--border:#1e1e1e;
+  --accent-blue:#1c6cfc;--accent-cyan:#00c8ff;--accent-silver:#c0c0c0;--accent-gold:#d4a017;
+  --text-primary:#ffffff;--text-secondary:#a0a0a0;--text-muted:#505050;
+  --danger:#ff3333;--success:#00cc66;
+  --radius:16px;--radius-lg:24px;--container:min(1300px,94vw);
+
+  --fs-display-lg:clamp(36px,6vw,64px);
+  --fs-display-md:clamp(26px,4vw,40px);
+  --fs-body:clamp(14px,1.8vw,16px);
+  --fs-sm:clamp(12px,1.5vw,14px);
+  --sp-md:clamp(14px,3vw,20px);
+  --sp-lg:clamp(20px,4vw,32px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden;max-width:100vw}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter','Cairo',sans-serif;overflow-x:hidden;max-width:100vw;cursor:none}
+img{max-width:100%;height:auto}
+.display{font-family:'Bebas Neue',sans-serif;letter-spacing:2px}
+.muted{color:var(--text-secondary)}
+.container{width:var(--container);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+
+/* ── CUSTOM CURSOR (desktop / fine-pointer devices only) ── */
+#cursor-dot{display:none;position:fixed;width:10px;height:10px;background:var(--accent-cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:background .2s,transform .1s;box-shadow:0 0 12px var(--accent-cyan);will-change:transform}
+#cursor-ring{display:none;position:fixed;width:32px;height:32px;border:1.5px solid rgba(0,200,255,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .15s ease,width .2s,height .2s,opacity .2s;will-change:transform}
+@media (pointer:fine) and (hover:hover){
+  #cursor-dot,#cursor-ring{display:block}
+  body:not(.cursor-visible) #cursor-dot,body:not(.cursor-visible) #cursor-ring{opacity:0}
+  a,button{cursor:none}
+}
+@media (pointer:coarse){
+  body,a,button{cursor:auto!important}
+}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;min-width:44px;padding:15px 28px;border-radius:50px;border:1.5px solid transparent;cursor:none;font-weight:600;font-size:15px;letter-spacing:.5px;transition:all .3s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;white-space:nowrap}
+.btn::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.07);border-radius:50px;opacity:0;transition:.2s}
+.btn:hover::after{opacity:1}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--accent-blue) 0%,#0f9bff 100%);color:#fff;box-shadow:0 10px 30px rgba(28,108,252,.4)}
+.btn.outline{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05);color:#fff}
+.btn.outline:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.btn.whatsapp{background:#0fbf57;color:#fff;box-shadow:0 10px 30px rgba(15,191,87,.35)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.sm{padding:10px 18px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);transform:scale(0);animation:ripple-anim .6s linear;pointer-events:none}
+@keyframes ripple-anim{to{transform:scale(4);opacity:0}}
+
+/* ── NAVBAR ── */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:500;height:80px;display:flex;align-items:center;transition:height .3s;background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+.navbar.scrolled{height:64px}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;width:var(--container);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.nav-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-family:Rajdhani;font-size:13px;letter-spacing:2.5px;color:var(--text-secondary);transition:.2s;position:relative;text-transform:uppercase;text-decoration:none}
+.nav-links a:hover{color:#fff}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-phone{display:flex;align-items:center;gap:8px;font-family:Rajdhani;font-size:13px;color:var(--text-secondary);letter-spacing:1px}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;cursor:none;padding:4px;border:none;background:none}
+.hamburger span{display:block;height:2px;background:#fff;border-radius:2px;transition:.3s}
+.mobile-nav{position:fixed;inset:0;z-index:490;background:rgba(5,5,5,.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;transform:translateY(-100%);transition:transform .4s cubic-bezier(.77,0,.175,1)}
+.mobile-nav.open{transform:translateY(0)}
+.mobile-nav a{font-family:'Bebas Neue';font-size:clamp(32px,8vw,40px);letter-spacing:4px;color:#fff;text-decoration:none;transition:.2s;padding:8px 0;min-height:56px;display:flex;align-items:center}
+.mobile-nav a:hover{color:var(--accent-cyan)}
+
+/* ── FETCH STATES ── */
+.fetch-loading{padding:60px 20px;text-align:center;color:var(--text-secondary);font-family:Cairo;font-size:14px}
+.fetch-loading::before{content:"";display:block;width:30px;height:30px;margin:0 auto 14px;border:3px solid var(--border);border-top-color:var(--accent-cyan);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── DASHBOARD CARDS ── */
+.dash-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(20px,4vw,40px) clamp(20px,4vw,44px);margin-bottom:24px;position:relative;overflow:hidden;transition:border-color .3s}
+.dash-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.dash-card.cyan::before{background:var(--accent-cyan)}
+.dash-card.gold::before{background:var(--accent-gold)}
+.dash-card.green::before{background:var(--success)}
+.dash-card.orange::before{background:#ff9900}
+.dash-kicker{font-family:Rajdhani;font-size:11px;letter-spacing:4px;color:var(--accent-gold);text-transform:uppercase;margin-bottom:16px}
+.dash-model-name{font-family:'Bebas Neue';font-size:clamp(36px,5vw,56px);letter-spacing:2px;line-height:1;margin-bottom:14px}
+.dash-vin-badge{display:inline-block;font-family:monospace;font-size:16px;letter-spacing:3px;color:var(--accent-cyan);padding:10px 18px;background:rgba(0,200,255,.06);border:1px solid rgba(0,200,255,.15);border-radius:8px}
+.dash-status-wrap{display:flex;align-items:center;flex-wrap:wrap;gap:20px}
+.dash-status-icon{font-size:56px;line-height:1}
+.dash-status-text-main{font-family:'Bebas Neue';font-size:clamp(28px,4vw,40px);line-height:1;margin-bottom:6px}
+.dash-status-text-sub{font-family:Cairo;font-size:15px;color:var(--text-secondary)}
+.dash-last-service{margin-top:20px;padding-top:20px;border-top:1px solid var(--border);font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-muted)}
+.dash-amount{font-family:'Bebas Neue';font-size:clamp(64px,10vw,112px);color:var(--accent-gold);line-height:1;text-shadow:0 0 50px rgba(212,160,23,.3)}
+.dash-currency{font-family:'Bebas Neue';font-size:28px;color:var(--accent-gold);opacity:.7;margin-bottom:8px}
+.dash-amount-sub{font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-muted)}
+
+/* ── VIN ENTRY ── */
+.vin-entry-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.vin-entry-inner{text-align:center;max-width:500px;width:100%}
+.vin-entry-heading{font-family:'Bebas Neue';font-size:clamp(48px,8vw,80px);line-height:1;margin-bottom:14px}
+.vin-entry-sub{font-family:Cairo;font-size:16px;color:var(--text-secondary);line-height:1.8;margin-bottom:36px}
+.vin-input-large{width:100%;padding:20px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-secondary);color:#fff;font-family:monospace;font-size:20px;letter-spacing:4px;text-transform:uppercase;outline:none;text-align:center;margin-bottom:12px;transition:border-color .2s,box-shadow .2s}
+.vin-input-large:focus{border-color:var(--accent-cyan);box-shadow:0 0 0 3px rgba(0,200,255,.1)}
+.vin-page-error{color:var(--danger);font-family:Cairo;font-size:13px;margin-bottom:16px;min-height:20px;display:none}
+
+/* ── FOOTER ── */
+.footer{background:#060606;border-top:1px solid var(--border);padding:64px 0 32px;margin-top:60px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;margin-bottom:50px}
+.footer-brand p{font-family:Cairo;font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.8}
+.social-row{display:flex;gap:12px;margin-top:20px}
+.social-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:.3s;text-decoration:none}
+.social-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.footer-col h4{font-family:Rajdhani;font-size:14px;letter-spacing:3px;color:var(--accent-silver);margin-bottom:18px;text-transform:uppercase}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{font-family:Cairo;font-size:14px;color:var(--text-secondary);transition:.2s;text-decoration:none}
+.footer-col ul li a:hover{color:#fff}
+.newsletter-form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.newsletter-form input{padding:13px 16px;min-height:48px;border-radius:50px;border:1px solid var(--border);background:var(--bg-secondary);color:#fff;font-family:Cairo;font-size:16px!important;outline:none}
+input,textarea,select{font-size:16px}
+.newsletter-form input:focus{border-color:var(--accent-cyan)}
+.form-msg{font-family:Cairo;font-size:12px;margin-top:8px;display:none}
+.form-msg.ok{color:var(--success);display:block}
+.form-msg.err{color:var(--danger);display:block}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-muted)}
+.back-top{width:44px;height:44px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:.3s;cursor:none}
+.back-top:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+
+/* ── WA FLOAT ── */
+#wa-float{position:fixed;bottom:28px;left:28px;z-index:600;width:60px;height:60px;border-radius:50%;background:#0fbf57;border:none;cursor:none;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 8px 30px rgba(15,191,87,.45);text-decoration:none}
+
+@media(max-width:767px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .navbar{height:60px}
+  .footer-grid{grid-template-columns:1fr}
+  .nav-phone{display:none}
+}
+</style>
+</head>
+<body class="cursor-visible">
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAVBAR -->
+<header class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="customer.html#home" style="text-decoration:none;display:flex;align-items:center">
+      <img src="assets/logo-mo.png" alt="MO by Ahmed Mahmoud" style="height:54px;width:auto;display:block">
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="customer.html#home">HOME</a>
+      <a href="spare-parts.html">SPARE PARTS</a>
+      <a href="customer.html#services">SERVICES</a>
+      <a href="customer.html#about">ABOUT</a>
+      <a href="customer.html#contact">CONTACT</a>
+      <a href="customer-dashboard.html" style="color:var(--accent-cyan)">MY DASHBOARD</a>
+    </nav>
+    <div class="nav-right">
+      <div class="nav-phone" style="display:flex;align-items:center;gap:8px">
+        <i class="fa-solid fa-phone" style="color:var(--accent-cyan);font-size:12px"></i>
+        <span id="navPhoneText" style="font-family:Rajdhani;font-size:13px;letter-spacing:1px">+20 1XX XXX XXXX</span>
+      </div>
+      <a class="btn whatsapp sm" id="navWa" href="#" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="customer.html#home" class="mobile-link">HOME</a>
+  <a href="spare-parts.html" class="mobile-link">SPARE PARTS</a>
+  <a href="customer.html#services" class="mobile-link">SERVICES</a>
+  <a href="customer.html#about" class="mobile-link">ABOUT</a>
+  <a href="customer.html#contact" class="mobile-link">CONTACT</a>
+  <a href="customer-dashboard.html" class="mobile-link" style="color:var(--accent-cyan)">MY DASHBOARD</a>
+  <a class="btn whatsapp" href="#" id="mobileWa" style="margin-top:12px"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+</div>
+
+<!-- DASHBOARD -->
+<main style="min-height:80vh;padding:120px 0 80px">
+  <div class="container" id="dashboardSection">
+    <div class="fetch-loading">Loading...</div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-name display" style="font-size:32px">MO BY AHMED MAHMOUD</div>
+        <p>Where Precision Meets Performance<br>BMW specialists since 2010</p>
+        <div class="social-row">
+          <a href="#" id="socialInstagram" class="social-btn" aria-label="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" id="socialTiktok" class="social-btn" aria-label="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" id="socialYoutube" class="social-btn" aria-label="YouTube" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="socialFacebook" class="social-btn" aria-label="Facebook" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>QUICK LINKS</h4>
+        <ul>
+          <li><a href="customer.html#home">Home</a></li>
+          <li><a href="spare-parts.html">Spare Parts</a></li>
+          <li><a href="customer.html#services">Services</a></li>
+          <li><a href="customer.html#about">About</a></li>
+          <li><a href="customer.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>SERVICES</h4>
+        <ul>
+          <li><a href="customer.html#services">Quick Service</a></li>
+          <li><a href="customer.html#services">Full Service</a></li>
+          <li><a href="customer.html#services">Tuning & Mods</a></li>
+          <li><a href="customer.html#services">BMW Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>NEWSLETTER</h4>
+        <p style="font-family:Cairo;font-size:13px;color:var(--text-muted);margin-bottom:14px">Subscribe to get the latest offers and events</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" name="email" placeholder="Your email address" aria-label="Email for newsletter" required>
+          <button type="submit" class="btn primary sm">Subscribe</button>
+          <div id="newsletterMsg" class="form-msg"></div>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" id="footerCopy">© 2025 MO BY AHMED MAHMOUD | All Rights Reserved</span>
+      <button class="back-top" id="backTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+    </div>
+  </div>
+</footer>
+
+<a id="wa-float" href="#" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+
+<script>
+const API = 'http://localhost:3000/api';
+let WHATSAPP = '201000000000';
+const wa = t => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`;
+
+async function apiGet(path){
+  const res = await fetch(API + path);
+  if (!res.ok) { const e = new Error('HTTP ' + res.status); e.status = res.status; throw e; }
+  return res.json();
+}
+async function apiPost(path, body){
+  const res = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
+// ── Custom cursor ──
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; });
+(function anim(){ rx += (mx - rx) * .15; ry += (my - ry) * .15; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(anim); })();
+document.addEventListener('mouseleave', () => document.body.classList.remove('cursor-visible'));
+document.addEventListener('mouseenter', () => document.body.classList.add('cursor-visible'));
+function rewireCursorTargets(){
+  document.querySelectorAll('a,button').forEach(el => {
+    el.onmouseenter = () => { ring.style.width = '50px'; ring.style.height = '50px'; ring.style.borderColor = 'rgba(0,200,255,.7)'; };
+    el.onmouseleave = () => { ring.style.width = '32px'; ring.style.height = '32px'; ring.style.borderColor = 'rgba(0,200,255,.5)'; };
+  });
+}
+rewireCursorTargets();
+
+// ── Ripple ──
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 2;
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+});
+
+// ── Navbar / hamburger ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 60), { passive: true });
+const ham = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+ham.addEventListener('click', () => { mobileNav.classList.toggle('open'); ham.classList.toggle('open'); });
+document.querySelectorAll('.mobile-link,.mobile-nav .btn').forEach(a => a.addEventListener('click', () => {
+  mobileNav.classList.remove('open'); ham.classList.remove('open');
+}));
+document.getElementById('backTop')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ── Dashboard nav link if VIN saved ──
+if (localStorage.getItem('mo_vin')) {
+  const nl = document.querySelector('.nav-links');
+  if (nl && !nl.querySelector('[data-vin-link]')) {
+    const a = document.createElement('a');
+    a.href = 'customer-dashboard.html'; a.textContent = 'MY DASHBOARD';
+    a.style.color = 'var(--accent-cyan)'; a.setAttribute('data-vin-link', '1');
+    nl.appendChild(a);
+  }
+}
+
+// ── Newsletter ──
+document.getElementById('newsletterForm')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.target;
+  const msg = document.getElementById('newsletterMsg');
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  try {
+    await apiPost('/newsletter', { email: form.querySelector('input[name="email"]').value });
+    msg.textContent = 'You have successfully subscribed ✓'; msg.className = 'form-msg ok';
+    form.reset();
+  } catch (err) {
+    msg.textContent = 'Could not subscribe — please check your email address'; msg.className = 'form-msg err';
+  } finally { btn.disabled = false; }
+});
+
+// ── Settings ──
+async function loadSettings(){
+  try {
+    const s = await apiGet('/settings');
+    WHATSAPP = s.whatsapp || WHATSAPP;
+    const waMsg = 'Hi, I need assistance with my car';
+    ['navWa', 'mobileWa', 'wa-float'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.href = wa(waMsg);
+    });
+    if (s.phone) { const pt = document.getElementById('navPhoneText'); if (pt) pt.textContent = s.phone; }
+    if (s.footer_copyright) { const fc = document.getElementById('footerCopy'); if (fc) fc.textContent = s.footer_copyright; }
+    const socialMap = { socialInstagram: 'social_instagram', socialTiktok: 'social_tiktok', socialYoutube: 'social_youtube', socialFacebook: 'social_facebook' };
+    Object.entries(socialMap).forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (el && s[key]) el.href = s[key];
+    });
+  } catch (e) { /* keep static fallback */ }
+}
+
+// ── Render VIN entry form ──
+function renderVINEntry(section){
+  section.innerHTML = `
+    <div class="vin-entry-wrap">
+      <div class="vin-entry-inner">
+        <div class="vin-entry-heading">TRACK YOUR BMW</div>
+        <p class="vin-entry-sub">
+          Enter your chassis number to view your service status,<br>car readiness, and total spending.
+        </p>
+        <input class="vin-input-large" id="vinInputPage" maxlength="17" placeholder="WBA3A5C51CF256985" autocomplete="off">
+        <div class="vin-page-error" id="vinPageError"></div>
+        <button class="btn primary" id="vinPageSubmit" style="width:100%;font-size:16px;padding:18px;margin-top:4px">
+          <i class="fa-solid fa-magnifying-glass"></i> Find My Car
+        </button>
+        <p style="font-family:Cairo;font-size:12px;color:var(--text-muted);margin-top:20px">
+          Don't see your car? &nbsp;<a href="#" id="registerWaLink" style="color:#0fbf57">Contact us on WhatsApp to register</a>
+        </p>
+      </div>
+    </div>`;
+  rewireCursorTargets();
+
+  document.getElementById('registerWaLink').href = wa('Hi, I would like to register my BMW. VIN: ');
+
+  const input = document.getElementById('vinInputPage');
+  const errEl = document.getElementById('vinPageError');
+  const btn = document.getElementById('vinPageSubmit');
+
+  input.addEventListener('input', () => {
+    input.value = input.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '').slice(0, 17);
+    input.style.borderColor = 'var(--border)';
+    errEl.style.display = 'none';
+  });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submitVIN(); });
+  btn.addEventListener('click', submitVIN);
+
+  async function submitVIN(){
+    const vin = input.value.toUpperCase().trim();
+    errEl.style.display = 'none';
+    input.style.borderColor = 'var(--border)';
+    if (vin.length !== 17 || /[IOQ]/.test(vin)) {
+      errEl.textContent = 'VIN must be exactly 17 valid characters (no I, O, or Q)';
+      errEl.style.display = 'block';
+      input.style.borderColor = 'var(--danger)';
+      return;
+    }
+    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching...';
+    try {
+      const customer = await apiGet('/customers/vin/' + vin);
+      localStorage.setItem('mo_vin', vin);
+      sessionStorage.setItem('mo_customer', JSON.stringify(customer));
+      renderDashboard(section, customer);
+    } catch (err) {
+      if (err.status === 404) {
+        errEl.innerHTML = `VIN not found in our system. <a href="${wa('Hi, I want to register my BMW VIN: ' + vin)}" target="_blank" style="color:#0fbf57">Contact us on WhatsApp</a> to add your car.`;
+      } else {
+        errEl.textContent = 'Something went wrong — please try again.';
+      }
+      errEl.style.display = 'block';
+      input.style.borderColor = 'var(--danger)';
+    } finally {
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Find My Car';
+      rewireCursorTargets();
+    }
+  }
+}
+
+// ── Render customer dashboard ──
+function renderDashboard(section, customer){
+  const isReady = customer.car_status !== 'in_service';
+  section.innerHTML = `
+    <div class="dash-card cyan">
+      <div class="dash-kicker">YOUR VEHICLE</div>
+      ${customer.customer_name ? `<div style="font-family:Cairo;font-size:18px;color:var(--text-secondary);margin-bottom:6px;font-weight:600">مرحباً، <span style="color:#fff">${escapeHtml(customer.customer_name)}</span> 👋</div>` : ''}
+      <div class="dash-model-name">${escapeHtml(customer.car_model || 'Your BMW')}</div>
+      <div class="dash-vin-badge">VIN: ${escapeHtml(customer.vin)}</div>
+    </div>
+
+    <div class="dash-card ${isReady ? 'green' : 'orange'}"
+      style="${isReady ? 'background:linear-gradient(135deg,rgba(0,204,102,.04),var(--bg-card))' : 'background:linear-gradient(135deg,rgba(255,153,0,.04),var(--bg-card))'}">
+      <div class="dash-kicker">CAR STATUS</div>
+      <div class="dash-status-wrap">
+        <div class="dash-status-icon">${isReady ? '✅' : '🔧'}</div>
+        <div>
+          <div class="dash-status-text-main" style="color:${isReady ? 'var(--success)' : '#ff9900'}">${isReady ? 'جاهزة للاستلام' : 'في الصيانة'}</div>
+          <div class="dash-status-text-sub">${isReady ? 'Your car is ready for pickup' : 'Your car is currently being serviced by our team'}</div>
+        </div>
+      </div>
+      ${customer.last_service_date ? `<div class="dash-last-service">Last service: ${escapeHtml(customer.last_service_date)}</div>` : ''}
+    </div>
+
+    <div class="dash-card gold">
+      <div class="dash-kicker">TOTAL SPENDING</div>
+      <div class="dash-amount">${Number(customer.total_spent_egp || 0).toLocaleString('en-US')}</div>
+      <div class="dash-currency">EGP</div>
+      <div class="dash-amount-sub">Across all services and spare parts</div>
+    </div>
+
+    <div class="dash-card" style="border-left:4px solid var(--accent-blue)">
+      <div class="dash-kicker">MY BOOKINGS</div>
+      <div id="bookingsList"><div class="fetch-loading" style="padding:30px 0">Loading bookings...</div></div>
+    </div>
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
+      <a href="spare-parts.html" class="btn outline"><i class="fa-solid fa-gears"></i> Browse Spare Parts</a>
+      <a href="customer.html#services" class="btn primary"><i class="fa-solid fa-calendar-check"></i> Book a Service</a>
+      <button class="btn danger" id="signOutBtn"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+    </div>`;
+  rewireCursorTargets();
+
+  if (customer.customer_phone) {
+    loadCustomerBookings(customer.customer_phone);
+  } else {
+    const bl = document.getElementById('bookingsList');
+    if (bl) bl.innerHTML = `
+      <div style="font-family:Cairo;font-size:13px;color:var(--text-muted);text-align:center;padding:20px">
+        No phone number linked to your account. Contact us to link your bookings.
+      </div>`;
+  }
+
+  document.getElementById('signOutBtn').addEventListener('click', () => {
+    localStorage.removeItem('mo_vin');
+    sessionStorage.removeItem('mo_customer');
+    renderVINEntry(section);
+  });
+}
+
+async function loadCustomerBookings(phone){
+  const bl = document.getElementById('bookingsList');
+  if (!bl) return;
+
+  try {
+    const bookings = await apiGet('/bookings/customer/' + encodeURIComponent(phone));
+
+    if (!bookings || !bookings.length) {
+      bl.innerHTML = `
+        <div style="font-family:Cairo;font-size:14px;color:var(--text-muted);text-align:center;padding:24px 0">
+          No bookings found yet.<br>
+          <a href="customer.html#services" style="color:var(--accent-cyan);text-decoration:none;font-size:13px">Book a service →</a>
+        </div>`;
+      return;
+    }
+
+    const statusColors = {
+      pending:   { bg: 'rgba(212,160,23,.1)',  border: 'rgba(212,160,23,.3)',  color: '#d4a017' },
+      confirmed: { bg: 'rgba(0,204,102,.1)',   border: 'rgba(0,204,102,.3)',   color: '#00cc66' },
+      cancelled: { bg: 'rgba(255,51,51,.1)',   border: 'rgba(255,51,51,.3)',   color: '#ff6666' }
+    };
+    const statusAr = { pending: 'قيد الانتظار', confirmed: 'مؤكد', cancelled: 'ملغي' };
+    const serviceIcons = { quick: '⚡', full: '🛠️', tuning: '🏎️', pickup: '🚗', default: '📋' };
+
+    bl.innerHTML = bookings.map(b => {
+      const sc = statusColors[b.status] || statusColors.pending;
+      const icon = serviceIcons[b.service_type] || serviceIcons.default;
+      const dateStr = b.created_at
+        ? new Date(b.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : '—';
+      return `
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(28,108,252,.1);border:1px solid rgba(28,108,252,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+            <span style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px">${escapeHtml(b.service_type.toUpperCase())}</span>
+            <span style="padding:3px 10px;border-radius:50px;font-size:11px;font-family:Rajdhani;letter-spacing:1px;background:${sc.bg};border:1px solid ${sc.border};color:${sc.color}">${statusAr[b.status] || b.status}</span>
+          </div>
+          <div style="font-family:Rajdhani;font-size:12px;color:var(--text-muted);letter-spacing:1px;margin-bottom:4px">
+            REF: ${escapeHtml(b.ref_number)}
+            &nbsp;·&nbsp; ${escapeHtml(dateStr)}
+            ${b.slot_datetime ? `&nbsp;·&nbsp; ${escapeHtml(b.slot_datetime)}` : ''}
+          </div>
+          ${b.issue_description ? `
+          <div style="font-family:Cairo;font-size:13px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px" title="${escapeHtml(b.issue_description)}">
+            ${escapeHtml(b.issue_description.slice(0, 80))}${b.issue_description.length > 80 ? '…' : ''}
+          </div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    const items = bl.querySelectorAll('[style*="border-bottom"]');
+    if (items.length) items[items.length - 1].style.borderBottom = 'none';
+
+  } catch (err) {
+    bl.innerHTML = `
+      <div style="font-family:Cairo;font-size:13px;color:var(--text-muted);text-align:center;padding:20px">
+        Could not load bookings —
+        <button onclick="loadCustomerBookings('${escapeHtml(phone)}')" class="btn outline sm" style="margin-left:8px;cursor:pointer">Retry</button>
+      </div>`;
+  }
+}
+
+// ── Init ──
+async function init(){
+  await loadSettings();
+
+  const section = document.getElementById('dashboardSection');
+  const savedVIN = localStorage.getItem('mo_vin');
+
+  if (!savedVIN) { renderVINEntry(section); return; }
+
+  const cached = sessionStorage.getItem('mo_customer');
+  if (cached) {
+    try { renderDashboard(section, JSON.parse(cached)); return; }
+    catch (e) { /* fall through to fresh fetch */ }
+  }
+
+  section.innerHTML = '<div class="fetch-loading">Loading your data...</div>';
+  try {
+    const customer = await apiGet('/customers/vin/' + savedVIN);
+    sessionStorage.setItem('mo_customer', JSON.stringify(customer));
+    renderDashboard(section, customer);
+  } catch (err) {
+    if (err.status === 404) {
+      localStorage.removeItem('mo_vin');
+      renderVINEntry(section);
+    } else {
+      section.innerHTML = `
+        <div style="text-align:center;padding:80px 20px;color:var(--text-secondary)">
+          <div style="font-size:48px;margin-bottom:20px">⚠️</div>
+          <div style="font-family:Cairo;font-size:16px;margin-bottom:20px">Could not load your data</div>
+          <button class="btn outline" onclick="location.reload()">Try Again</button>
+        </div>`;
+      rewireCursorTargets();
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "mo-bmw-backend",
+  "version": "1.0.0",
+  "description": "MO BY AHMED MAHMOUD - BMW workshop CMS backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "multer": "^2.0.0",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^7.4.0",
+    "dotenv": "^16.4.5"
+  }
+}

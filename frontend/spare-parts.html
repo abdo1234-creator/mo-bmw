@@ -1,0 +1,1324 @@
+<!-- FILE: spare-parts.html | PURPOSE: Dedicated BMW spare parts catalog (series → model → engine drill-down) | DEPENDS ON: backend API at http://localhost:3000/api, customer.html (sibling page) -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Spare Parts Catalog — MO BY AHMED MAHMOUD</title>
+<meta name="description" content="Browse genuine and performance BMW spare parts by series, model and engine — MO BY AHMED MAHMOUD."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<style>
+:root{
+  --bg-primary:#050505;--bg-secondary:#0d0d0d;--bg-card:#111111;--border:#1e1e1e;
+  --accent-blue:#1c6cfc;--accent-cyan:#00c8ff;--accent-silver:#c0c0c0;--accent-gold:#d4a017;
+  --text-primary:#ffffff;--text-secondary:#a0a0a0;--text-muted:#505050;
+  --danger:#ff3333;--success:#00cc66;
+  --radius:16px;--radius-lg:24px;
+  --shadow:0 24px 60px rgba(0,0,0,.5);
+  --container:min(1300px,94vw);
+
+  --fs-display-lg:clamp(36px,6vw,64px);
+  --fs-display-md:clamp(26px,4vw,40px);
+  --fs-body:clamp(14px,1.8vw,16px);
+  --fs-sm:clamp(12px,1.5vw,14px);
+  --sp-md:clamp(14px,3vw,20px);
+  --sp-lg:clamp(20px,4vw,32px);
+  --sp-section:clamp(50px,8vw,80px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden;max-width:100vw}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter','Cairo',sans-serif;overflow-x:hidden;max-width:100vw;cursor:none}
+img{max-width:100%;height:auto}
+.display{font-family:'Bebas Neue',sans-serif;letter-spacing:2px}
+.tech{font-family:'Rajdhani',sans-serif;letter-spacing:1.5px}
+.muted{color:var(--text-secondary)}
+.container{width:var(--container);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.section{padding:var(--sp-section) 0;position:relative}
+
+/* ── CUSTOM CURSOR (desktop / fine-pointer devices only) ── */
+#cursor-dot{display:none;position:fixed;width:10px;height:10px;background:var(--accent-cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:background .2s,transform .1s;box-shadow:0 0 12px var(--accent-cyan);will-change:transform}
+#cursor-ring{display:none;position:fixed;width:32px;height:32px;border:1.5px solid rgba(0,200,255,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .15s ease,width .2s,height .2s,opacity .2s;will-change:transform}
+@media (pointer:fine) and (hover:hover){
+  #cursor-dot,#cursor-ring{display:block}
+  body:not(.cursor-visible) #cursor-dot,body:not(.cursor-visible) #cursor-ring{opacity:0}
+  a,button{cursor:none}
+}
+@media (pointer:coarse){
+  body,a,button{cursor:auto!important}
+}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;min-width:44px;padding:15px 28px;border-radius:50px;border:1.5px solid transparent;cursor:none;font-weight:600;font-size:15px;letter-spacing:.5px;transition:all .3s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;white-space:nowrap}
+.btn::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.07);border-radius:50px;opacity:0;transition:.2s}
+.btn:hover::after{opacity:1}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--accent-blue) 0%,#0f9bff 100%);color:#fff;box-shadow:0 10px 30px rgba(28,108,252,.4)}
+.btn.primary:hover{box-shadow:0 16px 40px rgba(28,108,252,.55)}
+.btn.outline{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05);color:#fff}
+.btn.outline:hover{border-color:var(--accent-cyan);color:var(--accent-cyan);box-shadow:0 0 20px rgba(0,200,255,.2)}
+.btn.whatsapp{background:#0fbf57;color:#fff;box-shadow:0 10px 30px rgba(15,191,87,.35)}
+.btn.whatsapp:hover{background:#0daa4d}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.sm{padding:10px 18px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);transform:scale(0);animation:ripple-anim .6s linear;pointer-events:none}
+@keyframes ripple-anim{to{transform:scale(4);opacity:0}}
+
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);transition:all .3s;position:relative}
+.kicker{font-family:Rajdhani;font-size:12px;letter-spacing:4px;color:var(--accent-gold);text-transform:uppercase;margin-bottom:12px}
+.section-heading{font-family:'Bebas Neue';font-size:clamp(36px,5vw,56px);line-height:1;margin-bottom:14px}
+
+/* ── INTRO ── */
+#introOverlay{position:fixed;inset:0;z-index:1000;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#introOverlay.gone{display:none}
+.intro-row{display:flex;align-items:center;gap:36px}
+.intro-row svg{opacity:0}
+#introText{font-family:'Bebas Neue';font-size:clamp(48px,8vw,80px);letter-spacing:4px;opacity:0;color:#fff}
+.intro-speedline{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,255,.5),transparent);width:30%;opacity:0}
+
+/* ── NAVBAR (copied from customer.html) ── */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:500;height:80px;display:flex;align-items:center;transition:height .3s,background .3s,backdrop-filter .3s;background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+.navbar.scrolled{height:64px}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;width:var(--container);margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.nav-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-family:Rajdhani;font-size:13px;letter-spacing:2.5px;color:var(--text-secondary);transition:.2s;position:relative;text-transform:uppercase;text-decoration:none}
+.nav-links a:hover{color:#fff}
+.nav-links a::after{content:"";position:absolute;bottom:-6px;left:50%;right:50%;height:2px;background:var(--accent-cyan);transition:left .25s,right .25s;border-radius:2px}
+.nav-links a:hover::after{left:0;right:0}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-phone{display:flex;align-items:center;gap:8px;font-family:Rajdhani;font-size:13px;color:var(--text-secondary);letter-spacing:1px}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;cursor:none;padding:4px;border:none;background:none}
+.hamburger span{display:block;height:2px;background:#fff;border-radius:2px;transition:.3s}
+.mobile-nav{position:fixed;inset:0;z-index:490;background:rgba(5,5,5,.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;transform:translateY(-100%);transition:transform .4s cubic-bezier(.77,0,.175,1)}
+.mobile-nav.open{transform:translateY(0)}
+.mobile-nav a{font-family:'Bebas Neue';font-size:clamp(32px,8vw,40px);letter-spacing:4px;color:#fff;text-decoration:none;transition:.2s;padding:8px 0;min-height:56px;display:flex;align-items:center}
+.mobile-nav a:hover{color:var(--accent-cyan)}
+
+/* ── BREADCRUMB ── */
+#breadcrumb{position:sticky;top:64px;z-index:390;background:var(--bg-secondary);border-bottom:1px solid var(--border);padding:14px 0}
+.crumb{font-family:Rajdhani;font-size:13px;letter-spacing:1.5px;color:var(--text-muted);background:none;border:none;cursor:none;padding:0}
+.crumb.clickable{color:var(--accent-cyan);cursor:none}
+.crumb.active{color:#fff}
+.crumb-sep{color:var(--text-muted);margin:0 10px}
+
+/* ── SERIES GRID ── */
+.series-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
+.series-card{height:220px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);position:relative;overflow:hidden;cursor:none;transition:all .3s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column}
+.series-card:hover{transform:translateY(-6px) scale(1.02);border-color:rgba(0,200,255,.4);box-shadow:0 0 40px rgba(0,200,255,.1)}
+.series-watermark{position:absolute;right:-10px;bottom:-20px;font-family:'Bebas Neue';font-size:160px;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;user-select:none}
+.series-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan))}
+.series-accent.m-accent{background:linear-gradient(90deg,#cc2222,#1c6cfc)}
+.series-content{padding:28px;display:flex;flex-direction:column;height:100%;position:relative;z-index:1}
+.series-name{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;margin-bottom:6px}
+.series-tag{display:inline-flex;padding:3px 10px;border-radius:50px;font-size:11px;font-family:Rajdhani;letter-spacing:1px;border:1px solid;width:fit-content;margin-bottom:auto}
+.series-count{font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--text-muted);margin-top:14px}
+
+/* ── MODEL CARDS ── */
+.models-row{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin-top:40px}
+.model-card-sp{width:200px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:none;transition:all .3s}
+.model-card-sp:hover{transform:translateY(-6px);border-color:rgba(0,200,255,.4);box-shadow:0 0 30px rgba(0,200,255,.1)}
+.model-img-wrap-sp{height:140px;background:linear-gradient(135deg,#0a0a1a,#0d0d0d);display:flex;align-items:center;justify-content:center}
+.model-img-wrap-sp img{width:90%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,.7))}
+.model-info-sp{padding:16px}
+.model-name-sp{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px}
+.model-year-sp{font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px}
+.tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:11px;font-family:Rajdhani;letter-spacing:1px;border:1px solid;margin:2px 2px 0 0}
+.tag.popular{border-color:rgba(212,160,23,.4);color:var(--accent-gold);background:rgba(212,160,23,.07)}
+.tag.track{border-color:rgba(255,51,51,.4);color:#ff6666;background:rgba(255,51,51,.07)}
+.tag.m-perf{border-color:rgba(0,200,255,.4);color:var(--accent-cyan);background:rgba(0,200,255,.07)}
+
+/* ── ENGINE CHIPS ── */
+.engine-chips{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:40px}
+.engine-chip{padding:14px 28px;border-radius:50px;border:1.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-secondary);font-family:Rajdhani;font-size:16px;font-weight:700;letter-spacing:3px;cursor:none;transition:all .3s}
+.engine-chip:hover{border-color:rgba(0,200,255,.4);color:var(--accent-cyan)}
+.engine-chip.selected{background:var(--accent-cyan);border-color:var(--accent-cyan);color:#000;box-shadow:0 0 20px rgba(0,200,255,.4)}
+
+/* ── PARTS GRID (reused names from customer.html) ── */
+.parts-filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.pf-tab{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-family:Rajdhani;font-size:13px;letter-spacing:1.5px;cursor:none;transition:.2s}
+.pf-tab.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff}
+.parts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.part-card{padding:22px;border-radius:var(--radius)}
+.part-category{font-family:Rajdhani;font-size:11px;letter-spacing:3px;color:var(--accent-cyan);margin-bottom:8px;text-transform:uppercase}
+.part-name{font-family:Cairo;font-size:15px;font-weight:700;margin-bottom:4px}
+.part-name-ar{font-family:Cairo;font-size:13px;color:var(--text-muted);margin-bottom:8px}
+.part-oem{font-family:'Courier New',monospace;font-size:11px;color:var(--text-muted);margin-bottom:10px}
+.part-price{font-family:'Bebas Neue';font-size:28px;color:var(--accent-gold);margin-bottom:8px}
+.part-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.part-badge{padding:3px 10px;border-radius:50px;font-size:11px;font-family:Rajdhani;letter-spacing:1px}
+.badge-oem{background:rgba(28,108,252,.1);border:1px solid rgba(28,108,252,.3);color:#80b0ff}
+.badge-perf{background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.3);color:var(--accent-cyan)}
+.badge-compat{background:rgba(0,204,102,.1);border:1px solid rgba(0,204,102,.3);color:var(--success)}
+.stock-ok{color:var(--success);font-size:12px;font-family:Rajdhani}
+.stock-wait{color:#ff9900;font-size:12px;font-family:Rajdhani}
+
+/* ── FETCH STATES ── */
+.fetch-loading{padding:60px 20px;text-align:center;color:var(--text-secondary);font-family:Cairo;font-size:14px}
+.fetch-loading::before{content:"";display:block;width:30px;height:30px;margin:0 auto 14px;border:3px solid var(--border);border-top-color:var(--accent-cyan);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fetch-error{padding:24px;text-align:center;color:#ff8888;background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);border-radius:var(--radius);font-family:Cairo;font-size:14px;grid-column:1/-1}
+.fetch-error button{margin-top:12px}
+.empty-state{text-align:center;padding:60px;color:var(--text-muted);font-family:Cairo;grid-column:1/-1}
+
+/* ── FOOTER (copied from customer.html) ── */
+.footer{background:#060606;border-top:1px solid var(--border);padding:64px 0 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;margin-bottom:50px}
+.footer-brand p{font-family:Cairo;font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.8}
+.social-row{display:flex;gap:12px;margin-top:20px}
+.social-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:.3s;text-decoration:none}
+.social-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan);background:rgba(0,200,255,.06)}
+.footer-col h4{font-family:Rajdhani;font-size:14px;letter-spacing:3px;color:var(--accent-silver);margin-bottom:18px;text-transform:uppercase}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{font-family:Cairo;font-size:14px;color:var(--text-secondary);transition:.2s;text-decoration:none}
+.footer-col ul li a:hover{color:#fff}
+.newsletter-form{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.newsletter-form input{padding:13px 16px;min-height:48px;border-radius:50px;border:1px solid var(--border);background:var(--bg-secondary);color:#fff;font-family:Cairo;font-size:16px!important;outline:none;transition:.3s}
+input,textarea,select{font-size:16px}
+.newsletter-form input:focus{border-color:var(--accent-cyan)}
+.form-msg{font-family:Cairo;font-size:12px;margin-top:8px;display:none}
+.form-msg.ok{color:var(--success);display:block}
+.form-msg.err{color:var(--danger);display:block}
+
+/* ── FORM FIELDS (cart checkout) ── */
+.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.form-field label{font-family:Rajdhani;font-size:12px;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase}
+.form-field input,.form-field textarea,.form-field select{padding:13px 16px;min-height:48px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-primary);color:#fff;font-family:Cairo;font-size:16px!important;outline:none;transition:.3s}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--accent-cyan);box-shadow:0 0 0 3px rgba(0,200,255,.1)}
+.form-field select{appearance:none;cursor:none}
+
+/* ── CART BUTTON / BADGE ── */
+#cartFloatBtn{position:relative;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.04);color:#fff;cursor:none;font-size:17px;transition:.2s;flex-shrink:0}
+#cartFloatBtn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.cart-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:50px;background:var(--danger);color:#fff;font-family:Rajdhani;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ── CART DRAWER ── */
+.cart-overlay{position:fixed;inset:0;z-index:899;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+.cart-overlay.show{opacity:1;pointer-events:auto}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;z-index:900;width:min(420px,100vw);background:var(--bg-secondary);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .35s cubic-bezier(.77,0,.175,1);display:flex;flex-direction:column;overflow-y:auto}
+.cart-drawer.show{transform:translateX(0)}
+.cart-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-secondary);z-index:1}
+.cart-drawer-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:1.5px}
+.cart-drawer-close{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:transparent;color:#fff;cursor:none;flex-shrink:0}
+.cart-drawer-close:hover{border-color:var(--danger);color:var(--danger)}
+.cart-drawer-body{padding:24px;flex:1}
+
+.cart-empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.cart-empty i{font-size:40px;margin-bottom:14px;display:block;opacity:.4}
+
+.cart-item-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-name{font-family:Cairo;font-size:14px;font-weight:600;margin-bottom:4px}
+.cart-item-price{font-family:Rajdhani;font-size:13px;color:var(--accent-gold)}
+.qty-stepper{display:flex;align-items:center;gap:8px;font-family:Rajdhani;font-size:14px;flex-shrink:0}
+.qty-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:#fff;cursor:none;font-size:16px;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.cart-item-remove{width:32px;height:32px;border-radius:50%;border:none;background:none;color:var(--text-muted);cursor:none;flex-shrink:0}
+.cart-item-remove:hover{color:var(--danger)}
+.cart-summary{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.cart-summary-row{display:flex;justify-content:space-between;font-family:'Bebas Neue';font-size:20px}
+
+/* ── PAYMENT STEP (shared with cart checkout) ── */
+.bk-back-step{background:none;border:none;color:var(--text-secondary);font-size:13px;cursor:none;display:flex;align-items:center;gap:6px;margin-bottom:16px;letter-spacing:1px;font-family:Rajdhani}
+.bk-back-step:hover{color:#fff}
+.payment-methods-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(120px,100%),1fr));gap:12px;margin-bottom:20px}
+.payment-method-card{display:flex;flex-direction:column;align-items:center;padding:18px 12px;border-radius:var(--radius);border:1.5px solid var(--border);background:rgba(255,255,255,.03);color:#fff;cursor:none;text-align:center;transition:border-color .2s,background .2s,transform .2s}
+.payment-method-card:hover{border-color:rgba(0,200,255,.4);background:rgba(0,200,255,.05);transform:translateY(-2px)}
+.payment-method-card.active{border-color:var(--accent-cyan);background:rgba(0,200,255,.08);box-shadow:0 0 0 3px rgba(0,200,255,.12)}
+.payment-info-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;margin-bottom:16px}
+.payment-detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-family:Cairo;font-size:14px;gap:12px}
+.payment-detail-row:last-of-type{border-bottom:none}
+.payment-detail-row span:first-child{color:var(--text-muted);flex-shrink:0}
+.payment-detail-row span:last-child{font-weight:600;text-align:right}
+.payment-detail-row.account-number span:last-child{font-family:monospace;font-size:14px;color:var(--accent-cyan);letter-spacing:1px;display:flex;align-items:center;gap:10px}
+.copy-number-btn{background:none;border:1px solid var(--border);color:var(--text-secondary);border-radius:6px;padding:4px 8px;cursor:none;font-size:13px;transition:.2s;flex-shrink:0}
+.copy-number-btn:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.screenshot-dropzone{border:2px dashed var(--border);border-radius:var(--radius);padding:28px 16px;text-align:center;cursor:none;transition:.2s}
+.screenshot-dropzone:hover{border-color:var(--accent-cyan);background:rgba(0,200,255,.04)}
+.field-error{color:var(--danger);font-size:12px;margin-top:6px}
+
+/* ── CONFIRMATION CARD (cart checkout) ── */
+.confirm-card{background:linear-gradient(135deg,rgba(0,204,102,.1),rgba(28,108,252,.08));border:1px solid rgba(0,204,102,.3);border-radius:var(--radius-lg);padding:28px 20px;text-align:center}
+.bk-summary-card{background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-top:18px;text-align:left}
+.bk-summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px;font-family:Cairo}
+.bk-summary-row:last-child{border-bottom:none}
+.bk-summary-row span:first-child{color:var(--text-muted)}
+.bk-summary-row span:last-child{font-weight:600}
+
+@media(max-width:479px){
+  .cart-drawer{width:100vw}
+  .payment-methods-grid{grid-template-columns:1fr}
+  .payment-method-card{flex-direction:row;justify-content:flex-start;gap:14px;padding:14px;text-align:left}
+  .payment-method-card i{font-size:18px!important;margin-bottom:0!important}
+}
+
+/* ── MY PART ORDERS ── */
+.parts-orders-teaser{display:flex;align-items:center;gap:20px;padding:24px 32px;background:linear-gradient(135deg,rgba(28,108,252,.06),rgba(0,200,255,.04));border:1px solid rgba(0,200,255,.18);border-radius:var(--radius-lg);flex-wrap:wrap;transition:border-color .3s}
+.parts-orders-teaser:hover{border-color:rgba(0,200,255,.35)}
+.parts-orders-icon{font-size:34px;flex-shrink:0;filter:drop-shadow(0 0 12px rgba(0,200,255,.4))}
+.parts-orders-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;margin-bottom:4px}
+.parts-orders-sub{font-family:Cairo;font-size:14px;color:var(--text-secondary)}
+.parts-orders-panel-inner{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 28px 24px}
+.parts-orders-panel-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:1.5px;margin-bottom:16px}
+.parts-phone-input{flex:1;min-width:160px;max-width:260px;padding:13px 16px;min-height:48px;border-radius:50px;border:1px solid var(--border);background:var(--bg-primary);color:#fff;font-size:16px!important;outline:none;font-family:Inter;transition:.2s}
+.parts-phone-input:focus{border-color:var(--accent-cyan)}
+.parts-history-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.parts-history-row:last-child{border-bottom:none}
+.parts-history-name{font-family:'Bebas Neue';font-size:17px;letter-spacing:1px;margin-bottom:4px}
+.parts-history-meta{font-family:Rajdhani;font-size:12px;letter-spacing:1px;color:var(--text-muted)}
+.parts-history-badge{padding:5px 12px;border-radius:50px;font-size:11px;letter-spacing:.5px;flex-shrink:0;font-family:Rajdhani;border:1px solid}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-muted)}
+.back-top{width:44px;height:44px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:.3s;cursor:none}
+.back-top:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+
+/* ── WA FLOAT ── */
+#wa-float{position:fixed;bottom:28px;left:28px;z-index:600;width:60px;height:60px;border-radius:50%;background:#0fbf57;border:none;cursor:none;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 8px 30px rgba(15,191,87,.45);animation:waPulse 3s ease-in-out infinite;text-decoration:none}
+@keyframes waPulse{0%,100%{box-shadow:0 8px 30px rgba(15,191,87,.45)}50%{box-shadow:0 8px 50px rgba(15,191,87,.7),0 0 0 12px rgba(15,191,87,.1)}}
+
+/* ── RESPONSIVE (breakpoints: xs 0-479 · sm 480-767 · md 768-1023 · lg 1024-1279 · xl 1280+) ── */
+@media(max-width:1279px){
+  .parts-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:1023px){
+  .series-grid{grid-template-columns:repeat(3,1fr)}
+  .parts-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:767px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .series-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+  #breadcrumb{top:auto}
+  .nav-phone{display:none}
+}
+@media(max-width:479px){
+  .series-grid{grid-template-columns:1fr}
+  .parts-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body class="cursor-visible">
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- INTRO -->
+<div id="introOverlay">
+  <div class="intro-row">
+    <img id="introSvg" src="assets/logo-mo.png" alt="MO by Ahmed Mahmoud" style="width:280px;height:auto">
+    <div id="introText" class="display">SPARE PARTS</div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="customer.html#home" style="text-decoration:none;display:flex;align-items:center">
+      <img src="assets/logo-mo.png" alt="MO by Ahmed Mahmoud" style="height:54px;width:auto;display:block">
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="customer.html#home">HOME</a>
+      <a href="spare-parts.html" style="color:var(--accent-cyan)">SPARE PARTS</a>
+      <a href="customer.html#services">SERVICES</a>
+      <a href="customer.html#about">ABOUT</a>
+      <a href="customer.html#contact">CONTACT</a>
+    </nav>
+    <div class="nav-right">
+      <div class="nav-phone" style="display:flex;align-items:center;gap:8px">
+        <i class="fa-solid fa-phone" style="color:var(--accent-cyan);font-size:12px"></i>
+        <span id="navPhoneText" style="font-family:Rajdhani;font-size:13px;letter-spacing:1px">+20 1XX XXX XXXX</span>
+      </div>
+      <a class="btn whatsapp sm" id="navWa" href="#" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+      </a>
+      <button id="cartFloatBtn" aria-label="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cartBadge" class="cart-badge" style="display:none">0</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="customer.html#home" class="mobile-link">HOME</a>
+  <a href="spare-parts.html" class="mobile-link" style="color:var(--accent-cyan)">SPARE PARTS</a>
+  <a href="customer.html#services" class="mobile-link">SERVICES</a>
+  <a href="customer.html#about" class="mobile-link">ABOUT</a>
+  <a href="customer.html#contact" class="mobile-link">CONTACT</a>
+  <a class="btn whatsapp" href="#" id="mobileWa" style="margin-top:12px"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+</div>
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb">
+  <div class="container" id="breadcrumbInner"></div>
+</div>
+
+<!-- CATALOG MAIN -->
+<main id="catalogMain" class="section" style="padding-top:48px">
+  <div class="container" id="catalogContainer"><div class="fetch-loading">Loading...</div></div>
+</main>
+
+<!-- MY PART ORDERS -->
+<section class="section" style="padding-top:0;padding-bottom:80px">
+  <div class="container">
+    <div id="partsOrdersTeaser" class="parts-orders-teaser">
+      <div class="parts-orders-icon">📦</div>
+      <div style="flex:1;min-width:180px">
+        <div class="parts-orders-title">TRACK YOUR ORDERS</div>
+        <div class="parts-orders-sub">Enter your phone number to see your spare part order history</div>
+      </div>
+      <button class="btn primary" id="partsOrdersToggle"><i class="fa-solid fa-box-open"></i> My Orders</button>
+    </div>
+
+    <div id="partsOrdersPanel" style="display:none;margin-top:20px">
+      <div class="parts-orders-panel-inner">
+        <div class="parts-orders-panel-title">MY PART ORDERS</div>
+        <div id="partsPhoneEntry" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+          <input type="tel" id="partsPhoneInput" class="parts-phone-input" placeholder="01X XXXX XXXX" pattern="01[0-9]{9}">
+          <button class="btn primary" id="partsHistoryBtn"><i class="fa-solid fa-magnifying-glass"></i> Find Orders</button>
+        </div>
+        <div id="partsHistoryList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-name display" style="font-size:32px">MO BY AHMED MAHMOUD</div>
+        <p id="footerTagline">Where Precision Meets Performance<br>BMW specialists since 2010</p>
+        <div class="social-row">
+          <a href="#" id="socialInstagram" class="social-btn" aria-label="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" id="socialTiktok" class="social-btn" aria-label="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" id="socialYoutube" class="social-btn" aria-label="YouTube" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="socialFacebook" class="social-btn" aria-label="Facebook" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>QUICK LINKS</h4>
+        <ul>
+          <li><a href="customer.html#home">Home</a></li>
+          <li><a href="spare-parts.html">Spare Parts</a></li>
+          <li><a href="customer.html#services">Services</a></li>
+          <li><a href="customer.html#about">About</a></li>
+          <li><a href="customer.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>SERVICES</h4>
+        <ul>
+          <li><a href="customer.html#services">Quick Service</a></li>
+          <li><a href="customer.html#services">Full Service</a></li>
+          <li><a href="customer.html#services">Tuning & Mods</a></li>
+          <li><a href="customer.html#services">BMW Events</a></li>
+          <li><a href="customer.html#services">Book Your Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>NEWSLETTER</h4>
+        <p style="font-family:Cairo;font-size:13px;color:var(--text-muted);margin-bottom:14px">Subscribe to get the latest offers and events</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" name="email" placeholder="Your email address" aria-label="Email for newsletter" required>
+          <button type="submit" class="btn primary sm">Subscribe</button>
+          <div id="newsletterMsg" class="form-msg"></div>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" id="footerCopy">© 2025 MO BY AHMED MAHMOUD | All Rights Reserved</span>
+      <button class="back-top" id="backTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a id="wa-float" href="#" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+
+<!-- CART DRAWER -->
+<div id="cartOverlay" class="cart-overlay"></div>
+<aside id="cartDrawer" class="cart-drawer">
+  <div class="cart-drawer-head">
+    <div id="cartDrawerTitle" class="cart-drawer-title">YOUR CART</div>
+    <button id="cartDrawerClose" class="cart-drawer-close" aria-label="Close">✕</button>
+  </div>
+  <div id="cartDrawerBody" class="cart-drawer-body"></div>
+</aside>
+
+<script>
+// ═══════════════════════ API CONFIG & HELPERS ═══════════════════════
+const API = 'http://localhost:3000/api';
+const BACKEND_ORIGIN = 'http://localhost:3000';
+let WHATSAPP = '201000000000';
+const wa = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+
+async function apiGet(path){
+  const res = await fetch(API + path);
+  if (!res.ok) { const e = new Error('HTTP ' + res.status); e.status = res.status; throw e; }
+  return res.json();
+}
+async function apiPost(path, body){
+  const res = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+function fmtPrice(n){ return Number(n || 0).toLocaleString('en-US') + ' EGP'; }
+function loadingHTML(){ return '<div class="fetch-loading">Loading...</div>'; }
+function errorHTML(retryFnName){
+  return `<div class="fetch-error">Could not load data — please try again<br><button class="btn outline sm" onclick="${retryFnName}()" style="margin-top:12px">Retry</button></div>`;
+}
+
+// ═══════════════════════ CUSTOM CURSOR ═══════════════════════
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; });
+(function animCursor(){ rx += (mx - rx) * .15; ry += (my - ry) * .15; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animCursor); })();
+document.addEventListener('mouseleave', () => document.body.classList.remove('cursor-visible'));
+document.addEventListener('mouseenter', () => document.body.classList.add('cursor-visible'));
+function rewireCursorTargets(){
+  document.querySelectorAll('a,button,.series-card,.model-card-sp,.engine-chip,.pf-tab,.crumb.clickable').forEach(el => {
+    el.onmouseenter = () => { ring.style.width = '50px'; ring.style.height = '50px'; ring.style.borderColor = 'rgba(0,200,255,.7)'; };
+    el.onmouseleave = () => { ring.style.width = '32px'; ring.style.height = '32px'; ring.style.borderColor = 'rgba(0,200,255,.5)'; };
+  });
+}
+
+// ═══════════════════════ RIPPLE EFFECT ═══════════════════════
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 2;
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+});
+
+// ═══════════════════════ INTRO ANIMATION (GSAP, plays once per session) ═══════════════════════
+(function(){
+  const INTRO_KEY = 'mo_parts_intro_played'; // separate key from customer.html's intro
+  const overlay = document.getElementById('introOverlay');
+  const svg = document.getElementById('introSvg');
+  const text = document.getElementById('introText');
+  const row = document.querySelector('.intro-row');
+
+  function endIntro(){
+    gsap.to(overlay, {
+      opacity: 0, duration: .5, ease: 'power2.in',
+      onComplete: () => {
+        overlay.classList.add('gone');
+        gsap.from('#breadcrumb, #catalogContainer > *', { y: 40, opacity: 0, duration: .6, stagger: .1, ease: 'power3.out' });
+      }
+    });
+  }
+
+  if (!sessionStorage.getItem(INTRO_KEY)) {
+    sessionStorage.setItem(INTRO_KEY, '1');
+
+    for (let i = 0; i < 8; i++) {
+      const line = document.createElement('div');
+      line.className = 'intro-speedline';
+      line.style.top = (Math.random() * 90 + 5) + '%';
+      line.style.left = '-30%';
+      overlay.appendChild(line);
+      gsap.to(line, { opacity: 1, duration: .15, delay: .1 * i });
+      gsap.to(line, { left: '130%', duration: .9, delay: .1 * i, ease: 'power2.in' });
+      gsap.to(line, { opacity: 0, duration: .3, delay: .1 * i + .6 });
+    }
+
+    gsap.set(svg, { x: -120, opacity: 0 });
+    gsap.set(text, { x: 120, opacity: 0 });
+    gsap.to(svg, { x: 0, opacity: 1, duration: .7, delay: .3, ease: 'power3.out' });
+    gsap.to(text, { x: 0, opacity: 1, duration: .7, delay: .3, ease: 'power3.out' });
+
+    setTimeout(endIntro, 1800);
+  } else {
+    overlay.classList.add('gone');
+  }
+})();
+
+// ═══════════════════════ NAVBAR / HAMBURGER ═══════════════════════
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 60), { passive: true });
+const ham = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+ham.addEventListener('click', () => { mobileNav.classList.toggle('open'); ham.classList.toggle('open'); });
+document.querySelectorAll('.mobile-link,.mobile-nav .btn').forEach(a => a.addEventListener('click', () => {
+  mobileNav.classList.remove('open'); ham.classList.remove('open');
+}));
+
+// ═══════════════════════ BACK TO TOP ═══════════════════════
+document.getElementById('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ═══════════════════════ NEWSLETTER ═══════════════════════
+document.getElementById('newsletterForm')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.target;
+  const emailInput = form.querySelector('input[name="email"]');
+  const msg = document.getElementById('newsletterMsg');
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  try {
+    await apiPost('/newsletter', { email: emailInput.value });
+    msg.textContent = 'You have successfully subscribed ✓';
+    msg.className = 'form-msg ok';
+    form.reset();
+  } catch (err) {
+    msg.textContent = 'Could not subscribe — please check your email address';
+    msg.className = 'form-msg err';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ═══════════════════════ SETTINGS (phone / whatsapp / social) ═══════════════════════
+async function loadSettings(){
+  try {
+    const s = await apiGet('/settings');
+    WHATSAPP = s.whatsapp || WHATSAPP;
+    window.MO_PAYMENT = {
+      cash: s.payment_cash_enabled !== 'false',
+      bank: s.payment_bank_enabled === 'true',
+      wallet: s.payment_wallet_enabled === 'true',
+      bankAccount: s.payment_bank_account || '',
+      bankName: s.payment_bank_name || '',
+      bankHolder: s.payment_bank_holder || '',
+      walletNumber: s.payment_wallet_number || '',
+      walletProvider: s.payment_wallet_provider || 'Vodafone Cash / InstaPay'
+    };
+    const defaultWaMsg = 'Hi, I would like to inquire about MO BY AHMED MAHMOUD spare parts';
+    document.getElementById('navWa').href = wa(defaultWaMsg);
+    document.getElementById('mobileWa').href = wa(defaultWaMsg);
+    document.getElementById('wa-float').href = wa(defaultWaMsg);
+    if (s.phone) document.getElementById('navPhoneText').textContent = s.phone;
+    if (s.social_instagram) document.getElementById('socialInstagram').href = s.social_instagram;
+    if (s.social_tiktok) document.getElementById('socialTiktok').href = s.social_tiktok;
+    if (s.social_youtube) document.getElementById('socialYoutube').href = s.social_youtube;
+    if (s.social_facebook) document.getElementById('socialFacebook').href = s.social_facebook;
+    if (s.footer_copyright) document.getElementById('footerCopy').textContent = s.footer_copyright;
+    if (s.tagline) document.getElementById('footerTagline').innerHTML = `${s.tagline}<br>BMW specialists since 2010`;
+  } catch (err) { /* keep static fallback text already in the markup */ }
+}
+
+// ═══════════════════════ CATALOG DATA (fetched from /api/service-config) ═══════════════════════
+window.allSeries = [];
+window.engineMap = {};
+
+function getModelsForSeries(allModels, seriesId){
+  // First: models explicitly tagged with this series_id in admin
+  const byTag = allModels.filter(m => m.series_id === seriesId);
+  if (byTag.length) return byTag;
+  // Fallback: keyword matching from catalog_series config
+  const series = window.allSeries.find(s => s.id === seriesId);
+  const keywords = series?.keywords || [];
+  return allModels.filter(m => keywords.some(k => m.name.toUpperCase().includes(k.toUpperCase())));
+}
+
+function getEnginesForModel(modelName){
+  const upper = modelName.toUpperCase();
+  const matched = [];
+  for (const [engine, variants] of Object.entries(window.engineMap)) {
+    if ((variants || []).some(v => upper.includes(v.toUpperCase()) || v.toUpperCase().includes(upper.split(' ')[1] || ''))) {
+      matched.push(engine);
+    }
+  }
+  return matched.length ? matched : Object.keys(window.engineMap);
+}
+
+const PART_CATS = ['All', 'Engine', 'Brakes', 'Suspension', 'Electrical', 'Tuning'];
+
+// ═══════════════════════ CATALOG STATE MACHINE ═══════════════════════
+const catalogState = { level: 'series', series: null, model: null, engine: null, category: 'All' };
+window.allModels = [];
+window.currentParts = [];
+
+function renderBreadcrumb(){
+  const crumbs = [{ label: 'All', level: 'series' }];
+  if (catalogState.series) {
+    const s = window.allSeries.find(x => x.id === catalogState.series);
+    crumbs.push({ label: s ? s.name : catalogState.series, level: 'models' });
+  }
+  if (catalogState.model) crumbs.push({ label: catalogState.model.name, level: 'engines' });
+  if (catalogState.engine) crumbs.push({ label: catalogState.engine, level: 'parts' });
+
+  const wrap = document.getElementById('breadcrumbInner');
+  wrap.innerHTML = crumbs.map((c, i) => {
+    const isLast = i === crumbs.length - 1;
+    const sep = i > 0 ? '<span class="crumb-sep">›</span>' : '';
+    return `${sep}<button class="crumb${isLast ? ' active' : ' clickable'}" data-level="${c.level}" ${isLast ? 'disabled' : ''}>${escapeHtml(c.label)}</button>`;
+  }).join('');
+  wrap.querySelectorAll('.crumb.clickable').forEach(btn => {
+    btn.addEventListener('click', () => goToLevel(btn.dataset.level));
+  });
+}
+
+function goToLevel(level){
+  if (level === 'series') { catalogState.series = null; catalogState.model = null; catalogState.engine = null; renderSeries(); }
+  else if (level === 'models') { catalogState.model = null; catalogState.engine = null; renderModelsLevel(); }
+  else if (level === 'engines') { catalogState.engine = null; renderEnginesLevel(); }
+}
+
+function transitionTo(renderFn){
+  const container = document.getElementById('catalogContainer');
+  gsap.to(container, {
+    x: -60, opacity: 0, duration: .25, ease: 'power2.in',
+    onComplete: () => {
+      renderFn();
+      gsap.fromTo(container, { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: .35, ease: 'power2.out' });
+      AOS.refresh();
+      rewireCursorTargets();
+    }
+  });
+}
+
+// ═══════════════════════ LEVEL 1 — SERIES GRID ═══════════════════════
+function renderSeries(){
+  catalogState.level = 'series';
+  renderBreadcrumb();
+  const container = document.getElementById('catalogContainer');
+  container.innerHTML = `
+    <div class="kicker" style="text-align:center">BMW SPARE PARTS</div>
+    <h2 class="section-heading" style="text-align:center;font-size:clamp(36px,5vw,56px)">Choose Your Series</h2>
+    <div class="series-grid">
+      ${window.allSeries.map(s => {
+        const count = getModelsForSeries(window.allModels, s.id).length;
+        return `
+        <div class="series-card" data-series="${s.id}" data-aos="fade-up">
+          <div class="series-accent${s.id === 'M' ? ' m-accent' : ''}"></div>
+          <div class="series-watermark">${s.id}</div>
+          <div class="series-content">
+            <div class="series-name">${s.name}</div>
+            <span class="series-tag" style="border-color:${s.tagColor};color:${s.tagColor}">${s.tag}</span>
+            <div class="series-count">${count} MODEL${count === 1 ? '' : 'S'} AVAILABLE</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  container.querySelectorAll('.series-card').forEach(card => {
+    card.addEventListener('click', () => {
+      catalogState.series = card.dataset.series;
+      transitionTo(renderModelsLevel);
+    });
+  });
+  AOS.refresh();
+  rewireCursorTargets();
+}
+
+// ═══════════════════════ LEVEL 2 — MODEL CARDS ═══════════════════════
+const tagLabels = { popular: 'Most Popular', track: 'Track Edition', 'm-perf': 'M Performance' };
+
+function renderModelsLevel(){
+  catalogState.level = 'models';
+  renderBreadcrumb();
+  const seriesInfo = window.allSeries.find(s => s.id === catalogState.series);
+  const models = getModelsForSeries(window.allModels, catalogState.series);
+  const container = document.getElementById('catalogContainer');
+  container.innerHTML = `
+    <div class="kicker" style="text-align:center">${seriesInfo ? seriesInfo.name : ''}</div>
+    <h2 class="section-heading" style="text-align:center;font-size:clamp(32px,4.5vw,48px)">${seriesInfo ? seriesInfo.name : ''} — Choose Your Model</h2>
+    <div class="models-row">
+      ${models.length ? models.map((m, i) => `
+        <div class="model-card-sp" data-index="${i}" data-aos="fade-up" data-aos-delay="${(i % 4) * 60}">
+          <div class="model-img-wrap-sp"><img src="${m.img_url}" alt="${escapeHtml(m.name)}" loading="lazy"></div>
+          <div class="model-info-sp">
+            <div class="model-name-sp">${escapeHtml(m.name)}</div>
+            <div class="model-year-sp">${escapeHtml(m.years || '')}</div>
+            <div>${(m.tags || []).map(t => `<span class="tag ${t}">${tagLabels[t] || t}</span>`).join('')}</div>
+          </div>
+        </div>`).join('') : '<div class="empty-state">No models available for this series right now</div>'}
+    </div>`;
+  container.querySelectorAll('.model-card-sp').forEach(card => {
+    card.addEventListener('click', () => {
+      catalogState.model = models[+card.dataset.index];
+      transitionTo(renderEnginesLevel);
+    });
+  });
+  AOS.refresh();
+  rewireCursorTargets();
+}
+
+// ═══════════════════════ LEVEL 3 — ENGINE SELECTION ═══════════════════════
+function renderEnginesLevel(){
+  catalogState.level = 'engines';
+  catalogState.engine = null;
+  renderBreadcrumb();
+  const model = catalogState.model;
+  const engines = getEnginesForModel(model.name);
+  const container = document.getElementById('catalogContainer');
+  container.innerHTML = `
+    <div class="kicker" style="text-align:center">${escapeHtml(model.name)}</div>
+    <h2 class="section-heading" style="text-align:center;font-size:clamp(32px,4.5vw,48px)">${escapeHtml(model.name)} — Choose Your Engine</h2>
+    <div class="engine-chips">
+      ${engines.map(e => `<button class="engine-chip" data-engine="${e}">${e}</button>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <button class="btn primary" id="engineContinueBtn" disabled style="opacity:.5">Continue <i class="fa-solid fa-arrow-right"></i></button>
+    </div>`;
+  const chips = container.querySelectorAll('.engine-chip');
+  const continueBtn = document.getElementById('engineContinueBtn');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      catalogState.engine = chip.dataset.engine;
+      continueBtn.disabled = false;
+      continueBtn.style.opacity = '1';
+    });
+  });
+  continueBtn.addEventListener('click', () => { if (catalogState.engine) transitionTo(renderPartsLevel); });
+  AOS.refresh();
+  rewireCursorTargets();
+}
+
+// ═══════════════════════ LEVEL 4 — PARTS DISPLAY ═══════════════════════
+const badgeMap = { oem: 'badge-oem', compat: 'badge-compat', perf: 'badge-perf' };
+const badgeLbl = { oem: 'OEM Original', compat: 'OEM Compatible', perf: 'Performance' };
+
+async function renderPartsLevel(){
+  catalogState.level = 'parts';
+  catalogState.category = 'All';
+  renderBreadcrumb();
+  const container = document.getElementById('catalogContainer');
+  container.innerHTML = `
+    <div class="kicker" style="text-align:center">${escapeHtml(catalogState.model.name)} — ${escapeHtml(catalogState.engine)}</div>
+    <h2 class="section-heading" style="text-align:center;font-size:clamp(32px,4.5vw,48px)">Available Parts</h2>
+    <div class="parts-filter-tabs" id="partsFilterTabs"></div>
+    <div id="partsLoadingMsg" class="fetch-loading">Loading parts...</div>
+    <div class="parts-grid" id="partsGridSp" style="display:none"></div>`;
+  renderPartsFilterTabs();
+
+  try {
+    const q = new URLSearchParams({ limit: '500' });
+    if (catalogState.series) q.set('series_id', catalogState.series);
+    if (catalogState.model?.id) q.set('model_id', String(catalogState.model.id));
+    if (catalogState.engine) q.set('engine_code', catalogState.engine);
+    const data = await apiGet('/parts?' + q.toString());
+    window.currentParts = data.items || [];
+  } catch (err) {
+    container.innerHTML += `<div class="fetch-error">Could not load parts — <button class="btn outline sm" onclick="renderPartsLevel()">Retry</button></div>`;
+    return;
+  }
+
+  document.getElementById('partsLoadingMsg').style.display = 'none';
+  document.getElementById('partsGridSp').style.display = 'grid';
+  renderPartsFilterTabs();
+  renderPartsGrid();
+  AOS.refresh();
+  rewireCursorTargets();
+}
+
+function renderPartsFilterTabs(){
+  document.getElementById('partsFilterTabs').innerHTML = PART_CATS.map(c =>
+    `<button class="pf-tab${c === catalogState.category ? ' active' : ''}" data-cat="${c}">${c}</button>`
+  ).join('');
+  document.querySelectorAll('#partsFilterTabs .pf-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      catalogState.category = tab.dataset.cat;
+      document.querySelectorAll('#partsFilterTabs .pf-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderPartsGrid();
+    });
+  });
+}
+
+function renderPartsGrid(){
+  const filtered = catalogState.category === 'All'
+    ? (window.currentParts || [])
+    : (window.currentParts || []).filter(p => p.cat === catalogState.category);
+  const grid = document.getElementById('partsGridSp');
+  if (!grid) return;
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state">No spare parts in this category right now</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(p => {
+    const hasDiscount = p.discounted_price_egp !== null && p.discounted_price_egp !== undefined;
+    const priceHtml = hasDiscount
+      ? `<del class="muted" style="font-size:16px">${fmtPrice(p.price_egp)}</del> <span style="color:var(--accent-gold)">${fmtPrice(p.discounted_price_egp)}</span>`
+      : fmtPrice(p.price_egp);
+    const finalPrice = hasDiscount ? p.discounted_price_egp : p.price_egp;
+    const partName = p.en || p.ar;
+    return `
+    <div class="card part-card" data-aos="fade-up">
+      ${p.img_url ? `
+      <div style="width:100%;height:160px;background:linear-gradient(135deg,#0a0a1a,#0d0d0d);border-radius:var(--radius);overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+        <img src="${escapeHtml(p.img_url)}" alt="${escapeHtml(partName)}" loading="lazy" style="max-width:90%;max-height:140px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,0,0,.7))">
+      </div>` : ''}
+      <div class="part-category">${escapeHtml(p.cat)}</div>
+      <div class="part-name">${escapeHtml(partName)}</div>
+      ${p.ar && p.ar !== partName ? `<div class="part-name-ar">${escapeHtml(p.ar)}</div>` : ''}
+      <div class="part-oem">OEM: ${escapeHtml(p.oem || '—')}</div>
+      <div class="part-price">${priceHtml}</div>
+      <div class="part-meta">
+        <span class="part-badge ${badgeMap[p.badge] || 'badge-oem'}">${badgeLbl[p.badge] || escapeHtml(p.badge)}</span>
+        <span class="${p.stock ? 'stock-ok' : 'stock-wait'}">${p.stock ? '✓ In Stock' : '⏳ Order — 3 days'}</span>
+      </div>
+      <button type="button" class="btn primary add-to-cart-btn" style="width:100%;justify-content:center" data-part-id="${p.id}">
+        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+      </button>
+    </div>`;
+  }).join('');
+  rewireCursorTargets();
+}
+
+// ═══════════════════════ CART ═══════════════════════
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('mo_cart') || '[]'); } catch { cart = []; }
+let cartStep = 'cart'; // 'cart' | 'details' | 'payment' | 'confirmed'
+let checkoutDetails = {};
+let checkoutMethod = null;
+let lastOrder = null;
+
+function escapeAttrSp(s){ return escapeHtml(s).replace(/`/g, '&#96;'); }
+function saveCart(){ localStorage.setItem('mo_cart', JSON.stringify(cart)); updateCartBadge(); }
+function updateCartBadge(){
+  const n = cart.reduce((s, it) => s + it.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = n;
+  badge.style.display = n ? 'flex' : 'none';
+}
+function cartTotal(){ return cart.reduce((s, it) => s + it.price * it.qty, 0); }
+
+function addToCart(part){
+  const existing = cart.find(it => it.part_id === part.part_id);
+  if (existing) existing.qty += 1;
+  else cart.push({ part_id: part.part_id, name: part.name, oem: part.oem, price: part.price, qty: 1 });
+  saveCart();
+  openCartDrawer();
+}
+
+function openCartDrawer(){
+  cartStep = 'cart';
+  document.getElementById('cartOverlay').classList.add('show');
+  document.getElementById('cartDrawer').classList.add('show');
+  renderCartDrawer();
+}
+function closeCartDrawer(){
+  document.getElementById('cartOverlay').classList.remove('show');
+  document.getElementById('cartDrawer').classList.remove('show');
+}
+
+function renderCartDrawer(){
+  const titleEl = document.getElementById('cartDrawerTitle');
+  const body = document.getElementById('cartDrawerBody');
+
+  if (cartStep === 'cart') {
+    titleEl.textContent = 'YOUR CART';
+    if (!cart.length) {
+      body.innerHTML = `<div class="cart-empty"><i class="fa-solid fa-cart-shopping"></i><p>Your cart is empty</p></div>`;
+      return;
+    }
+    body.innerHTML = `
+      <div class="cart-items">
+        ${cart.map(it => `
+          <div class="cart-item-row" data-id="${it.part_id}">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${escapeHtml(it.name)}</div>
+              <div class="cart-item-price">${fmtPrice(it.price)}</div>
+            </div>
+            <div class="qty-stepper">
+              <button type="button" class="qty-btn" data-action="qty-dec" data-id="${it.part_id}">−</button>
+              <span>${it.qty}</span>
+              <button type="button" class="qty-btn" data-action="qty-inc" data-id="${it.part_id}">+</button>
+            </div>
+            <button type="button" class="cart-item-remove" data-action="cart-remove" data-id="${it.part_id}" aria-label="Remove"><i class="fa-solid fa-trash"></i></button>
+          </div>`).join('')}
+      </div>
+      <div class="cart-summary">
+        <div class="cart-summary-row"><span>Subtotal</span><span>${fmtPrice(cartTotal())}</span></div>
+      </div>
+      <button type="button" class="btn primary" style="width:100%;margin-top:16px" id="cartCheckoutBtn"><i class="fa-solid fa-arrow-right"></i> Proceed to Checkout</button>`;
+    document.getElementById('cartCheckoutBtn').onclick = () => { cartStep = 'details'; renderCartDrawer(); };
+  }
+
+  else if (cartStep === 'details') {
+    titleEl.textContent = 'YOUR DETAILS';
+    body.innerHTML = `
+      <button type="button" class="bk-back-step" id="cartBackToCart"><i class="fa-solid fa-arrow-left"></i> Back to Cart</button>
+      <form id="cartDetailsForm">
+        <div class="form-field"><label>Mobile Number</label><input type="tel" name="phone" required placeholder="01X XXXX XXXX" pattern="01[0-9]{9}" value="${escapeAttrSp(checkoutDetails.phone || '')}"></div>
+        <div class="form-field"><label>Full Name</label><input type="text" name="name" required value="${escapeAttrSp(checkoutDetails.name || '')}"></div>
+        <div class="form-field"><label>Email</label><input type="email" name="email" value="${escapeAttrSp(checkoutDetails.email || '')}"></div>
+        <div class="form-field"><label>Delivery Address</label><textarea name="address" rows="3" required>${escapeHtml(checkoutDetails.address || '')}</textarea></div>
+        <div class="form-field"><label>Area / Delivery Range</label>
+          <select name="deliveryRange">
+            <option value="">Select area</option>
+            <option ${checkoutDetails.deliveryRange === 'New Cairo / Fifth Settlement' ? 'selected' : ''}>New Cairo / Fifth Settlement</option>
+            <option ${checkoutDetails.deliveryRange === 'Greater Cairo' ? 'selected' : ''}>Greater Cairo</option>
+            <option ${checkoutDetails.deliveryRange === 'Giza' ? 'selected' : ''}>Giza</option>
+            <option ${checkoutDetails.deliveryRange === 'Other Governorate' ? 'selected' : ''}>Other Governorate</option>
+          </select>
+        </div>
+        <button type="submit" class="btn primary" style="width:100%;margin-top:8px"><i class="fa-solid fa-credit-card"></i> Continue to Payment</button>
+      </form>`;
+    document.getElementById('cartBackToCart').onclick = () => { cartStep = 'cart'; renderCartDrawer(); };
+    document.getElementById('cartDetailsForm').addEventListener('submit', e => {
+      e.preventDefault();
+      checkoutDetails = Object.fromEntries(new FormData(e.target).entries());
+      cartStep = 'payment';
+      renderCartDrawer();
+    });
+  }
+
+  else if (cartStep === 'payment') {
+    titleEl.textContent = 'PAYMENT METHOD';
+    body.innerHTML = `
+      <button type="button" class="bk-back-step" id="cartBackToDetails"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <div class="payment-methods-grid" id="cartPayMethods"></div>
+      <div class="payment-details-panel" id="cartPayDetails" style="display:none"></div>
+      <div class="payment-screenshot-wrap" id="cartScreenshotWrap" style="display:none">
+        <div class="form-field" style="margin-top:20px">
+          <label><i class="fa-solid fa-image"></i> Upload Transfer Screenshot <span style="color:var(--danger)">*</span></label>
+          <div class="screenshot-dropzone" id="cartScreenshotZone">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px;color:var(--text-muted);margin-bottom:10px;display:block"></i>
+            <div style="font-family:Rajdhani;font-size:13px;letter-spacing:1px;color:var(--text-secondary)">Tap to upload or drag your screenshot here</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:6px">JPG / PNG / WEBP — max 10MB</div>
+          </div>
+          <input type="file" name="payment_screenshot" accept="image/*" id="cartScreenshotInput" style="display:none">
+          <div class="screenshot-preview" id="cartScreenshotPreview" style="display:none">
+            <img id="cartScreenshotImg" src="" alt="Payment screenshot" style="max-width:100%;max-height:220px;border-radius:10px;border:1px solid var(--border);object-fit:contain">
+            <button type="button" class="btn danger sm" id="cartScreenshotClear" style="margin-top:10px"><i class="fa-solid fa-xmark"></i> Remove</button>
+          </div>
+          <div class="field-error" id="cartScreenshotErr" style="display:none">Please upload a screenshot of your payment to confirm your order.</div>
+        </div>
+      </div>
+      <div class="form-msg" id="cartFormMsg"></div>
+      <button type="button" class="btn primary" id="cartSubmitBtn" style="width:100%;margin-top:20px"><i class="fa-solid fa-paper-plane"></i> Confirm Order</button>`;
+    document.getElementById('cartBackToDetails').onclick = () => { cartStep = 'details'; renderCartDrawer(); };
+    renderCartPaymentMethods();
+    document.getElementById('cartSubmitBtn').onclick = submitCartOrder;
+  }
+
+  else if (cartStep === 'confirmed') {
+    titleEl.textContent = 'ORDER CONFIRMED';
+    body.innerHTML = `
+      <div class="confirm-card">
+        <div style="font-family:'Bebas Neue';font-size:28px;color:var(--success);margin-bottom:4px;letter-spacing:1px">✓ ORDER CONFIRMED!</div>
+        <div style="font-family:Rajdhani;font-size:13px;letter-spacing:2px;color:var(--text-muted);margin:10px 0 4px">ORDER REFERENCE</div>
+        <div style="font-family:'Bebas Neue';font-size:34px;color:var(--accent-cyan)">${escapeHtml(lastOrder?.ref_number || '')}</div>
+        <div class="bk-summary-card">
+          <div class="bk-summary-row"><span>Items</span><span>${(lastOrder?.items || []).reduce((s, it) => s + it.quantity, 0)}</span></div>
+          <div class="bk-summary-row"><span>Total</span><span>${fmtPrice(lastOrder?.total_amount || 0)}</span></div>
+          <div class="bk-summary-row"><span>Payment</span><span>${({ cash: 'Cash on Delivery', bank: 'Bank Transfer', wallet: 'Mobile Wallet' })[checkoutMethod] || '—'}</span></div>
+        </div>
+        <p style="color:var(--text-secondary);margin-top:16px;font-size:14px">Our team will contact you within 2 hours to confirm delivery.</p>
+        <button type="button" class="btn primary" style="width:100%;margin-top:16px" id="cartContinueShopping">Continue Shopping</button>
+      </div>`;
+    document.getElementById('cartContinueShopping').onclick = closeCartDrawer;
+  }
+}
+
+function renderCartPaymentMethods(){
+  const p = window.MO_PAYMENT || {};
+  const container = document.getElementById('cartPayMethods');
+  const methods = [];
+  if (p.cash)   methods.push({ id: 'cash',   icon: 'fa-money-bills',          label: 'Cash on Delivery', sub: 'Pay when it arrives' });
+  if (p.bank)   methods.push({ id: 'bank',   icon: 'fa-building-columns',     label: 'Bank Transfer',   sub: p.bankName || 'Transfer to our account' });
+  if (p.wallet) methods.push({ id: 'wallet', icon: 'fa-mobile-screen-button', label: 'Mobile Wallet',   sub: p.walletProvider || 'InstaPay / Vodafone Cash' });
+  if (!methods.length) {
+    container.innerHTML = `<div class="fetch-error">No payment methods available. Please contact us on WhatsApp.</div>`;
+    return;
+  }
+  container.innerHTML = methods.map(m => `
+    <button type="button" class="payment-method-card" data-method="${m.id}">
+      <i class="fa-solid ${m.icon}" style="font-size:24px;color:var(--accent-cyan);margin-bottom:8px;display:block"></i>
+      <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:1px">${m.label}</div>
+      <div style="font-family:Cairo;font-size:11px;color:var(--text-secondary);margin-top:4px">${escapeHtml(m.sub)}</div>
+    </button>`).join('');
+}
+
+function showCartPaymentDetails(method){
+  checkoutMethod = method;
+  const p = window.MO_PAYMENT || {};
+  const panel = document.getElementById('cartPayDetails');
+  const screenshotWrap = document.getElementById('cartScreenshotWrap');
+  document.querySelectorAll('#cartPayMethods .payment-method-card').forEach(c => c.classList.toggle('active', c.dataset.method === method));
+  panel.style.display = 'block';
+
+  if (method === 'cash') {
+    panel.innerHTML = `<div class="payment-info-box" style="border-color:rgba(0,204,102,.3);background:rgba(0,204,102,.05)">
+      <i class="fa-solid fa-circle-info" style="color:var(--success);font-size:18px;margin-bottom:8px;display:block"></i>
+      <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--success);margin-bottom:6px">CASH ON DELIVERY</div>
+      <div style="font-family:Cairo;font-size:14px;color:var(--text-secondary);line-height:1.7">Pay in cash when your order arrives. Our team will confirm the final amount when they contact you.</div>
+    </div>`;
+    screenshotWrap.style.display = 'none';
+  } else if (method === 'bank') {
+    panel.innerHTML = `<div class="payment-info-box">
+      <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--accent-cyan);margin-bottom:14px">BANK TRANSFER DETAILS</div>
+      <div class="payment-detail-row"><span>Bank</span><span>${escapeHtml(p.bankName)}</span></div>
+      <div class="payment-detail-row"><span>Account Holder</span><span>${escapeHtml(p.bankHolder)}</span></div>
+      <div class="payment-detail-row account-number"><span>Account Number</span><span>${escapeHtml(p.bankAccount)} <button type="button" class="copy-number-btn" data-copy="${escapeAttrSp(p.bankAccount)}" title="Copy"><i class="fa-regular fa-copy"></i></button></span></div>
+      <div style="margin-top:12px;font-family:Cairo;font-size:12px;color:var(--text-muted);line-height:1.7">After transferring, upload your screenshot below. Your order won't be confirmed until the screenshot is received.</div>
+    </div>`;
+    screenshotWrap.style.display = 'block';
+  } else if (method === 'wallet') {
+    panel.innerHTML = `<div class="payment-info-box">
+      <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--accent-gold);margin-bottom:14px">${escapeHtml(p.walletProvider).toUpperCase()} DETAILS</div>
+      <div class="payment-detail-row account-number"><span>Wallet Number</span><span>${escapeHtml(p.walletNumber)} <button type="button" class="copy-number-btn" data-copy="${escapeAttrSp(p.walletNumber)}" title="Copy"><i class="fa-regular fa-copy"></i></button></span></div>
+      <div style="margin-top:12px;font-family:Cairo;font-size:12px;color:var(--text-muted);line-height:1.7">Send the payment to the wallet number above, then upload your screenshot below.</div>
+    </div>`;
+    screenshotWrap.style.display = 'block';
+  }
+}
+
+async function submitCartOrder(){
+  const msgBox = document.getElementById('cartFormMsg');
+  const submitBtn = document.getElementById('cartSubmitBtn');
+  msgBox.textContent = ''; msgBox.className = 'form-msg';
+  if (!checkoutMethod) { msgBox.textContent = 'Please select a payment method.'; msgBox.classList.add('err'); return; }
+  const screenshotInput = document.getElementById('cartScreenshotInput');
+  if ((checkoutMethod === 'bank' || checkoutMethod === 'wallet') && !screenshotInput?.files?.length) {
+    document.getElementById('cartScreenshotErr').style.display = 'block';
+    return;
+  }
+  submitBtn.disabled = true;
+  try {
+    let screenshotUrl = null;
+    if (screenshotInput?.files?.length) {
+      const fd = new FormData();
+      fd.append('file', screenshotInput.files[0]);
+      const res = await fetch(`${API}/uploads/payment-screenshot`, { method: 'POST', body: fd });
+      if (!res.ok) throw new Error('Screenshot upload failed');
+      screenshotUrl = (await res.json()).url;
+    }
+    const payload = {
+      customer_phone: checkoutDetails.phone,
+      customer_name: checkoutDetails.name,
+      customer_email: checkoutDetails.email || '',
+      delivery_address: checkoutDetails.address,
+      delivery_range: checkoutDetails.deliveryRange || '',
+      payment_method: checkoutMethod,
+      payment_screenshot_url: screenshotUrl,
+      items: cart.map(it => ({ part_id: it.part_id, name: it.name, oem: it.oem || '', price: it.price, qty: it.qty }))
+    };
+    const order = await apiPost('/orders', payload);
+    lastOrder = order;
+    cart = [];
+    saveCart();
+    cartStep = 'confirmed';
+    renderCartDrawer();
+  } catch (err) {
+    msgBox.textContent = 'Could not place your order — ' + err.message + '. Please try again or contact us on WhatsApp.';
+    msgBox.classList.add('err');
+  } finally {
+    submitBtn.disabled = false;
+  }
+}
+
+// ── Cart event delegation ──
+document.getElementById('cartFloatBtn').addEventListener('click', openCartDrawer);
+document.getElementById('cartDrawerClose').addEventListener('click', closeCartDrawer);
+document.getElementById('cartOverlay').addEventListener('click', closeCartDrawer);
+
+document.addEventListener('click', e => {
+  const addBtn = e.target.closest('.add-to-cart-btn');
+  if (addBtn) {
+    e.preventDefault();
+    const partId = Number(addBtn.dataset.partId);
+    const part = (window.currentParts || []).find(p => p.id === partId);
+    if (!part) return;
+    const finalPrice = (part.discounted_price_egp !== null && part.discounted_price_egp !== undefined) ? part.discounted_price_egp : part.price_egp;
+    addToCart({ part_id: part.id, name: part.en || part.ar, oem: part.oem || '', price: finalPrice });
+    return;
+  }
+
+  const qtyBtn = e.target.closest('[data-action="qty-inc"],[data-action="qty-dec"]');
+  if (qtyBtn) {
+    const id = Number(qtyBtn.dataset.id);
+    const it = cart.find(x => x.part_id === id);
+    if (it) {
+      it.qty += qtyBtn.dataset.action === 'qty-inc' ? 1 : -1;
+      if (it.qty <= 0) cart = cart.filter(x => x.part_id !== id);
+      saveCart();
+      renderCartDrawer();
+    }
+    return;
+  }
+
+  const removeBtn = e.target.closest('[data-action="cart-remove"]');
+  if (removeBtn) {
+    cart = cart.filter(x => x.part_id !== Number(removeBtn.dataset.id));
+    saveCart();
+    renderCartDrawer();
+    return;
+  }
+
+  const methodCard = e.target.closest('#cartPayMethods .payment-method-card');
+  if (methodCard) {
+    e.preventDefault();
+    showCartPaymentDetails(methodCard.dataset.method);
+    return;
+  }
+
+  const zone = e.target.closest('#cartScreenshotZone');
+  if (zone) { document.getElementById('cartScreenshotInput')?.click(); return; }
+
+  const clearBtn = e.target.closest('#cartScreenshotClear');
+  if (clearBtn) {
+    const input = document.getElementById('cartScreenshotInput');
+    if (input) input.value = '';
+    document.getElementById('cartScreenshotPreview').style.display = 'none';
+    document.getElementById('cartScreenshotZone').style.display = 'block';
+    return;
+  }
+
+  const copyBtn = e.target.closest('.copy-number-btn');
+  if (copyBtn) {
+    e.preventDefault();
+    navigator.clipboard.writeText(copyBtn.dataset.copy).then(() => {
+      copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+      setTimeout(() => { copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>'; }, 1800);
+    });
+    return;
+  }
+});
+
+document.addEventListener('change', e => {
+  const input = e.target.closest('#cartScreenshotInput');
+  if (!input) return;
+  const file = input.files?.[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) {
+    const err = document.getElementById('cartScreenshotErr');
+    err.style.display = 'block';
+    err.textContent = 'File too large — max 10MB';
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('cartScreenshotImg').src = ev.target.result;
+    document.getElementById('cartScreenshotPreview').style.display = 'block';
+    document.getElementById('cartScreenshotZone').style.display = 'none';
+    document.getElementById('cartScreenshotErr').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+updateCartBadge();
+
+// ═══════════════════════ MY PART ORDERS (customer-facing history) ═══════════════════════
+const PARTS_HISTORY_STATUS_META = {
+  pending:   { label: 'Pending',     bg: 'rgba(212,160,23,.1)', border: 'rgba(212,160,23,.3)', color: 'var(--accent-gold)' },
+  confirmed: { label: 'Confirmed ✓', bg: 'rgba(0,204,102,.1)',  border: 'rgba(0,204,102,.3)',  color: 'var(--success)'     },
+  cancelled: { label: 'Cancelled',   bg: 'rgba(255,51,51,.1)',  border: 'rgba(255,51,51,.3)',  color: 'var(--danger)'      }
+};
+const PARTS_HISTORY_PAYMENT_META = {
+  pending:   { label: '⏳ Payment Pending',   bg: 'rgba(212,160,23,.08)', border: 'rgba(212,160,23,.25)', color: 'var(--accent-gold)' },
+  confirmed: { label: '✅ Payment Confirmed', bg: 'rgba(0,204,102,.08)',  border: 'rgba(0,204,102,.25)',  color: 'var(--success)'     },
+  rejected:  { label: '❌ Payment Rejected',  bg: 'rgba(255,51,51,.08)',  border: 'rgba(255,51,51,.25)',  color: 'var(--danger)'      }
+};
+
+document.getElementById('partsOrdersToggle').addEventListener('click', () => {
+  const panel = document.getElementById('partsOrdersPanel');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => document.getElementById('partsPhoneInput')?.focus(), 300);
+  }
+});
+document.getElementById('partsHistoryBtn').addEventListener('click', loadPartsHistory);
+document.getElementById('partsPhoneInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); loadPartsHistory(); }
+});
+
+async function loadPartsHistory(){
+  const input = document.getElementById('partsPhoneInput');
+  const list = document.getElementById('partsHistoryList');
+  const btn = document.getElementById('partsHistoryBtn');
+  const phone = input?.value?.trim();
+
+  if (!phone || !/^01[0-9]{9}$/.test(phone)) {
+    input.style.borderColor = 'var(--danger)';
+    setTimeout(() => { input.style.borderColor = ''; }, 1500);
+    return;
+  }
+
+  btn.disabled = true;
+  list.innerHTML = loadingHTML();
+
+  try {
+    const orders = await apiGet('/orders/customer/' + encodeURIComponent(phone));
+    if (!orders || !orders.length) {
+      list.innerHTML = `<div style="text-align:center;padding:32px 20px;color:var(--text-secondary);font-family:Cairo">No orders found for this number.</div>`;
+      return;
+    }
+    list.innerHTML = orders.map(o => {
+      const sm = PARTS_HISTORY_STATUS_META[o.status] || PARTS_HISTORY_STATUS_META.pending;
+      const pm = (o.payment_status && o.payment_status !== 'pending') ? PARTS_HISTORY_PAYMENT_META[o.payment_status] : null;
+      const dateStr = o.created_at ? new Date(o.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+      const items = o.items || [];
+      const itemsLabel = items.length ? `${escapeHtml(items[0].part_name)}${items.length > 1 ? ` +${items.length - 1} more` : ''}` : 'Order';
+      return `
+      <div class="parts-history-row">
+        <div style="flex:1;min-width:0">
+          <div class="parts-history-name">${itemsLabel}</div>
+          <div class="parts-history-meta">
+            ${escapeHtml(o.ref_number)} &nbsp;·&nbsp; ${escapeHtml(dateStr)} &nbsp;·&nbsp;
+            <span style="color:var(--accent-gold);font-weight:600">${fmtPrice(o.agreed_amount || o.total_amount)}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+          <span class="parts-history-badge" style="background:${sm.bg};border-color:${sm.border};color:${sm.color}">${sm.label}</span>
+          ${pm ? `<span class="parts-history-badge" style="background:${pm.bg};border-color:${pm.border};color:${pm.color};font-size:10px">${pm.label}</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    list.innerHTML = `<div class="fetch-error">Could not load orders — please try again<br><button class="btn outline sm" onclick="loadPartsHistory()" style="margin-top:10px">Retry</button></div>`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ═══════════════════════ INIT ═══════════════════════
+async function loadCatalogData(){
+  const container = document.getElementById('catalogContainer');
+  try {
+    const [models, seriesRes, engineRes] = await Promise.all([
+      apiGet('/models'),
+      apiGet('/service-config/catalog_series'),
+      apiGet('/service-config/catalog_engine_map')
+    ]);
+    window.allModels = models;
+    window.allSeries = seriesRes.value || [];
+    window.engineMap = engineRes.value || {};
+  } catch (err) {
+    container.innerHTML = errorHTML('loadCatalogData');
+    return;
+  }
+  // Parts are fetched lazily per series/model/engine selection in renderPartsLevel().
+  window.currentParts = [];
+  renderSeries();
+}
+
+async function init(){
+  AOS.init({ duration: 700, once: true, offset: 60 });
+  await Promise.allSettled([loadSettings(), loadCatalogData()]);
+}
+init();
+</script>
+</body>
+</html>

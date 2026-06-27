@@ -1,0 +1,2627 @@
+<!-- FILE: admin.html | PURPOSE: Admin CMS dashboard for MO BY AHMED MAHMOUD | DEPENDS ON: backend API at http://localhost:3000/api -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — MO BY AHMED MAHMOUD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<style>
+:root{
+  --bg-primary:#050505;--bg-secondary:#0d0d0d;--bg-card:#111111;--border:#1e1e1e;
+  --accent-blue:#1c6cfc;--accent-cyan:#00c8ff;--accent-gold:#d4a017;
+  --text-primary:#ffffff;--text-secondary:#a0a0a0;--text-muted:#505050;
+  --danger:#ff3333;--success:#00cc66;--warn:#ff9900;
+  --radius:14px;--radius-lg:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;max-width:100vw}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;max-width:100vw}
+img{max-width:100%;height:auto}
+input,textarea,select,button{font-family:inherit}
+input,textarea,select{font-size:16px}
+[dir-auto]{unicode-bidi:plaintext}
+.display{font-family:'Bebas Neue',sans-serif;letter-spacing:1.5px}
+.muted{color:var(--text-secondary)}
+.hidden{display:none!important}
+a{color:var(--accent-cyan);text-decoration:none}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:11px 20px;border-radius:50px;border:1.5px solid transparent;cursor:pointer;font-weight:600;font-size:14px;transition:.2s;white-space:nowrap;background:rgba(255,255,255,.05);color:#fff}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--accent-blue),#0f9bff);color:#fff}
+.btn.outline{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04)}
+.btn.outline:hover{border-color:var(--accent-cyan);color:var(--accent-cyan)}
+.btn.danger{background:rgba(255,51,51,.12);border-color:rgba(255,51,51,.4);color:#ff6666}
+.btn.gold{background:linear-gradient(135deg,var(--accent-gold),#f5c518);color:#000}
+.btn.success{background:rgba(0,204,102,.12);border-color:rgba(0,204,102,.4);color:#33dd88}
+.btn.sm{padding:7px 14px;font-size:12px;min-height:36px;min-width:36px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── LOGIN ── */
+#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,rgba(28,108,252,.12),transparent 50%),radial-gradient(circle at 70% 70%,rgba(0,200,255,.08),transparent 45%),var(--bg-primary);z-index:2000}
+.login-box{width:min(380px,90vw);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px 32px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.login-logo{text-align:center;margin-bottom:8px;font-family:'Bebas Neue';font-size:34px;letter-spacing:2px}
+.login-logo small{display:block;font-family:'Cairo';font-size:13px;color:var(--accent-gold);letter-spacing:1px;margin-top:2px}
+.login-sub{text-align:center;color:var(--text-secondary);font-size:13px;margin-bottom:28px;letter-spacing:1px}
+#loginError{display:none;background:rgba(255,51,51,.1);border:1px solid rgba(255,51,51,.3);color:#ff8080;padding:10px 14px;border-radius:var(--radius);font-size:13px;margin-bottom:16px}
+#loginError.show{display:block}
+
+/* ── FORM FIELDS ── */
+.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.form-field label{font-size:12px;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase}
+.form-field input,.form-field textarea,.form-field select{padding:12px 14px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-primary);color:#fff;font-size:16px!important;outline:none;transition:.2s;width:100%}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--accent-cyan);box-shadow:0 0 0 3px rgba(0,200,255,.12)}
+.form-field .field-error{color:var(--danger);font-size:12px;display:none}
+.form-field.invalid input,.form-field.invalid select,.form-field.invalid textarea{border-color:var(--danger)}
+.form-field.invalid .field-error{display:block}
+.form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media(max-width:639px){.form-grid2{grid-template-columns:1fr;gap:0}}
+.checkbox-row{display:flex;gap:16px;flex-wrap:wrap;padding:10px 0}
+.checkbox-row label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary)}
+
+/* ── APP SHELL ── */
+#app{display:flex;min-height:100vh}
+.sidebar{width:240px;flex-shrink:0;background:var(--bg-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;transition:width .25s,transform .3s}
+.sidebar-brand{padding:24px 20px 18px;font-family:'Bebas Neue';font-size:20px;letter-spacing:1.5px;border-bottom:1px solid var(--border)}
+.sidebar-brand small{display:block;font-family:'Cairo';font-size:10px;color:var(--accent-gold);letter-spacing:1px;margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:13px 20px;min-height:44px;color:var(--text-secondary);font-size:14px;cursor:pointer;border-right:3px solid transparent;transition:.2s}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--accent-cyan);background:rgba(0,200,255,.06);border-right-color:var(--accent-cyan)}
+.nav-icon{width:20px;text-align:center;flex-shrink:0}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 32px;border-bottom:1px solid var(--border);background:var(--bg-secondary);position:sticky;top:0;z-index:50}
+.topbar h1{font-family:'Bebas Neue';font-size:clamp(20px,4vw,26px);letter-spacing:1px}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.topbar-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.content{padding:28px 32px;flex:1;min-width:0}
+
+/* sidebar toggle (hamburger) — mobile only */
+.sidebar-toggle{display:none;flex-direction:column;justify-content:center;gap:4px;width:44px;height:44px;flex-shrink:0;cursor:pointer;border:none;background:none;padding:4px}
+.sidebar-toggle span{display:block;height:2px;background:#fff;border-radius:2px}
+
+/* overlay behind open drawer */
+.sidebar-overlay{position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none}
+.sidebar-overlay.show{display:block}
+
+/* Tablet: collapse to icon rail */
+@media(max-width:1023px){
+  .sidebar{width:64px}
+  .sidebar-brand,.nav-label{display:none}
+  .nav-item{justify-content:center;padding:14px 0}
+}
+
+/* Mobile: off-canvas drawer */
+@media(max-width:639px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:200;width:260px;transform:translateX(-100%);box-shadow:4px 0 24px rgba(0,0,0,.6)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar.open .sidebar-brand,.sidebar.open .nav-label{display:block}
+  .sidebar.open .nav-item{justify-content:flex-start;padding:13px 20px}
+  .sidebar-toggle{display:flex}
+  .topbar{padding:14px 16px}
+  .content{padding:16px}
+}
+
+/* ── STAT CARDS ── */
+.stat-cards{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.stat-card.gold{border-color:rgba(212,160,23,.3);background:linear-gradient(135deg,rgba(212,160,23,.07),var(--bg-card))}
+.stat-card-num{font-family:'Bebas Neue';font-size:clamp(26px,4vw,34px);color:var(--accent-cyan);line-height:1}
+.stat-card.gold .stat-card-num{color:var(--accent-gold)}
+.stat-card-label{font-size:12px;color:var(--text-secondary);margin-top:4px}
+@media(max-width:1279px){.stat-cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:767px){.stat-cards{grid-template-columns:repeat(2,1fr)}}
+
+/* ── PANEL / TABLE ── */
+.panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(16px,3vw,24px);margin-bottom:24px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.data-table{min-width:640px}
+.panel h3{font-family:'Bebas Neue';font-size:20px;margin-bottom:16px;letter-spacing:1px}
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.toolbar .search-input{flex:1;min-width:180px;max-width:280px;padding:10px 14px;border-radius:50px;border:1px solid var(--border);background:var(--bg-primary);color:#fff;outline:none}
+.toolbar select{padding:10px 14px;border-radius:50px;border:1px solid var(--border);background:var(--bg-primary);color:#fff;outline:none}
+.data-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.data-table th{text-align:left;padding:10px 12px;color:var(--text-muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.data-table td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr.dragging{opacity:.3}
+.data-table tr[draggable="true"]{cursor:grab}
+.thumb{width:46px;height:32px;object-fit:cover;border-radius:6px;background:#1a1a1a}
+.empty{text-align:center;color:var(--text-muted);padding:30px!important}
+.drag-handle{color:var(--text-muted);cursor:grab;width:20px}
+.tag-chip{display:inline-block;padding:3px 9px;border-radius:50px;font-size:11px;border:1px solid rgba(0,200,255,.3);color:var(--accent-cyan);background:rgba(0,200,255,.07);margin:2px}
+.badge{display:inline-block;padding:4px 11px;border-radius:50px;font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+.status-pending{background:rgba(212,160,23,.12);color:var(--accent-gold);border:1px solid rgba(212,160,23,.35)}
+.status-confirmed{background:rgba(0,204,102,.12);color:var(--success);border:1px solid rgba(0,204,102,.35)}
+.status-cancelled{background:rgba(255,51,51,.12);color:#ff6666;border:1px solid rgba(255,51,51,.35)}
+.badge-instock{color:var(--success)}
+.badge-wait{color:var(--warn)}
+.pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;font-size:13px;color:var(--text-secondary)}
+.error-block{background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);color:#ff8888;padding:18px;border-radius:var(--radius);text-align:center}
+.loading-spinner{display:flex;justify-content:center;padding:60px}
+.loading-spinner::after{content:"";width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent-cyan);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sub-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.sub-tab{padding:9px 18px;border-radius:50px;border:1.5px solid var(--border);background:rgba(255,255,255,.03);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:.2s}
+.sub-tab.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff}
+.list-editor{border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.list-editor-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.list-editor-row input{flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-primary);color:#fff}
+.day-block{border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.day-block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12px;letter-spacing:1px;color:var(--accent-cyan);text-transform:uppercase}
+.slot-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:50px;background:rgba(255,255,255,.05);border:1px solid var(--border);font-size:12px;margin:3px}
+.slot-chip button{background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;line-height:1}
+.add-inline{display:flex;gap:8px;margin-top:6px}
+.add-inline input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-primary);color:#fff}
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.media-item{background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.media-item img{width:100%;height:120px;object-fit:cover;display:block;background:#1a1a1a}
+.media-item .media-meta{padding:10px;font-size:12px}
+.media-item .media-meta .fn{color:var(--text-secondary);word-break:break-all;margin-bottom:6px}
+.media-item .media-actions{display:flex;gap:6px;padding:0 10px 10px}
+.dropzone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:36px;text-align:center;color:var(--text-secondary);margin-bottom:20px;transition:.2s;cursor:pointer}
+.dropzone.drag{border-color:var(--accent-cyan);background:rgba(0,200,255,.04)}
+
+/* ── PREVIEW CARD ── */
+.preview-card{border:1px solid var(--border);border-radius:var(--radius);padding:16px;background:var(--bg-primary);font-size:13px}
+
+/* ── MODAL ── */
+#modalRoot{position:fixed;inset:0;z-index:1500;display:none;align-items:flex-start;justify-content:center;padding:50px 16px;overflow-y:auto;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+#modalRoot.open{display:flex}
+.modal-box{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);width:min(640px,100%);margin-bottom:40px}
+.modal-box.wide{width:min(900px,100%)}
+@media(max-width:479px){
+  #modalRoot{padding:0;align-items:flex-end}
+  .modal-box{border-radius:var(--radius-lg) var(--radius-lg) 0 0;margin-bottom:0;width:100%}
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--border)}
+.modal-head h3{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px}
+.modal-x{background:none;border:1px solid var(--border);width:34px;height:34px;border-radius:50%;color:#fff;cursor:pointer;font-size:14px}
+.modal-x:hover{border-color:var(--danger);color:var(--danger)}
+.modal-body{padding:22px 26px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+.confirm-text{font-size:14px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6}
+.detail-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px;gap:16px}
+.detail-row span:first-child{color:var(--text-muted)}
+.detail-row span:last-child{text-align:right;word-break:break-word}
+
+/* ── TOAST ── */
+#toastContainer{position:fixed;top:20px;right:20px;z-index:3000;display:flex;flex-direction:column;gap:10px}
+.toast{padding:14px 20px;border-radius:var(--radius);font-size:13.5px;min-width:260px;box-shadow:0 12px 30px rgba(0,0,0,.4);animation:toastIn .25s ease;border:1px solid}
+.toast.success{background:#0a1f14;border-color:rgba(0,204,102,.4);color:#5fe3a0}
+.toast.error{background:#220a0a;border-color:rgba(255,51,51,.4);color:#ff8a8a}
+.toast.info{background:#0a1620;border-color:rgba(0,200,255,.4);color:#7fdfff}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+</style>
+</head>
+<body>
+<div id="loginScreen">
+  <div class="login-box">
+    <img src="assets/logo-mo.png" alt="MO by Ahmed Mahmoud" style="width:200px;height:auto;display:block;margin:0 auto 16px">
+    <div class="login-sub">CMS CONTROL PANEL</div>
+    <div id="loginError"></div>
+    <form id="loginForm">
+      <div class="form-field"><label>Username</label><input name="username" required autocomplete="username"></div>
+      <div class="form-field"><label>Password</label><input name="password" type="password" required autocomplete="current-password"></div>
+      <button type="submit" class="btn primary" style="width:100%;margin-top:6px">Sign In</button>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <aside class="sidebar">
+    <div class="sidebar-brand">MO ADMIN<small>BY AHMED MAHMOUD</small></div>
+    <div class="nav-item active" data-nav="dashboard"><span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span></div>
+    <div class="nav-item" data-nav="models"><span class="nav-icon">🚗</span><span class="nav-label">BMW Models</span></div>
+    <div class="nav-item" data-nav="parts"><span class="nav-icon">🔩</span><span class="nav-label">Spare Parts</span></div>
+    <div class="nav-item" data-nav="catalog"><span class="nav-icon">🧩</span><span class="nav-label">Catalog: Series & Engines</span></div>
+    <div class="nav-item" data-nav="discounts"><span class="nav-icon">🏷️</span><span class="nav-label">Discounts</span></div>
+    <div class="nav-item" data-nav="bookings"><span class="nav-icon">📅</span><span class="nav-label">Bookings</span></div>
+    <div class="nav-item" data-nav="orders"><span class="nav-icon">📦</span><span class="nav-label">Spare Parts Orders</span></div>
+    <div class="nav-item" data-nav="events"><span class="nav-icon">🎪</span><span class="nav-label">Events</span></div>
+    <div class="nav-item" data-nav="testimonials"><span class="nav-icon">⭐</span><span class="nav-label">Testimonials</span></div>
+    <div class="nav-item" data-nav="customers"><span class="nav-icon">👤</span><span class="nav-label">Customers (VIN)</span></div>
+    <div class="nav-item" data-nav="services"><span class="nav-icon">🎨</span><span class="nav-label">Services & Packages</span></div>
+    <div class="nav-item" data-nav="banners"><span class="nav-icon">🖼️</span><span class="nav-label">Banners / Hero</span></div>
+    <div class="nav-item" data-nav="media"><span class="nav-icon">📸</span><span class="nav-label">Media Library</span></div>
+    <div class="nav-item" data-nav="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Site Settings</span></div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <button class="btn outline sm" id="changePwBtn"><i class="fa-solid fa-key"></i> Change Password</button>
+        <button class="btn danger sm" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </header>
+    <div id="content" class="content"></div>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastContainer"></div>
+<script>
+// ═══════════════════════ CORE: API, AUTH, TOAST, MODAL ═══════════════════════
+const BACKEND_ORIGIN = 'http://localhost:3000';
+const API = BACKEND_ORIGIN + '/api';
+
+let TOKEN = localStorage.getItem('mo_admin_token');
+let TOKEN_EXP = Number(localStorage.getItem('mo_admin_exp') || 0);
+
+function isAuthed(){ return !!TOKEN && Date.now() < TOKEN_EXP; }
+function saveAuth(token, expiresAt){
+  TOKEN = token; TOKEN_EXP = expiresAt;
+  localStorage.setItem('mo_admin_token', token);
+  localStorage.setItem('mo_admin_exp', String(expiresAt));
+}
+function clearAuth(){
+  TOKEN = null; TOKEN_EXP = 0;
+  localStorage.removeItem('mo_admin_token');
+  localStorage.removeItem('mo_admin_exp');
+}
+
+async function api(path, opts = {}){
+  const isForm = opts.body instanceof FormData;
+  const headers = Object.assign({}, opts.headers || {});
+  if (!isForm) headers['Content-Type'] = 'application/json';
+  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+  const res = await fetch(API + path, Object.assign({}, opts, { headers }));
+  if (res.status === 401) {
+    clearAuth();
+    showLogin();
+    throw new Error('Session expired — please sign in again');
+  }
+  let data = null;
+  try { data = await res.json(); } catch { /* no body */ }
+  if (!res.ok) throw new Error((data && data.error) || ('Request failed (' + res.status + ')'));
+  return data;
+}
+async function apiBlob(path){
+  const res = await fetch(API + path, { headers: { Authorization: 'Bearer ' + TOKEN } });
+  if (res.status === 401) { clearAuth(); showLogin(); throw new Error('Session expired'); }
+  if (!res.ok) throw new Error('Export failed');
+  return res.blob();
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+}
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function escapeAttr(s){ return escapeHtml(s).replace(/`/g, '&#96;'); }
+function formatDate(s){ try { return new Date(s).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }); } catch { return s || ''; } }
+function formatMoney(n){ return Number(n || 0).toLocaleString('en-US') + ' EGP'; }
+function formatBytes(n){ if (!n) return '0 B'; const u = ['B','KB','MB','GB']; let i = 0; while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; } return n.toFixed(1) + ' ' + u[i]; }
+function errorBlock(msg){ return `<div class="error-block">⚠️ ${escapeHtml(msg)}<br><button class="btn outline sm" style="margin-top:12px" onclick="navigate(currentTab)">إعادة المحاولة / Retry</button></div>`; }
+function setContent(html){ document.getElementById('content').innerHTML = html; }
+
+// Save and restore scroll position across setContent calls
+let _savedScrollY = 0;
+function saveScroll() { _savedScrollY = document.getElementById('content').parentElement.scrollTop || window.scrollY; }
+function restoreScroll() {
+  requestAnimationFrame(() => {
+    try { document.getElementById('content').parentElement.scrollTop = _savedScrollY; } catch(e){}
+    window.scrollTo({ top: _savedScrollY, behavior: 'instant' });
+  });
+}
+
+// Inline success banner shown inside a modal (or embedded form) above its action buttons
+function showModalSuccessBanner(container, message = '✓ Saved successfully') {
+  const existing = container.querySelector('#modalSuccessBanner');
+  if (existing) existing.remove();
+  const banner = document.createElement('div');
+  banner.id = 'modalSuccessBanner';
+  banner.style.cssText = 'background:rgba(0,204,102,.12);border:1px solid rgba(0,204,102,.4);color:#33dd88;border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;font-size:13.5px;text-align:center';
+  banner.textContent = message;
+  const actions = container.querySelector('.modal-actions');
+  if (actions) actions.before(banner);
+  else container.appendChild(banner);
+  setTimeout(() => banner.remove(), 2500);
+}
+
+// ── Toasts ──
+function toast(type, msg){
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = '.3s'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+// ── Modal stack ──
+const modalRoot = document.getElementById('modalRoot');
+function openModal(html){
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  modalRoot.appendChild(wrap.firstElementChild);
+  modalRoot.classList.add('open');
+}
+function closeTopModal(){
+  if (modalRoot.lastElementChild) modalRoot.lastElementChild.remove();
+  if (!modalRoot.children.length) modalRoot.classList.remove('open');
+}
+function closeAllModals(){ modalRoot.innerHTML = ''; modalRoot.classList.remove('open'); }
+function confirmDialog(message){
+  return new Promise(resolve => {
+    openModal(`
+      <div class="modal-box" data-confirm-modal>
+        <div class="modal-head"><h3>تأكيد / Confirm</h3><button class="modal-x" data-close-confirm>✕</button></div>
+        <div class="modal-body">
+          <p class="confirm-text">${escapeHtml(message)}</p>
+          <div class="modal-actions">
+            <button class="btn outline" data-confirm-no>إلغاء</button>
+            <button class="btn danger" data-confirm-yes>تأكيد</button>
+          </div>
+        </div>
+      </div>`);
+    const top = modalRoot.lastElementChild;
+    top.querySelector('[data-confirm-yes]').onclick = () => { top.remove(); if (!modalRoot.children.length) modalRoot.classList.remove('open'); resolve(true); };
+    top.querySelector('[data-confirm-no]').onclick = () => { top.remove(); if (!modalRoot.children.length) modalRoot.classList.remove('open'); resolve(false); };
+    top.querySelector('[data-close-confirm]').onclick = () => { top.remove(); if (!modalRoot.children.length) modalRoot.classList.remove('open'); resolve(false); };
+  });
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTopModal(); });
+modalRoot.addEventListener('click', e => { if (e.target === modalRoot) closeTopModal(); });
+
+// ── Generic drag-to-reorder for <tbody> rows ──
+function wireDragReorder(tbody, onReorder){
+  if (!tbody) return;
+  let dragEl = null;
+  tbody.querySelectorAll('tr[draggable="true"]').forEach(row => {
+    row.addEventListener('dragstart', () => { dragEl = row; row.classList.add('dragging'); });
+    row.addEventListener('dragend', () => { row.classList.remove('dragging'); });
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!dragEl || e.currentTarget === dragEl) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      tbody.insertBefore(dragEl, before ? e.currentTarget : e.currentTarget.nextSibling);
+    });
+  });
+  tbody.addEventListener('drop', e => {
+    e.preventDefault();
+    const ids = Array.from(tbody.querySelectorAll('tr[draggable="true"]')).map(r => +r.dataset.id);
+    onReorder(ids);
+  });
+}
+
+// ═══════════════════════ AUTH FLOW ═══════════════════════
+function showLogin(){
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+function showApp(){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.remove('hidden');
+  navigate('dashboard');
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const errBox = document.getElementById('loginError');
+  errBox.classList.remove('show');
+  const fd = new FormData(e.target);
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  try {
+    const res = await fetch(API + '/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: fd.get('username'), password: fd.get('password') })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    saveAuth(data.token, data.expiresAt);
+    showApp();
+  } catch (err) {
+    errBox.textContent = err.message === 'Invalid username or password' ? 'بيانات تسجيل الدخول غير صحيحة' : err.message;
+    errBox.classList.add('show');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => { clearAuth(); showLogin(); });
+
+document.getElementById('changePwBtn').addEventListener('click', () => {
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>Change Password</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="pwForm">
+        <div class="form-field"><label>Current Password</label><input type="password" name="current_password" required></div>
+        <div class="form-field"><label>New Password</label><input type="password" name="new_password" required minlength="8">
+          <small class="muted">Min 8 chars, 1 uppercase letter, 1 number</small>
+        </div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Update Password</button></div>
+      </form>
+    </div>`);
+  modalRoot.lastElementChild.querySelector('[data-close]').onclick = closeTopModal;
+  modalRoot.lastElementChild.querySelector('#pwForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await api('/auth/change-password', { method: 'PUT', body: JSON.stringify({ current_password: fd.get('current_password'), new_password: fd.get('new_password') }) });
+      toast('success', 'Password updated');
+      closeTopModal();
+    } catch (err) { toast('error', err.message); }
+  });
+});
+
+// auto-logout check every minute
+setInterval(() => { if (TOKEN && Date.now() >= TOKEN_EXP) { clearAuth(); showLogin(); toast('info', 'Session expired — please sign in again'); } }, 60000);
+
+// ═══════════════════════ NAVIGATION ═══════════════════════
+let currentTab = 'dashboard';
+const TAB_TITLES = {
+  dashboard: 'Dashboard', models: 'BMW Models', parts: 'Spare Parts', discounts: 'Discounts & Promotions',
+  bookings: 'Bookings', orders: 'Spare Parts Orders', events: 'BMW Events', testimonials: 'Testimonials', services: 'Services & Packages',
+  banners: 'Banners / Hero', media: 'Media Library', settings: 'Site Settings', customers: 'Customers (VIN)',
+  catalog: 'Catalog: Series & Engines'
+};
+const TAB_RENDERERS = {}; // filled in later chunks: TAB_RENDERERS.dashboard = renderDashboard etc.
+
+function navigate(tab){
+  currentTab = tab;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === tab));
+  document.getElementById('pageTitle').textContent = TAB_TITLES[tab] || tab;
+  setContent('<div class="loading-spinner"></div>');
+  const fn = TAB_RENDERERS[tab];
+  if (fn) fn(); else setContent(errorBlock('Tab not implemented: ' + tab));
+}
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => { navigate(item.dataset.nav); closeSidebarDrawer(); });
+});
+
+// ═══════════════════════ MOBILE SIDEBAR DRAWER ═══════════════════════
+const sidebarEl = document.querySelector('.sidebar');
+const sidebarOverlayEl = document.getElementById('sidebarOverlay');
+function openSidebarDrawer(){ sidebarEl.classList.add('open'); sidebarOverlayEl.classList.add('show'); }
+function closeSidebarDrawer(){ sidebarEl.classList.remove('open'); sidebarOverlayEl.classList.remove('show'); }
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  sidebarEl.classList.contains('open') ? closeSidebarDrawer() : openSidebarDrawer();
+});
+sidebarOverlayEl.addEventListener('click', closeSidebarDrawer);
+
+// ═══════════════════════ DASHBOARD ═══════════════════════
+async function renderDashboard(){
+  try {
+    const s = await api('/dashboard/stats');
+    setContent(`
+      <div class="stat-cards">
+        <div class="stat-card"><div class="stat-card-num">${s.models_count}</div><div class="stat-card-label">BMW Models</div></div>
+        <div class="stat-card"><div class="stat-card-num">${s.parts_count}</div><div class="stat-card-label">Spare Parts</div></div>
+        <div class="stat-card"><div class="stat-card-num">${s.bookings_total}</div><div class="stat-card-label">Total Bookings</div></div>
+        <div class="stat-card gold"><div class="stat-card-num">${s.bookings_pending}</div><div class="stat-card-label">Pending Bookings</div></div>
+        <div class="stat-card"><div class="stat-card-num">${s.events_upcoming}</div><div class="stat-card-label">Upcoming Events</div></div>
+        <div class="stat-card"><div class="stat-card-num">${s.newsletter_count}</div><div class="stat-card-label">Newsletter Subs</div></div>
+      </div>
+      <div class="panel">
+        <h3>Recent Bookings</h3>
+        <table class="data-table">
+          <thead><tr><th>Ref</th><th>Service</th><th>Phone</th><th>Car</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            ${s.recent_bookings.length ? s.recent_bookings.map(b => `
+              <tr>
+                <td>${escapeHtml(b.ref_number)}</td>
+                <td>${escapeHtml(b.service_type)}</td>
+                <td>${escapeHtml(b.customer_phone)}</td>
+                <td>${escapeHtml(b.car_model || '')}</td>
+                <td><span class="badge status-${b.status}">${b.status}</span></td>
+                <td>${formatDate(b.created_at)}</td>
+              </tr>`).join('') : '<tr><td colspan="6" class="empty">No bookings yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>`);
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.dashboard = renderDashboard;
+
+// ═══════════════════════ BMW MODELS ═══════════════════════
+const MODEL_TAGS = ['popular', 'track', 'm-perf'];
+const MODEL_TAG_LABELS = { popular: 'Most Popular', track: 'Track Edition', 'm-perf': 'M Performance' };
+const SERIES_OPTIONS = [
+  { id: '1', name: '1 Series' }, { id: '2', name: '2 Series' }, { id: '3', name: '3 Series' },
+  { id: '4', name: '4 Series' }, { id: '5', name: '5 Series' }, { id: '7', name: '7 Series' },
+  { id: 'X', name: 'X Series' }, { id: 'M', name: 'M Series' }
+];
+let cachedModels = [];
+
+async function renderModels(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    cachedModels = await api('/models');
+    setContent(`
+      <div class="toolbar"><button class="btn primary" data-action="model-add"><i class="fa-solid fa-plus"></i> Add Model</button></div>
+      <div class="panel">
+        <table class="data-table" id="modelsTable">
+          <thead><tr><th></th><th>Image</th><th>Name</th><th>Years</th><th>Tags</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${cachedModels.length ? cachedModels.map(modelRow).join('') : '<tr><td colspan="6" class="empty">No models yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>`);
+    wireDragReorder(document.querySelector('#modelsTable tbody'), async ids => {
+      try { await api('/models/reorder', { method: 'PUT', body: JSON.stringify({ ids }) }); toast('success', 'Order updated'); }
+      catch (err) { toast('error', err.message); }
+    });
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.models = renderModels;
+
+function modelRow(m){
+  return `<tr draggable="true" data-id="${m.id}">
+    <td class="drag-handle">⠿</td>
+    <td><img class="thumb" src="${escapeAttr(m.img_url || '')}" onerror="this.style.visibility='hidden'"></td>
+    <td>${escapeHtml(m.name)}</td>
+    <td>${escapeHtml(m.years || '')}</td>
+    <td>${(m.tags || []).map(t => `<span class="tag-chip">${escapeHtml(MODEL_TAG_LABELS[t] || t)}</span>`).join('')}${m.series_id ? `<span class="tag-chip" style="background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.3);color:var(--accent-cyan)">${escapeHtml(m.series_id)} Series</span>` : ''}</td>
+    <td>
+      <button class="btn outline sm" data-action="model-edit" data-id="${m.id}">Edit</button>
+      <button class="btn danger sm" data-action="model-delete" data-id="${m.id}">Delete</button>
+    </td>
+  </tr>`;
+}
+
+function openModelModal(model){
+  const isEdit = !!model;
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} BMW Model</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="modelForm">
+        <div class="form-field"><label>Name</label><input name="name" required value="${escapeAttr(model?.name || '')}"></div>
+        <div class="form-field"><label>Years</label><input name="years" placeholder="2022–2025" value="${escapeAttr(model?.years || '')}"></div>
+        <div class="form-field"><label>Image URL</label><input name="img_url" placeholder="https://..." value="${escapeAttr(model?.img_url || '')}"></div>
+        <div class="form-field"><label>Or Upload Image</label><input type="file" name="upload" accept="image/jpeg,image/png,image/webp"></div>
+        <div class="form-field"><label>Tags</label>
+          <div class="checkbox-row">
+            ${MODEL_TAGS.map(t => `<label><input type="checkbox" name="tag_${t}" ${model && (model.tags || []).includes(t) ? 'checked' : ''}> ${MODEL_TAG_LABELS[t]}</label>`).join('')}
+          </div>
+        </div>
+        <div class="form-field"><label>BMW Series — الفئة</label>
+          <select name="series_id">
+            <option value="">-- Not assigned to a series --</option>
+            ${((window.cachedSeries && window.cachedSeries.length) ? window.cachedSeries : SERIES_OPTIONS).map(s => `<option value="${s.id}" ${model?.series_id === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#modelForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      let img_url = fd.get('img_url') || '';
+      const file = fd.get('upload');
+      if (file && file.size) {
+        const uploadFd = new FormData(); uploadFd.append('files', file);
+        const uploaded = await api('/media/upload', { method: 'POST', body: uploadFd });
+        img_url = BACKEND_ORIGIN + uploaded[0].url;
+      }
+      const tags = MODEL_TAGS.filter(t => fd.get('tag_' + t));
+      const payload = { name: fd.get('name'), years: fd.get('years'), img_url, tags, series_id: fd.get('series_id') || null };
+      if (isEdit) await api(`/models/${model.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      else await api('/models', { method: 'POST', body: JSON.stringify(payload) });
+      showModalSuccessBanner(top, isEdit ? 'Model updated ✓' : 'Model added ✓');
+      renderModels(true);
+      if (isEdit) setTimeout(closeTopModal, 1500);
+      else e.target.reset();
+    } catch (err) { toast('error', err.message); }
+    finally { submitBtn.disabled = false; }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'model-add') { await ensureCatalogDataLoaded(true); openModelModal(null); }
+  if (action === 'model-edit') { await ensureCatalogDataLoaded(true); openModelModal(cachedModels.find(m => String(m.id) === id)); }
+  if (action === 'model-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this model permanently?'))) return;
+    try { await api(`/models/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderModels(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ SPARE PARTS ═══════════════════════
+const PART_CATS = ['All', 'Engine', 'Brakes', 'Suspension', 'Electrical', 'Tuning'];
+const PART_BADGES = { oem: 'OEM Original', compat: 'OEM Compatible', perf: 'Performance' };
+let partsState = { category: 'All', search: '', page: 1 };
+let cachedPartsPage = [];
+let selectedPartIds = new Set();
+
+// ── Catalog data shared by the part-assignment UI (series/models/engine map) ──
+async function ensureCatalogDataLoaded(forceRefresh){
+  if (window.catalogDataLoaded && !forceRefresh) return;
+  try {
+    const [seriesRes, modelsRes, engineRes] = await Promise.all([
+      api('/service-config/catalog_series'),
+      api('/models'),
+      api('/service-config/catalog_engine_map')
+    ]);
+    window.cachedSeries = seriesRes.value || [];
+    window.cachedModels = modelsRes || [];
+    window.cachedEngineMap = engineRes.value || {};
+    window.catalogDataLoaded = true;
+  } catch (err) {
+    toast('error', 'Could not load catalog data: ' + err.message);
+  }
+}
+function getEnginesForModel(modelName){
+  const upper = (modelName || '').toUpperCase();
+  const matched = [];
+  for (const [engine, variants] of Object.entries(window.cachedEngineMap || {})) {
+    if ((variants || []).some(v => upper.includes(v.toUpperCase()) || v.toUpperCase().includes((upper.split(' ')[1]) || ''))) {
+      matched.push(engine);
+    }
+  }
+  return matched.length ? matched : Object.keys(window.cachedEngineMap || {});
+}
+
+async function renderParts(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    const q = new URLSearchParams();
+    if (partsState.category !== 'All') q.set('category', partsState.category);
+    if (partsState.search) q.set('search', partsState.search);
+    q.set('page', partsState.page); q.set('limit', 20);
+    const data = await api('/parts?' + q.toString());
+    cachedPartsPage = data.items;
+    selectedPartIds.clear();
+    const totalPages = Math.max(1, Math.ceil(data.total / data.limit));
+    setContent(`
+      <div class="toolbar">
+        <select id="partsCategoryFilter">${PART_CATS.map(c => `<option value="${c}" ${c === partsState.category ? 'selected' : ''}>${c}</option>`).join('')}</select>
+        <input class="search-input" id="partsSearch" placeholder="Search name or OEM..." value="${escapeAttr(partsState.search)}">
+        <button class="btn primary" data-action="part-add" style="margin-right:auto"><i class="fa-solid fa-plus"></i> Add Part</button>
+      </div>
+      <div class="panel" id="bulkPriceBar" style="display:none">
+        <div class="toolbar" style="margin-bottom:0">
+          <span class="muted" id="bulkSelCount">0 selected</span>
+          <select id="bulkType"><option value="percent">Percent %</option><option value="fixed">Fixed amount</option></select>
+          <input type="number" id="bulkValue" placeholder="value" style="width:120px;padding:10px 14px;border-radius:50px;border:1px solid var(--border);background:var(--bg-primary);color:#fff">
+          <button class="btn gold sm" data-action="part-bulk-apply">Apply to selected</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table class="data-table" id="partsTable">
+          <thead><tr><th><input type="checkbox" id="partsSelectAll"></th><th>Image</th><th>AR Name / Scope</th><th>EN Name</th><th>OEM</th><th>Price</th><th>Badge</th><th>Stock</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${cachedPartsPage.length ? cachedPartsPage.map(partRow).join('') : '<tr><td colspan="9" class="empty">No parts found</td></tr>'}
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button class="btn outline sm" data-action="parts-page" data-dir="-1" ${partsState.page <= 1 ? 'disabled' : ''}>← Prev</button>
+          <span>Page ${partsState.page} of ${totalPages} (${data.total} parts)</span>
+          <button class="btn outline sm" data-action="parts-page" data-dir="1" ${partsState.page >= totalPages ? 'disabled' : ''}>Next →</button>
+        </div>
+      </div>`);
+    document.getElementById('partsCategoryFilter').onchange = e => { partsState.category = e.target.value; partsState.page = 1; renderParts(); };
+    let searchTimer;
+    document.getElementById('partsSearch').oninput = e => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { partsState.search = e.target.value; partsState.page = 1; renderParts(); }, 350); };
+    document.getElementById('partsSelectAll').onchange = e => {
+      cachedPartsPage.forEach(p => e.target.checked ? selectedPartIds.add(p.id) : selectedPartIds.delete(p.id));
+      document.querySelectorAll('.part-check').forEach(c => c.checked = e.target.checked);
+      updateBulkBar();
+    };
+    document.querySelectorAll('.part-check').forEach(c => {
+      c.onchange = () => { c.checked ? selectedPartIds.add(+c.dataset.id) : selectedPartIds.delete(+c.dataset.id); updateBulkBar(); };
+    });
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.parts = renderParts;
+
+function updateBulkBar(){
+  const bar = document.getElementById('bulkPriceBar');
+  document.getElementById('bulkSelCount').textContent = selectedPartIds.size + ' selected';
+  bar.style.display = selectedPartIds.size ? 'block' : 'none';
+}
+
+function partRow(p){
+  const priceHtml = p.discounted_price_egp !== null
+    ? `<del class="muted">${formatMoney(p.price_egp)}</del> <span style="color:var(--accent-gold);font-weight:700">${formatMoney(p.discounted_price_egp)}</span>`
+    : formatMoney(p.price_egp);
+  const assignBadge = p.assignments && p.assignments.length
+    ? `<span class="tag-chip" style="margin-top:4px;display:block;border-color:rgba(0,200,255,.3);color:var(--accent-cyan)">${p.assignments.length} assignment${p.assignments.length > 1 ? 's' : ''}</span>`
+    : `<span class="tag-chip" style="margin-top:4px;display:block;border-color:rgba(80,80,80,.3);color:var(--text-muted)">All models</span>`;
+  return `<tr data-id="${p.id}">
+    <td><input type="checkbox" class="part-check" data-id="${p.id}"></td>
+    <td>${p.img_url ? `<img class="thumb" src="${escapeAttr(p.img_url)}" onerror="this.style.visibility='hidden'">` : `<div style="width:46px;height:32px;border-radius:6px;background:var(--bg-secondary);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-muted)">IMG</div>`}</td>
+    <td dir-auto>${escapeHtml(p.ar)}<div class="muted" style="font-size:11px">${escapeHtml(p.catAr)}</div>${assignBadge}</td>
+    <td>${escapeHtml(p.en || '')}</td>
+    <td style="font-family:monospace;font-size:12px">${escapeHtml(p.oem || '')}</td>
+    <td>${priceHtml}</td>
+    <td><span class="tag-chip">${PART_BADGES[p.badge] || p.badge}</span></td>
+    <td><button class="btn sm ${p.stock ? 'success' : 'outline'}" data-action="part-toggle-stock" data-id="${p.id}">${p.stock ? '✓ متوفر' : '⏳ 3 days'}</button></td>
+    <td>
+      <button class="btn outline sm" data-action="part-edit" data-id="${p.id}">Edit</button>
+      <button class="btn danger sm" data-action="part-delete" data-id="${p.id}">Delete</button>
+    </td>
+  </tr>`;
+}
+
+function assignmentChipHTML(seriesLabel, modelLabel, engineCode, seriesId, modelId, engineCodeRaw){
+  const label = `${seriesLabel} › ${modelLabel || 'All Models'} › ${engineCode || 'All Engines'}`;
+  return `<div data-assignment="1" data-series-id="${escapeAttr(seriesId)}" data-model-id="${modelId ? escapeAttr(String(modelId)) : ''}" data-engine-code="${escapeAttr(engineCodeRaw || '')}"
+    style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius);background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.15);font-family:Rajdhani;font-size:13px;letter-spacing:1px;gap:12px">
+    <span style="color:var(--accent-cyan)">🚗</span><span style="flex:1">${escapeHtml(label)}</span>
+    <button type="button" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;line-height:1;padding:0 4px" onclick="this.closest('[data-assignment]').remove();document.getElementById('assignmentsEmpty') && (document.getElementById('assignmentsEmpty').style.display = document.getElementById('assignmentsList').querySelectorAll('[data-assignment]').length === 0 ? 'block' : 'none')">✕</button>
+  </div>`;
+}
+function addAssignmentChip(listEl, emptyEl, seriesLabel, modelLabel, engineCode, seriesId, modelId, engineCodeRaw){
+  const wrap = document.createElement('div');
+  wrap.innerHTML = assignmentChipHTML(seriesLabel, modelLabel, engineCode, seriesId, modelId, engineCodeRaw);
+  listEl.insertBefore(wrap.firstElementChild, emptyEl);
+  if (emptyEl) emptyEl.style.display = 'none';
+}
+
+async function openPartModal(part){
+  const isEdit = !!part;
+  await ensureCatalogDataLoaded();
+  openModal(`
+    <div class="modal-box wide">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} Spare Part</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="partForm">
+        <div class="form-grid2">
+          <div class="form-field"><label>Arabic Name</label><input name="ar" dir-auto required value="${escapeAttr(part?.ar || '')}"></div>
+          <div class="form-field"><label>English Name</label><input name="en" value="${escapeAttr(part?.en || '')}"></div>
+          <div class="form-field"><label>Category</label><select name="cat">${PART_CATS.filter(c => c !== 'All').map(c => `<option value="${c}" ${part?.cat === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+          <div class="form-field"><label>OEM Number</label><input name="oem" value="${escapeAttr(part?.oem || '')}"></div>
+          <div class="form-field"><label>Price (EGP)</label><input type="number" name="price_egp" min="0" step="0.01" required value="${part?.price_egp ?? ''}"></div>
+          <div class="form-field"><label>Note</label><input name="note" value="${escapeAttr(part?.note || '')}" placeholder="5L, Set×4, +50HP..."></div>
+          <div class="form-field"><label>Badge</label><select name="badge">${Object.keys(PART_BADGES).map(b => `<option value="${b}" ${part?.badge === b ? 'selected' : ''}>${PART_BADGES[b]}</option>`).join('')}</select></div>
+          <div class="form-field"><label>Stock</label>
+            <select name="stock"><option value="true" ${!part || part.stock ? 'selected' : ''}>In Stock</option><option value="false" ${part && !part.stock ? 'selected' : ''}>Order in 3 days</option></select>
+          </div>
+          <div class="form-field"><label>Part Image URL</label><input name="img_url" placeholder="https://..." value="${escapeAttr(part?.img_url || '')}"></div>
+          <div class="form-field"><label>Or Upload Part Image</label><input type="file" name="upload_img" accept="image/jpeg,image/png,image/webp"></div>
+        </div>
+        <div id="imgPreviewWrap" style="margin-bottom:16px;${part?.img_url ? '' : 'display:none'}">
+          <img id="imgPreview" src="${escapeAttr(part?.img_url || '')}" style="max-width:200px;max-height:140px;object-fit:contain;border-radius:var(--radius);background:var(--bg-primary);border:1px solid var(--border);padding:8px">
+        </div>
+
+        <hr style="border-color:var(--border);margin:20px 0">
+        <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;margin-bottom:4px">ASSIGN TO SERIES / MODEL / ENGINE</div>
+        <p style="font-family:Cairo;font-size:12px;color:var(--text-muted);margin-bottom:18px">Leave empty = this part appears for ALL models. Add assignments to show it only for specific series, models, or engines.</p>
+
+        <div class="form-field"><label>Step 1 — Series</label><div id="assignSeriesChips" style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 0"></div></div>
+        <div class="form-field" id="assignModelField" style="display:none"><label>Step 2 — Model <span class="muted" style="font-size:10px">(optional — leave blank = all models)</span></label><select id="assignModelSelect"><option value="">All models in this series</option></select></div>
+        <div class="form-field" id="assignEngineField" style="display:none"><label>Step 3 — Engine <span class="muted" style="font-size:10px">(optional — leave blank = all engines)</span></label><select id="assignEngineSelect"><option value="">All engines for this model</option></select></div>
+        <button type="button" class="btn outline sm" id="addAssignmentBtn" style="margin-bottom:16px"><i class="fa-solid fa-circle-plus"></i> Add This Assignment</button>
+
+        <div style="font-family:Rajdhani;font-size:11px;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px">CURRENT ASSIGNMENTS</div>
+        <div id="assignmentsList" style="display:flex;flex-direction:column;gap:8px;min-height:40px;padding:12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius)">
+          <div id="assignmentsEmpty" style="font-family:Cairo;font-size:12px;color:var(--text-muted);text-align:center;padding:8px">No assignments yet — showing for all models</div>
+        </div>
+
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+
+  // ── Live image preview (URL input + file upload) ──
+  top.querySelector('[name="upload_img"]').addEventListener('change', function(){
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      top.querySelector('#imgPreviewWrap').style.display = 'block';
+      top.querySelector('#imgPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  top.querySelector('[name="img_url"]').addEventListener('input', function(){
+    const wrap = top.querySelector('#imgPreviewWrap');
+    if (this.value) { top.querySelector('#imgPreview').src = this.value; wrap.style.display = 'block'; }
+    else wrap.style.display = 'none';
+  });
+
+  // ── Step A: series chips ──
+  const seriesChipsWrap = top.querySelector('#assignSeriesChips');
+  let selectedSeriesId = null;
+  (window.cachedSeries || []).forEach(s => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'sub-tab';
+    chip.textContent = s.name;
+    chip.dataset.seriesId = s.id;
+    chip.addEventListener('click', () => {
+      seriesChipsWrap.querySelectorAll('.sub-tab').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedSeriesId = s.id;
+      const modelSelect = top.querySelector('#assignModelSelect');
+      modelSelect.innerHTML = `<option value="">All models in ${escapeHtml(s.name)}</option>`;
+      (window.cachedModels || [])
+        .filter(m => m.series_id === s.id || (s.keywords || []).some(k => m.name.toUpperCase().includes(k.toUpperCase())))
+        .forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = m.name + (m.years ? ' (' + m.years + ')' : '');
+          opt.dataset.modelName = m.name;
+          modelSelect.appendChild(opt);
+        });
+      top.querySelector('#assignModelField').style.display = 'flex';
+      top.querySelector('#assignEngineField').style.display = 'none';
+      top.querySelector('#assignEngineSelect').innerHTML = '<option value="">All engines for this model</option>';
+    });
+    seriesChipsWrap.appendChild(chip);
+  });
+
+  // ── Step B -> C cascade ──
+  top.querySelector('#assignModelSelect').addEventListener('change', function(){
+    const selectedOpt = this.options[this.selectedIndex];
+    const modelName = selectedOpt.dataset.modelName || '';
+    const engineSelect = top.querySelector('#assignEngineSelect');
+    engineSelect.innerHTML = '<option value="">All engines for this model</option>';
+    if (this.value) {
+      getEnginesForModel(modelName).forEach(code => {
+        const opt = document.createElement('option');
+        opt.value = code; opt.textContent = code;
+        engineSelect.appendChild(opt);
+      });
+      top.querySelector('#assignEngineField').style.display = 'flex';
+    } else {
+      top.querySelector('#assignEngineField').style.display = 'none';
+    }
+  });
+
+  // ── Add Assignment ──
+  top.querySelector('#addAssignmentBtn').addEventListener('click', () => {
+    if (!selectedSeriesId) { toast('info', 'Please select a series first'); return; }
+    const modelSelect = top.querySelector('#assignModelSelect');
+    const engineSelect = top.querySelector('#assignEngineSelect');
+    const series = (window.cachedSeries || []).find(s => s.id === selectedSeriesId);
+    const modelId = modelSelect.value || null;
+    const modelName = modelId ? (modelSelect.options[modelSelect.selectedIndex].dataset.modelName || modelSelect.options[modelSelect.selectedIndex].text) : null;
+    const engineCode = engineSelect.value || null;
+
+    const existing = Array.from(top.querySelectorAll('#assignmentsList [data-assignment]'));
+    const isDupe = existing.some(c =>
+      c.dataset.seriesId === selectedSeriesId &&
+      (c.dataset.modelId || '') === (modelId ? String(modelId) : '') &&
+      (c.dataset.engineCode || '') === (engineCode || '')
+    );
+    if (isDupe) { toast('info', 'This assignment already exists'); return; }
+
+    addAssignmentChip(top.querySelector('#assignmentsList'), top.querySelector('#assignmentsEmpty'),
+      series ? series.name : selectedSeriesId, modelName, engineCode, selectedSeriesId, modelId, engineCode);
+  });
+
+  // ── Pre-populate assignments when editing ──
+  if (isEdit && part?.id) {
+    try {
+      const list = await api(`/parts/${part.id}/assignments`);
+      (list || []).forEach(a => {
+        const series = (window.cachedSeries || []).find(s => s.id === a.series_id);
+        addAssignmentChip(top.querySelector('#assignmentsList'), top.querySelector('#assignmentsEmpty'),
+          series ? series.name : a.series_id, a.model_name, a.engine_code, a.series_id, a.model_id, a.engine_code);
+      });
+    } catch { /* no assignments yet */ }
+  }
+
+  top.querySelector('#partForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      let img_url = fd.get('img_url') || '';
+      const file = fd.get('upload_img');
+      if (file && file.size) {
+        const uploadFd = new FormData(); uploadFd.append('files', file);
+        const uploaded = await api('/media/upload', { method: 'POST', body: uploadFd });
+        img_url = BACKEND_ORIGIN + uploaded[0].url;
+      }
+      const payload = {
+        ar: fd.get('ar'), en: fd.get('en'), cat: fd.get('cat'), oem: fd.get('oem'),
+        price_egp: Number(fd.get('price_egp')), note: fd.get('note'), badge: fd.get('badge'),
+        stock: fd.get('stock') === 'true', img_url
+      };
+      const saved = isEdit
+        ? await api(`/parts/${part.id}`, { method: 'PUT', body: JSON.stringify(payload) })
+        : await api('/parts', { method: 'POST', body: JSON.stringify(payload) });
+
+      const assignments = Array.from(top.querySelectorAll('#assignmentsList [data-assignment]')).map(c => ({
+        series_id: c.dataset.seriesId,
+        model_id: c.dataset.modelId ? Number(c.dataset.modelId) : null,
+        engine_code: c.dataset.engineCode || null
+      }));
+      try {
+        await api(`/parts/${saved.id}/assignments/replace`, { method: 'PUT', body: JSON.stringify({ assignments }) });
+      } catch (err) {
+        toast('info', 'Part saved but assignments could not be saved: ' + err.message);
+      }
+
+      showModalSuccessBanner(top, isEdit ? 'Part updated ✓' : 'Part added ✓');
+      renderParts(true);
+      if (isEdit) {
+        setTimeout(closeTopModal, 1500);
+      } else {
+        e.target.reset();
+        top.querySelector('#imgPreviewWrap').style.display = 'none';
+        top.querySelectorAll('#assignmentsList [data-assignment]').forEach(c => c.remove());
+        const emptyEl = top.querySelector('#assignmentsEmpty');
+        if (emptyEl) emptyEl.style.display = 'block';
+        seriesChipsWrap.querySelectorAll('.sub-tab').forEach(c => c.classList.remove('active'));
+        selectedSeriesId = null;
+        top.querySelector('#assignModelField').style.display = 'none';
+        top.querySelector('#assignEngineField').style.display = 'none';
+      }
+    } catch (err) { toast('error', err.message); }
+    finally { submitBtn.disabled = false; }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'part-add') openPartModal(null);
+  if (action === 'part-edit') openPartModal(cachedPartsPage.find(p => String(p.id) === id));
+  if (action === 'part-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this part permanently?'))) return;
+    try { await api(`/parts/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderParts(true); }
+    catch (err) { toast('error', err.message); }
+  }
+  if (action === 'part-toggle-stock') {
+    const p = cachedPartsPage.find(x => String(x.id) === id);
+    try { await api(`/parts/${id}`, { method: 'PUT', body: JSON.stringify({ stock: !p.stock }) }); toast('success', 'Stock updated'); renderParts(true); }
+    catch (err) { toast('error', err.message); }
+  }
+  if (action === 'parts-page') {
+    partsState.page += Number(btn.dataset.dir);
+    await renderParts();
+    document.querySelector('#content .panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  if (action === 'part-bulk-apply') {
+    const type = document.getElementById('bulkType').value;
+    const value = Number(document.getElementById('bulkValue').value);
+    if (!value && value !== 0) { toast('error', 'Enter a value'); return; }
+    try {
+      await api('/parts/bulk-price', { method: 'POST', body: JSON.stringify({ ids: Array.from(selectedPartIds), type, value }) });
+      toast('success', 'Prices updated'); renderParts(true);
+    } catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ DISCOUNTS & PROMOTIONS ═══════════════════════
+let cachedDiscounts = [];
+
+async function renderDiscounts(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    cachedDiscounts = await api('/discounts');
+    setContent(`
+      <div class="toolbar"><button class="btn primary" data-action="discount-add"><i class="fa-solid fa-plus"></i> Add Discount</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Label</th><th>Type</th><th>Value</th><th>Scope</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${cachedDiscounts.length ? cachedDiscounts.map(discountRow).join('') : '<tr><td colspan="7" class="empty">No discounts yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>`);
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.discounts = renderDiscounts;
+
+function discountScopeLabel(d){
+  if (d.applies_to === 'all_parts') return '🌍 All Parts';
+  if (d.applies_to === 'category') return '📂 ' + escapeHtml(d.target_id || '') + ' category';
+  if (d.applies_to === 'specific_part') return '🔩 Part #' + escapeHtml(d.target_id || '');
+  if (d.applies_to === 'booking') return '📅 ' + escapeHtml(d.target_id || '') + ' booking';
+  return escapeHtml(d.applies_to);
+}
+function discountRow(d){
+  const expired = d.expiry_date && new Date(d.expiry_date) < new Date();
+  return `<tr data-id="${d.id}">
+    <td dir-auto>${escapeHtml(d.label)}</td>
+    <td>${d.type}</td>
+    <td>${d.type === 'percent' ? d.value + '%' : formatMoney(d.value)}</td>
+    <td><span class="tag-chip" style="color:var(--accent-gold);border-color:rgba(212,160,23,.3)">${discountScopeLabel(d)}</span></td>
+    <td>${d.expiry_date ? escapeHtml(d.expiry_date) : '—'} ${expired ? '<span class="badge status-cancelled">expired</span>' : ''}</td>
+    <td><button class="btn sm ${d.active ? 'success' : 'outline'}" data-action="discount-toggle" data-id="${d.id}">${d.active ? 'Active' : 'Inactive'}</button></td>
+    <td>
+      <button class="btn outline sm" data-action="discount-edit" data-id="${d.id}">Edit</button>
+      <button class="btn danger sm" data-action="discount-delete" data-id="${d.id}">Delete</button>
+    </td>
+  </tr>`;
+}
+
+function discountTargetField(appliesTo, currentTarget){
+  if (appliesTo === 'category') {
+    return `<select name="target_id">${PART_CATS.filter(c => c !== 'All').map(c => `<option value="${c}" ${currentTarget === c ? 'selected' : ''}>${c}</option>`).join('')}</select>`;
+  }
+  if (appliesTo === 'specific_part') {
+    return `<select name="target_id">${cachedPartsPage.concat(cachedModels.length ? [] : []).length ? '' : ''}${(cachedPartsPage.length ? cachedPartsPage : []).map(p => `<option value="${p.id}" ${String(currentTarget) === String(p.id) ? 'selected' : ''}>${escapeHtml(p.ar)} (#${p.id})</option>`).join('') || '<option value="">Load Parts tab first to populate this list</option>'}</select>`;
+  }
+  if (appliesTo === 'booking') {
+    return `<select name="target_id">${['quick', 'full', 'tuning', 'pickup'].map(s => `<option value="${s}" ${currentTarget === s ? 'selected' : ''}>${s}</option>`).join('')}</select>`;
+  }
+  return `<input name="target_id" value="" disabled placeholder="N/A for all parts">`;
+}
+
+function openDiscountModal(discount){
+  const isEdit = !!discount;
+  const appliesTo = discount?.applies_to || 'all_parts';
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} Discount</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="discountForm">
+        <div class="form-field"><label>Label</label><input name="label" dir-auto required value="${escapeAttr(discount?.label || '')}" placeholder="عرض رمضان"></div>
+        <div class="form-grid2">
+          <div class="form-field"><label>Type</label><select name="type"><option value="percent" ${discount?.type === 'percent' ? 'selected' : ''}>Percent %</option><option value="fixed" ${discount?.type === 'fixed' ? 'selected' : ''}>Fixed Amount</option></select></div>
+          <div class="form-field"><label>Value</label><input type="number" name="value" step="0.01" required value="${discount?.value ?? ''}"></div>
+          <div class="form-field"><label>Applies To</label><select name="applies_to" id="appliesToSelect">
+            ${['all_parts', 'category', 'specific_part', 'booking'].map(a => `<option value="${a}" ${appliesTo === a ? 'selected' : ''}>${a}</option>`).join('')}
+          </select></div>
+          <div class="form-field"><label>Target</label><div id="targetFieldWrap">${discountTargetField(appliesTo, discount?.target_id)}</div></div>
+          <div class="form-field"><label>Expiry Date</label><input type="date" name="expiry_date" value="${discount?.expiry_date || ''}"></div>
+          <div class="form-field"><label>Active</label><div class="checkbox-row"><label><input type="checkbox" name="active" ${!discount || discount.active ? 'checked' : ''}> Active</label></div></div>
+        </div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#appliesToSelect').addEventListener('change', e => {
+    document.getElementById('targetFieldWrap').innerHTML = discountTargetField(e.target.value, null);
+  });
+  top.querySelector('#discountForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = {
+      label: fd.get('label'), type: fd.get('type'), value: Number(fd.get('value')),
+      applies_to: fd.get('applies_to'), target_id: fd.get('target_id') || null,
+      expiry_date: fd.get('expiry_date') || null, active: fd.get('active') === 'on'
+    };
+    try {
+      if (isEdit) await api(`/discounts/${discount.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      else await api('/discounts', { method: 'POST', body: JSON.stringify(payload) });
+      showModalSuccessBanner(top, isEdit ? 'Discount updated ✓' : 'Discount added ✓');
+      renderDiscounts(true);
+      if (isEdit) {
+        setTimeout(closeTopModal, 1500);
+      } else {
+        e.target.reset();
+        document.getElementById('targetFieldWrap').innerHTML = discountTargetField('all_parts', null);
+      }
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'discount-add') openDiscountModal(null);
+  if (action === 'discount-edit') openDiscountModal(cachedDiscounts.find(d => String(d.id) === id));
+  if (action === 'discount-toggle') {
+    const d = cachedDiscounts.find(x => String(x.id) === id);
+    try { await api(`/discounts/${id}`, { method: 'PUT', body: JSON.stringify({ active: !d.active }) }); toast('success', 'Updated'); renderDiscounts(true); }
+    catch (err) { toast('error', err.message); }
+  }
+  if (action === 'discount-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this discount?'))) return;
+    try { await api(`/discounts/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderDiscounts(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ BOOKINGS ═══════════════════════
+let bookingsState = { status: '', service_type: '', from: '', to: '', page: 1 };
+let cachedBookingsPage = [];
+
+function waLinkForBooking(b){
+  const intl = '20' + String(b.customer_phone || '').replace(/^0/, '');
+  const msg = encodeURIComponent(`مرحباً، بخصوص حجزك ${b.ref_number} (${b.service_type})`);
+  return `https://wa.me/${intl}?text=${msg}`;
+}
+
+async function renderBookings(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    const q = new URLSearchParams();
+    if (bookingsState.status.startsWith('pay:')) q.set('payment_status', bookingsState.status.slice(4));
+    else if (bookingsState.status) q.set('status', bookingsState.status);
+    if (bookingsState.service_type) q.set('service_type', bookingsState.service_type);
+    if (bookingsState.from) q.set('from', bookingsState.from);
+    if (bookingsState.to) q.set('to', bookingsState.to);
+    q.set('page', bookingsState.page); q.set('limit', 20);
+    const data = await api('/bookings?' + q.toString());
+    cachedBookingsPage = data.items;
+    const totalPages = Math.max(1, Math.ceil(data.total / data.limit));
+    setContent(`
+      <div class="toolbar">
+        <select id="bkStatus">
+          <option value="">All Status</option>
+          <optgroup label="Booking Status">
+            ${['pending', 'confirmed', 'cancelled'].map(s => `<option value="${s}" ${bookingsState.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </optgroup>
+          <optgroup label="Payment Status">
+            <option value="pay:pending"   ${bookingsState.status === 'pay:pending'   ? 'selected' : ''}>💳 Awaiting Payment</option>
+            <option value="pay:confirmed" ${bookingsState.status === 'pay:confirmed' ? 'selected' : ''}>✅ Payment Confirmed</option>
+            <option value="pay:rejected"  ${bookingsState.status === 'pay:rejected'  ? 'selected' : ''}>❌ Payment Rejected</option>
+          </optgroup>
+        </select>
+        <select id="bkType"><option value="">All Services</option>${['quick', 'full', 'tuning', 'pickup'].map(s => `<option value="${s}" ${bookingsState.service_type === s ? 'selected' : ''}>${s}</option>`).join('')}</select>
+        <input type="date" id="bkFrom" value="${bookingsState.from}" title="From date">
+        <input type="date" id="bkTo" value="${bookingsState.to}" title="To date">
+        <button class="btn outline sm" id="bkExport" style="margin-right:auto"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Ref</th><th>Service</th><th>Phone</th><th>Car</th><th>Slot</th><th>Status</th><th>Payment</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${cachedBookingsPage.length ? cachedBookingsPage.map(bookingRow).join('') : '<tr><td colspan="9" class="empty">No bookings found</td></tr>'}
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button class="btn outline sm" data-action="bk-page" data-dir="-1" ${bookingsState.page <= 1 ? 'disabled' : ''}>← Prev</button>
+          <span>Page ${bookingsState.page} of ${totalPages} (${data.total} bookings)</span>
+          <button class="btn outline sm" data-action="bk-page" data-dir="1" ${bookingsState.page >= totalPages ? 'disabled' : ''}>Next →</button>
+        </div>
+      </div>`);
+    document.getElementById('bkStatus').onchange = e => { bookingsState.status = e.target.value; bookingsState.page = 1; renderBookings(); };
+    document.getElementById('bkType').onchange = e => { bookingsState.service_type = e.target.value; bookingsState.page = 1; renderBookings(); };
+    document.getElementById('bkFrom').onchange = e => { bookingsState.from = e.target.value; bookingsState.page = 1; renderBookings(); };
+    document.getElementById('bkTo').onchange = e => { bookingsState.to = e.target.value; bookingsState.page = 1; renderBookings(); };
+    document.getElementById('bkExport').onclick = async () => {
+      try { downloadBlob(await apiBlob('/bookings/export'), 'bookings.csv'); }
+      catch (err) { toast('error', err.message); }
+    };
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.bookings = renderBookings;
+
+const PAYMENT_STATUS_META = {
+  pending:   { label: 'Awaiting',  color: 'var(--accent-gold)', bg: 'rgba(212,160,23,.1)', border: 'rgba(212,160,23,.3)' },
+  confirmed: { label: 'Paid ✓',    color: 'var(--success)',     bg: 'rgba(0,204,102,.1)',  border: 'rgba(0,204,102,.3)' },
+  rejected:  { label: 'Rejected',  color: 'var(--danger)',      bg: 'rgba(255,51,51,.1)',  border: 'rgba(255,51,51,.3)' },
+};
+const PAYMENT_METHOD_LABEL = { cash: '💵 Cash', bank: '🏦 Bank', wallet: '📱 Wallet' };
+
+function bookingRow(b){
+  const pm = PAYMENT_STATUS_META[b.payment_status] || null;
+  return `<tr data-id="${b.id}">
+    <td>${escapeHtml(b.ref_number)}</td>
+    <td>${escapeHtml(b.service_type)}${b.tuning_stage ? `<div class="muted" style="font-size:11px;margin-top:2px">Stage: ${escapeHtml(String(b.tuning_stage).toUpperCase())}</div>` : ''}</td>
+    <td>${escapeHtml(b.customer_phone)}</td>
+    <td>${escapeHtml(b.car_model || '')}</td>
+    <td>${escapeHtml(b.slot_datetime || '—')}</td>
+    <td>
+      <select class="bk-status-select" data-id="${b.id}" style="background:var(--bg-primary);color:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 8px">
+        ${['pending', 'confirmed', 'cancelled'].map(s => `<option value="${s}" ${b.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>
+    </td>
+    <td>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">${PAYMENT_METHOD_LABEL[b.payment_method] || '—'}</div>
+      ${pm ? `<span style="font-size:11px;padding:3px 8px;border-radius:50px;background:${pm.bg};border:1px solid ${pm.border};color:${pm.color}">${pm.label}</span>` : ''}
+    </td>
+    <td>${formatDate(b.created_at)}</td>
+    <td>
+      <button class="btn outline sm" data-action="bk-view" data-id="${b.id}">View</button>
+      <a class="btn success sm" href="${waLinkForBooking(b)}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+      <button class="btn danger sm" data-action="bk-delete" data-id="${b.id}">Delete</button>
+    </td>
+  </tr>`;
+}
+
+function openBookingDrawer(b){
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>Booking ${escapeHtml(b.ref_number)}</h3><button class="modal-x" data-close>✕</button></div>
+      <div class="modal-body">
+        <div class="detail-row"><span>Service Type</span><span>${escapeHtml(b.service_type)}</span></div>
+        ${b.tuning_stage ? `<div class="detail-row"><span>Tuning Stage</span><span style="color:var(--accent-cyan);font-weight:700">${escapeHtml(String(b.tuning_stage).toUpperCase())}</span></div>` : ''}
+        <div class="detail-row"><span>Phone</span><span>${escapeHtml(b.customer_phone)}</span></div>
+        <div class="detail-row"><span>Email</span><span>${escapeHtml(b.customer_email || '—')}</span></div>
+        <div class="detail-row"><span>Car Model</span><span>${escapeHtml(b.car_model || '—')}</span></div>
+        <div class="detail-row"><span>Slot</span><span>${escapeHtml(b.slot_datetime || '—')}</span></div>
+        <div class="detail-row"><span>Address</span><span>${escapeHtml(b.address || '—')}</span></div>
+        <div class="detail-row"><span>Delivery Range</span><span>${escapeHtml(b.delivery_range || '—')}</span></div>
+        <div class="detail-row"><span>Issue / Notes from customer</span><span dir-auto>${escapeHtml(b.issue_description || '—')}</span></div>
+        <div class="detail-row"><span>Created</span><span>${formatDate(b.created_at)}</span></div>
+
+        ${b.payment_method ? `
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+          <div style="font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--accent-cyan);margin-bottom:12px">PAYMENT</div>
+          <div class="detail-row"><span>Method</span><span>${({cash:'💵 Cash on Visit',bank:'🏦 Bank Transfer',wallet:'📱 Mobile Wallet'})[b.payment_method] || '—'}</span></div>
+          ${b.payment_confirmed_at ? `<div class="detail-row"><span>Confirmed At</span><span>${formatDate(b.payment_confirmed_at)}</span></div>` : ''}
+          ${b.payment_screenshot_url ? `
+          <div style="margin-top:14px">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:Rajdhani;letter-spacing:1px">PAYMENT SCREENSHOT</div>
+            <a href="${escapeAttr(b.payment_screenshot_url)}" target="_blank" rel="noopener" style="display:inline-block">
+              <img src="${escapeAttr(b.payment_screenshot_url)}" alt="Payment screenshot" style="max-width:100%;max-height:280px;border-radius:var(--radius);border:1px solid var(--border);object-fit:contain;display:block">
+            </a>
+          </div>` : `
+          <div style="margin-top:12px;padding:16px;border:1px dashed var(--border);border-radius:var(--radius);text-align:center;font-size:13px;color:var(--text-muted)">No screenshot uploaded yet</div>`}
+
+          <form id="bkPaymentForm" style="margin-top:16px">
+            <div class="form-grid2">
+              <div class="form-field"><label>Payment Status</label>
+                <select name="payment_status">
+                  <option value="pending"   ${b.payment_status === 'pending'   ? 'selected' : ''}>⏳ Awaiting Confirmation</option>
+                  <option value="confirmed" ${b.payment_status === 'confirmed' ? 'selected' : ''}>✅ Payment Confirmed</option>
+                  <option value="rejected"  ${b.payment_status === 'rejected'  ? 'selected' : ''}>❌ Payment Rejected</option>
+                </select>
+              </div>
+              <div class="form-field"><label>Agreed Amount (EGP)</label><input name="agreed_amount" type="number" min="0" value="${b.agreed_amount ?? ''}"></div>
+            </div>
+            <div class="form-field"><label>Payment Admin Note</label><textarea name="payment_admin_note" rows="2">${escapeHtml(b.payment_admin_note || '')}</textarea></div>
+            <div class="modal-actions"><button type="submit" class="btn success">Save Payment Info</button></div>
+          </form>
+        </div>` : ''}
+
+        <form id="bkNotesForm" style="margin-top:16px">
+          <div class="form-field"><label>Admin Notes</label><textarea name="admin_notes" rows="3">${escapeHtml(b.admin_notes || '')}</textarea></div>
+          <div class="modal-actions">
+            <a class="btn success" href="${waLinkForBooking(b)}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            <button type="submit" class="btn primary">Save Notes</button>
+          </div>
+        </form>
+      </div>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#bkNotesForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try { await api(`/bookings/${b.id}`, { method: 'PUT', body: JSON.stringify({ admin_notes: fd.get('admin_notes') }) }); toast('success', 'Notes saved'); closeTopModal(); renderBookings(true); }
+    catch (err) { toast('error', err.message); }
+  });
+  top.querySelector('#bkPaymentForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newStatus = fd.get('payment_status');
+    try {
+      await api(`/bookings/${b.id}`, { method: 'PUT', body: JSON.stringify({
+        payment_status: newStatus,
+        agreed_amount: fd.get('agreed_amount') ? Number(fd.get('agreed_amount')) : null,
+        payment_admin_note: fd.get('payment_admin_note')
+      }) });
+      if (newStatus === 'confirmed') {
+        showModalSuccessBanner(top, '✓ Order confirmed successfully! Our team will contact you within 2 hours.');
+        setTimeout(closeTopModal, 2500);
+      } else {
+        toast('success', 'Payment info saved');
+        closeTopModal();
+        renderBookings(true);
+      }
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'bk-page') {
+    bookingsState.page += Number(btn.dataset.dir);
+    await renderBookings();
+    document.querySelector('#content .panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  if (action === 'bk-view') openBookingDrawer(cachedBookingsPage.find(b => String(b.id) === id));
+  if (action === 'bk-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this booking?'))) return;
+    try { await api(`/bookings/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderBookings(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+document.getElementById('content').addEventListener('change', async e => {
+  if (e.target.classList.contains('bk-status-select')) {
+    try { await api(`/bookings/${e.target.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) }); toast('success', 'Status updated'); }
+    catch (err) { toast('error', err.message); renderBookings(true); }
+  }
+});
+
+// ═══════════════════════ SPARE PARTS ORDERS ═══════════════════════
+let ordersState = { status: '', from: '', to: '', page: 1 };
+let cachedOrdersPage = [];
+
+function waLinkForOrder(o){
+  const intl = '20' + String(o.customer_phone || '').replace(/^0/, '');
+  const msg = encodeURIComponent(`مرحباً، بخصوص طلبك ${o.ref_number}`);
+  return `https://wa.me/${intl}?text=${msg}`;
+}
+function itemsSummary(items){
+  if(!items || !items.length) return '—';
+  const first = `${escapeHtml(items[0].part_name)} ×${items[0].quantity}`;
+  return items.length > 1 ? `${first} <span class="muted">+${items.length - 1} more</span>` : first;
+}
+
+async function renderOrders(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    const q = new URLSearchParams();
+    if (ordersState.status.startsWith('pay:')) q.set('payment_status', ordersState.status.slice(4));
+    else if (ordersState.status) q.set('status', ordersState.status);
+    if (ordersState.from) q.set('from', ordersState.from);
+    if (ordersState.to) q.set('to', ordersState.to);
+    q.set('page', ordersState.page); q.set('limit', 20);
+    const data = await api('/orders?' + q.toString());
+    cachedOrdersPage = data.items;
+    const totalPages = Math.max(1, Math.ceil(data.total / data.limit));
+    setContent(`
+      <div class="toolbar">
+        <select id="ordStatus">
+          <option value="">All Status</option>
+          <optgroup label="Order Status">
+            ${['pending', 'confirmed', 'cancelled'].map(s => `<option value="${s}" ${ordersState.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </optgroup>
+          <optgroup label="Payment Status">
+            <option value="pay:pending"   ${ordersState.status === 'pay:pending'   ? 'selected' : ''}>💳 Awaiting Payment</option>
+            <option value="pay:confirmed" ${ordersState.status === 'pay:confirmed' ? 'selected' : ''}>✅ Payment Confirmed</option>
+            <option value="pay:rejected"  ${ordersState.status === 'pay:rejected'  ? 'selected' : ''}>❌ Payment Rejected</option>
+          </optgroup>
+        </select>
+        <input type="date" id="ordFrom" value="${ordersState.from}" title="From date">
+        <input type="date" id="ordTo" value="${ordersState.to}" title="To date">
+        <button class="btn outline sm" id="ordExport" style="margin-right:auto"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Ref</th><th>Customer</th><th>Phone</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${cachedOrdersPage.length ? cachedOrdersPage.map(orderRow).join('') : '<tr><td colspan="9" class="empty">No orders found</td></tr>'}
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button class="btn outline sm" data-action="ord-page" data-dir="-1" ${ordersState.page <= 1 ? 'disabled' : ''}>← Prev</button>
+          <span>Page ${ordersState.page} of ${totalPages} (${data.total} orders)</span>
+          <button class="btn outline sm" data-action="ord-page" data-dir="1" ${ordersState.page >= totalPages ? 'disabled' : ''}>Next →</button>
+        </div>
+      </div>`);
+    document.getElementById('ordStatus').onchange = e => { ordersState.status = e.target.value; ordersState.page = 1; renderOrders(); };
+    document.getElementById('ordFrom').onchange = e => { ordersState.from = e.target.value; ordersState.page = 1; renderOrders(); };
+    document.getElementById('ordTo').onchange = e => { ordersState.to = e.target.value; ordersState.page = 1; renderOrders(); };
+    document.getElementById('ordExport').onclick = async () => {
+      try { downloadBlob(await apiBlob('/orders/export'), 'orders.csv'); }
+      catch (err) { toast('error', err.message); }
+    };
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.orders = renderOrders;
+
+function orderRow(o){
+  const pm = PAYMENT_STATUS_META[o.payment_status] || null;
+  return `<tr data-id="${o.id}">
+    <td>${escapeHtml(o.ref_number)}</td>
+    <td>${escapeHtml(o.customer_name || '—')}</td>
+    <td>${escapeHtml(o.customer_phone)}</td>
+    <td>${itemsSummary(o.items)}</td>
+    <td>${formatMoney(o.total_amount)}</td>
+    <td>
+      <select class="ord-status-select" data-id="${o.id}" style="background:var(--bg-primary);color:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 8px">
+        ${['pending', 'confirmed', 'cancelled'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>
+    </td>
+    <td>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">${PAYMENT_METHOD_LABEL[o.payment_method] || '—'}</div>
+      ${pm ? `<span style="font-size:11px;padding:3px 8px;border-radius:50px;background:${pm.bg};border:1px solid ${pm.border};color:${pm.color}">${pm.label}</span>` : ''}
+    </td>
+    <td>${formatDate(o.created_at)}</td>
+    <td>
+      <button class="btn outline sm" data-action="ord-view" data-id="${o.id}">View</button>
+      <a class="btn success sm" href="${waLinkForOrder(o)}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+      <button class="btn danger sm" data-action="ord-delete" data-id="${o.id}">Delete</button>
+    </td>
+  </tr>`;
+}
+
+function openOrderDrawer(o){
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>Order ${escapeHtml(o.ref_number)}</h3><button class="modal-x" data-close>✕</button></div>
+      <div class="modal-body">
+        <div class="detail-row"><span>Customer Name</span><span>${escapeHtml(o.customer_name || '—')}</span></div>
+        <div class="detail-row"><span>Phone</span><span>${escapeHtml(o.customer_phone)}</span></div>
+        <div class="detail-row"><span>Email</span><span>${escapeHtml(o.customer_email || '—')}</span></div>
+        <div class="detail-row"><span>Delivery Address</span><span dir-auto>${escapeHtml(o.delivery_address || '—')}</span></div>
+        <div class="detail-row"><span>Delivery Range</span><span>${escapeHtml(o.delivery_range || '—')}</span></div>
+        <div class="detail-row"><span>Created</span><span>${formatDate(o.created_at)}</span></div>
+
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+          <div style="font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--accent-cyan);margin-bottom:10px">ITEMS</div>
+          <table class="data-table" style="font-size:13px">
+            <thead><tr><th>Part</th><th>OEM</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr></thead>
+            <tbody>
+              ${(o.items || []).map(it => `<tr>
+                <td>${escapeHtml(it.part_name)}</td>
+                <td>${escapeHtml(it.part_oem || '—')}</td>
+                <td>${it.quantity}</td>
+                <td>${formatMoney(it.unit_price)}</td>
+                <td>${formatMoney(it.unit_price * it.quantity)}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+          <div class="detail-row" style="margin-top:8px"><span>Total Amount</span><span style="color:var(--accent-gold);font-family:'Bebas Neue';font-size:20px">${formatMoney(o.total_amount)}</span></div>
+        </div>
+
+        ${o.payment_method ? `
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+          <div style="font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--accent-cyan);margin-bottom:12px">PAYMENT</div>
+          <div class="detail-row"><span>Method</span><span>${({cash:'💵 Cash on Visit',bank:'🏦 Bank Transfer',wallet:'📱 Mobile Wallet'})[o.payment_method] || '—'}</span></div>
+          ${o.payment_confirmed_at ? `<div class="detail-row"><span>Confirmed At</span><span>${formatDate(o.payment_confirmed_at)}</span></div>` : ''}
+          ${o.payment_screenshot_url ? `
+          <div style="margin-top:14px">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-family:Rajdhani;letter-spacing:1px">PAYMENT SCREENSHOT</div>
+            <a href="${escapeAttr(o.payment_screenshot_url)}" target="_blank" rel="noopener" style="display:inline-block">
+              <img src="${escapeAttr(o.payment_screenshot_url)}" alt="Payment screenshot" style="max-width:100%;max-height:280px;border-radius:var(--radius);border:1px solid var(--border);object-fit:contain;display:block">
+            </a>
+          </div>` : `
+          <div style="margin-top:12px;padding:16px;border:1px dashed var(--border);border-radius:var(--radius);text-align:center;font-size:13px;color:var(--text-muted)">No screenshot uploaded yet</div>`}
+
+          <form id="ordPaymentForm" style="margin-top:16px">
+            <div class="form-grid2">
+              <div class="form-field"><label>Payment Status</label>
+                <select name="payment_status">
+                  <option value="pending"   ${o.payment_status === 'pending'   ? 'selected' : ''}>⏳ Awaiting Confirmation</option>
+                  <option value="confirmed" ${o.payment_status === 'confirmed' ? 'selected' : ''}>✅ Payment Confirmed</option>
+                  <option value="rejected"  ${o.payment_status === 'rejected'  ? 'selected' : ''}>❌ Payment Rejected</option>
+                </select>
+              </div>
+              <div class="form-field"><label>Agreed Amount (EGP)</label><input name="agreed_amount" type="number" min="0" value="${o.agreed_amount ?? ''}" placeholder="${o.total_amount}"></div>
+            </div>
+            <div class="form-field"><label>Payment Admin Note</label><textarea name="payment_admin_note" rows="2">${escapeHtml(o.payment_admin_note || '')}</textarea></div>
+            <div class="modal-actions"><button type="submit" class="btn success">Save Payment Info</button></div>
+          </form>
+        </div>` : ''}
+
+        <form id="ordNotesForm" style="margin-top:16px">
+          <div class="form-field"><label>Admin Notes</label><textarea name="admin_notes" rows="3">${escapeHtml(o.admin_notes || '')}</textarea></div>
+          <div class="modal-actions">
+            <a class="btn success" href="${waLinkForOrder(o)}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            <button type="submit" class="btn primary">Save Notes</button>
+          </div>
+        </form>
+      </div>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#ordNotesForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try { await api(`/orders/${o.id}`, { method: 'PUT', body: JSON.stringify({ admin_notes: fd.get('admin_notes') }) }); toast('success', 'Notes saved'); closeTopModal(); renderOrders(true); }
+    catch (err) { toast('error', err.message); }
+  });
+  top.querySelector('#ordPaymentForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newStatus = fd.get('payment_status');
+    try {
+      await api(`/orders/${o.id}`, { method: 'PUT', body: JSON.stringify({
+        payment_status: newStatus,
+        agreed_amount: fd.get('agreed_amount') ? Number(fd.get('agreed_amount')) : null,
+        payment_admin_note: fd.get('payment_admin_note')
+      }) });
+      if (newStatus === 'confirmed') {
+        showModalSuccessBanner(top, '✓ Order confirmed successfully! Our team will contact you within 2 hours.');
+        setTimeout(closeTopModal, 2500);
+        return;
+      }
+      toast('success', 'Payment info saved');
+      closeTopModal();
+      renderOrders(true);
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'ord-page') {
+    ordersState.page += Number(btn.dataset.dir);
+    await renderOrders();
+    document.querySelector('#content .panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  if (action === 'ord-view') openOrderDrawer(cachedOrdersPage.find(o => String(o.id) === id));
+  if (action === 'ord-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this order?'))) return;
+    try { await api(`/orders/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderOrders(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+document.getElementById('content').addEventListener('change', async e => {
+  if (e.target.classList.contains('ord-status-select')) {
+    try { await api(`/orders/${e.target.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) }); toast('success', 'Status updated'); }
+    catch (err) { toast('error', err.message); renderOrders(true); }
+  }
+});
+
+// ═══════════════════════ EVENTS ═══════════════════════
+let eventsSubTab = 'upcoming';
+let cachedEvents = [];
+const EVENT_BADGE_OPTIONS = { 'badge-track': 'TRACK DAY', 'badge-meet': 'CAR MEET', 'badge-drag': 'DRAG NIGHT' };
+
+async function renderEvents(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    cachedEvents = await api('/events?upcoming=' + (eventsSubTab === 'upcoming'));
+    setContent(`
+      <div class="sub-tabs">
+        <button class="sub-tab ${eventsSubTab === 'upcoming' ? 'active' : ''}" data-action="ev-subtab" data-sub="upcoming">Upcoming Events</button>
+        <button class="sub-tab ${eventsSubTab === 'past' ? 'active' : ''}" data-action="ev-subtab" data-sub="past">Past Events</button>
+      </div>
+      <div class="toolbar"><button class="btn primary" data-action="event-add"><i class="fa-solid fa-plus"></i> Add ${eventsSubTab === 'upcoming' ? 'Upcoming' : 'Past'} Event</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Name</th>${eventsSubTab === 'upcoming' ? '<th>Type</th><th>Date</th><th>Location</th><th>Price</th><th>Spots</th>' : '<th>Image</th>'}<th>Visible</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${cachedEvents.length ? cachedEvents.map(eventRow).join('') : '<tr><td colspan="8" class="empty">No events yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>`);
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.events = renderEvents;
+
+function eventRow(ev){
+  if (eventsSubTab === 'upcoming') {
+    return `<tr data-id="${ev.id}">
+      <td>${escapeHtml(ev.name)}</td>
+      <td>${escapeHtml(ev.event_type || '')}</td>
+      <td>${escapeHtml(ev.event_date || '')} ${escapeHtml(ev.event_time || '')}</td>
+      <td>${escapeHtml(ev.location || '')}</td>
+      <td>${formatMoney(ev.price_egp)}</td>
+      <td>${ev.remaining_spots}/${ev.total_spots}</td>
+      <td><button class="btn sm ${ev.visible ? 'success' : 'outline'}" data-action="event-toggle-visible" data-id="${ev.id}">${ev.visible ? 'Visible' : 'Hidden'}</button></td>
+      <td><button class="btn outline sm" data-action="event-edit" data-id="${ev.id}">Edit</button> <button class="btn danger sm" data-action="event-delete" data-id="${ev.id}">Delete</button></td>
+    </tr>`;
+  }
+  return `<tr data-id="${ev.id}">
+    <td>${escapeHtml(ev.name)}</td>
+    <td>${ev.image_url ? `<img class="thumb" src="${escapeAttr(ev.image_url)}">` : '—'}</td>
+    <td><button class="btn sm ${ev.visible ? 'success' : 'outline'}" data-action="event-toggle-visible" data-id="${ev.id}">${ev.visible ? 'Visible' : 'Hidden'}</button></td>
+    <td><button class="btn outline sm" data-action="event-edit" data-id="${ev.id}">Edit</button> <button class="btn danger sm" data-action="event-delete" data-id="${ev.id}">Delete</button></td>
+  </tr>`;
+}
+
+function openEventModal(ev){
+  const isEdit = !!ev;
+  const isUpcoming = eventsSubTab === 'upcoming';
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} ${isUpcoming ? 'Upcoming' : 'Past'} Event</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="eventForm">
+        <div class="form-field"><label>Name</label><input name="name" dir-auto required value="${escapeAttr(ev?.name || '')}"></div>
+        ${isUpcoming ? `
+        <div class="form-grid2">
+          <div class="form-field"><label>Badge / Type</label><select name="badge_class">${Object.entries(EVENT_BADGE_OPTIONS).map(([cls, label]) => `<option value="${cls}" ${ev?.badge_class === cls ? 'selected' : ''}>${label}</option>`).join('')}</select></div>
+          <div class="form-field"><label>Date</label><input type="date" name="event_date" value="${ev?.event_date || ''}"></div>
+          <div class="form-field"><label>Time</label><input name="event_time" placeholder="8:00 AM" value="${escapeAttr(ev?.event_time || '')}"></div>
+          <div class="form-field"><label>Location</label><input name="location" dir-auto value="${escapeAttr(ev?.location || '')}"></div>
+          <div class="form-field"><label>Price (EGP)</label><input type="number" name="price_egp" min="0" value="${ev?.price_egp ?? 0}"></div>
+          <div class="form-field"><label>Total Spots</label><input type="number" name="total_spots" min="0" value="${ev?.total_spots ?? 0}"></div>
+          <div class="form-field"><label>Remaining Spots</label><input type="number" name="remaining_spots" min="0" value="${ev?.remaining_spots ?? 0}"></div>
+        </div>` : `
+        <div class="form-field"><label>Image URL</label><input name="image_url" value="${escapeAttr(ev?.image_url || '')}"></div>`}
+        <div class="form-field"><div class="checkbox-row"><label><input type="checkbox" name="visible" ${!ev || ev.visible ? 'checked' : ''}> Visible on site</label></div></div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const eventTypeLabel = { 'badge-track': 'TRACK DAY', 'badge-meet': 'CAR MEET', 'badge-drag': 'DRAG NIGHT' };
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#eventForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = isUpcoming ? {
+      name: fd.get('name'), badge_class: fd.get('badge_class'), event_type: eventTypeLabel[fd.get('badge_class')],
+      event_date: fd.get('event_date'), event_time: fd.get('event_time'), location: fd.get('location'),
+      price_egp: Number(fd.get('price_egp')), total_spots: Number(fd.get('total_spots')), remaining_spots: Number(fd.get('remaining_spots')),
+      is_upcoming: true, visible: fd.get('visible') === 'on'
+    } : {
+      name: fd.get('name'), image_url: fd.get('image_url'), is_upcoming: false, visible: fd.get('visible') === 'on'
+    };
+    try {
+      if (isEdit) await api(`/events/${ev.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      else await api('/events', { method: 'POST', body: JSON.stringify(payload) });
+      showModalSuccessBanner(top, isEdit ? 'Event updated ✓' : 'Event added ✓');
+      renderEvents(true);
+      if (isEdit) setTimeout(closeTopModal, 1500);
+      else e.target.reset();
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'ev-subtab') { eventsSubTab = btn.dataset.sub; renderEvents(); }
+  if (action === 'event-add') openEventModal(null);
+  if (action === 'event-edit') openEventModal(cachedEvents.find(x => String(x.id) === id));
+  if (action === 'event-toggle-visible') {
+    const ev = cachedEvents.find(x => String(x.id) === id);
+    try { await api(`/events/${id}`, { method: 'PUT', body: JSON.stringify({ visible: !ev.visible }) }); toast('success', 'Updated'); renderEvents(true); }
+    catch (err) { toast('error', err.message); }
+  }
+  if (action === 'event-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this event?'))) return;
+    try { await api(`/events/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderEvents(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ SHARED LIST / SLOTS EDITOR WIDGETS ═══════════════════════
+function listEditorHTML(items){
+  return `<div class="list-editor" data-list-editor>
+    ${(items || []).map(item => `<div class="list-editor-row"><input value="${escapeAttr(item)}" dir-auto><button type="button" class="btn danger sm" data-list-remove>✕</button></div>`).join('')}
+    <div class="add-inline"><input placeholder="Add item..." dir-auto data-list-newitem><button type="button" class="btn outline sm" data-list-add>+ Add</button></div>
+  </div>`;
+}
+function collectListEditor(container){
+  return Array.from(container.querySelectorAll('.list-editor-row input')).map(i => i.value.trim()).filter(Boolean);
+}
+const ALL_DAYS = ['SAT', 'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI'];
+function dayBlockHTML(day, times){
+  return `<div class="day-block" data-day="${day}">
+    <div class="day-block-head"><span>${day}</span><button type="button" class="btn danger sm" data-day-remove>✕ remove day</button></div>
+    <div class="slot-chips">${times.map(t => `<span class="slot-chip" data-time="${escapeAttr(t)}">${escapeHtml(t)} <button type="button" data-slot-remove>✕</button></span>`).join('')}</div>
+    <div class="add-inline"><input placeholder="e.g. 9:00 AM" data-slot-newtime><button type="button" class="btn outline sm" data-slot-add>+ Add time</button></div>
+  </div>`;
+}
+function slotsEditorHTML(slotsObj){
+  return `<div class="list-editor" data-slots-editor>
+    ${Object.entries(slotsObj || {}).map(([day, times]) => dayBlockHTML(day, times)).join('')}
+    <div class="add-inline"><select data-newday-select>${ALL_DAYS.map(d => `<option value="${d}">${d}</option>`).join('')}</select><button type="button" class="btn outline sm" data-day-add>+ Add Day</button></div>
+  </div>`;
+}
+function collectSlotsEditor(container){
+  const out = {};
+  container.querySelectorAll('.day-block').forEach(block => {
+    const times = Array.from(block.querySelectorAll('.slot-chip')).map(c => c.dataset.time);
+    if (times.length) out[block.dataset.day] = times;
+  });
+  return out;
+}
+
+// shared delegated handler for these widgets — they appear both inside modals (modalRoot)
+// and directly in tab content (#content, e.g. Services & Packages), so wire both ancestors.
+function handleListSlotWidgetClick(e){
+  if (e.target.closest('[data-list-remove]')) { e.target.closest('.list-editor-row').remove(); return; }
+  if (e.target.closest('[data-list-add]')) {
+    const wrap = e.target.closest('[data-list-editor]');
+    const input = wrap.querySelector('[data-list-newitem]');
+    if (input.value.trim()) {
+      const row = document.createElement('div');
+      row.className = 'list-editor-row';
+      row.innerHTML = `<input value="${escapeAttr(input.value.trim())}" dir-auto><button type="button" class="btn danger sm" data-list-remove>✕</button>`;
+      wrap.querySelector('.add-inline').before(row);
+      input.value = '';
+    }
+    return;
+  }
+  if (e.target.closest('[data-day-remove]')) { e.target.closest('.day-block').remove(); return; }
+  if (e.target.closest('[data-slot-remove]')) { e.target.closest('.slot-chip').remove(); return; }
+  if (e.target.closest('[data-slot-add]')) {
+    const block = e.target.closest('.day-block');
+    const input = block.querySelector('[data-slot-newtime]');
+    if (input.value.trim()) {
+      const chip = document.createElement('span');
+      chip.className = 'slot-chip'; chip.dataset.time = input.value.trim();
+      chip.innerHTML = `${escapeHtml(input.value.trim())} <button type="button" data-slot-remove>✕</button>`;
+      block.querySelector('.add-inline').before(chip);
+      input.value = '';
+    }
+    return;
+  }
+  if (e.target.closest('[data-day-add]')) {
+    const wrap = e.target.closest('[data-slots-editor]');
+    const select = wrap.querySelector('[data-newday-select]');
+    const day = select.value;
+    if (wrap.querySelector(`.day-block[data-day="${day}"]`)) { toast('info', 'Day already added'); return; }
+    const trailingAddInline = wrap.querySelector(':scope > .add-inline');
+    const div = document.createElement('div');
+    div.innerHTML = dayBlockHTML(day, []);
+    trailingAddInline.before(div.firstElementChild);
+  }
+}
+modalRoot.addEventListener('click', handleListSlotWidgetClick);
+document.getElementById('content').addEventListener('click', handleListSlotWidgetClick);
+
+// ═══════════════════════ TESTIMONIALS ═══════════════════════
+let cachedTestimonials = [];
+async function renderTestimonials(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    cachedTestimonials = await api('/testimonials');
+    setContent(`
+      <div class="toolbar"><button class="btn primary" data-action="testi-add"><i class="fa-solid fa-plus"></i> Add Testimonial</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>City</th><th>Car</th><th>Stars</th><th>Quote</th><th>Visible</th><th>Actions</th></tr></thead>
+          <tbody>${cachedTestimonials.length ? cachedTestimonials.map(testiRow).join('') : '<tr><td colspan="7" class="empty">No testimonials yet</td></tr>'}</tbody>
+        </table>
+      </div>`);
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.testimonials = renderTestimonials;
+
+function testiRow(t){
+  return `<tr data-id="${t.id}">
+    <td>${escapeHtml(t.name)}</td><td>${escapeHtml(t.city || '')}</td><td>${escapeHtml(t.car || '')}</td>
+    <td>${'⭐'.repeat(t.stars)}</td>
+    <td dir-auto style="max-width:280px">${escapeHtml((t.quote || '').slice(0, 80))}${(t.quote || '').length > 80 ? '…' : ''}</td>
+    <td><button class="btn sm ${t.visible ? 'success' : 'outline'}" data-action="testi-toggle" data-id="${t.id}">${t.visible ? 'Visible' : 'Hidden'}</button></td>
+    <td><button class="btn outline sm" data-action="testi-edit" data-id="${t.id}">Edit</button> <button class="btn danger sm" data-action="testi-delete" data-id="${t.id}">Delete</button></td>
+  </tr>`;
+}
+
+function openTestiModal(t){
+  const isEdit = !!t;
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} Testimonial</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="testiForm">
+        <div class="form-grid2">
+          <div class="form-field"><label>Name</label><input name="name" required value="${escapeAttr(t?.name || '')}"></div>
+          <div class="form-field"><label>City</label><input name="city" value="${escapeAttr(t?.city || '')}"></div>
+          <div class="form-field"><label>Car</label><input name="car" value="${escapeAttr(t?.car || '')}"></div>
+          <div class="form-field"><label>Stars</label><select name="stars">${[5, 4, 3, 2, 1].map(n => `<option value="${n}" ${t?.stars === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+        </div>
+        <div class="form-field"><label>Quote</label><textarea name="quote" dir-auto rows="3" required>${escapeHtml(t?.quote || '')}</textarea></div>
+        <div class="form-field"><div class="checkbox-row"><label><input type="checkbox" name="visible" ${!t || t.visible ? 'checked' : ''}> Visible on site</label></div></div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#testiForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = { name: fd.get('name'), city: fd.get('city'), car: fd.get('car'), stars: Number(fd.get('stars')), quote: fd.get('quote'), visible: fd.get('visible') === 'on' };
+    try {
+      if (isEdit) await api(`/testimonials/${t.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      else await api('/testimonials', { method: 'POST', body: JSON.stringify(payload) });
+      showModalSuccessBanner(top, isEdit ? 'Testimonial updated ✓' : 'Testimonial added ✓');
+      renderTestimonials(true);
+      if (isEdit) setTimeout(closeTopModal, 1500);
+      else e.target.reset();
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'testi-add') openTestiModal(null);
+  if (action === 'testi-edit') openTestiModal(cachedTestimonials.find(x => String(x.id) === id));
+  if (action === 'testi-toggle') {
+    const t = cachedTestimonials.find(x => String(x.id) === id);
+    try { await api(`/testimonials/${id}`, { method: 'PUT', body: JSON.stringify({ visible: !t.visible }) }); toast('success', 'Updated'); renderTestimonials(true); }
+    catch (err) { toast('error', err.message); }
+  }
+  if (action === 'testi-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this testimonial?'))) return;
+    try { await api(`/testimonials/${id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderTestimonials(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ SERVICES & PACKAGES ═══════════════════════
+let servicesSubTab = 'quick';
+
+async function renderServices(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  setContent(`
+    <div class="sub-tabs">
+      ${['quick', 'full', 'tuning', 'pickup'].map(s => `<button class="sub-tab ${servicesSubTab === s ? 'active' : ''}" data-action="svc-subtab" data-sub="${s}">${({ quick: 'Quick Service', full: 'Full Service', tuning: 'Tuning', pickup: 'Pickup / Delivery' })[s]}</button>`).join('')}
+    </div>
+    <div id="svcContent"><div class="loading-spinner"></div></div>`);
+  document.getElementById('content').querySelectorAll('[data-action="svc-subtab"]').forEach(b => b.onclick = () => { servicesSubTab = b.dataset.sub; renderServices(); });
+  try {
+    if (servicesSubTab === 'quick') await renderQuickFullEditor('quick_service', 'Quick Service');
+    if (servicesSubTab === 'full') await renderQuickFullEditor('full_service', 'Full Service');
+    if (servicesSubTab === 'tuning') await renderTuningEditor();
+    if (servicesSubTab === 'pickup') await renderPickupEditor();
+    if (preserveScroll) restoreScroll();
+  } catch (err) { document.getElementById('svcContent').innerHTML = errorBlock(err.message); }
+}
+TAB_RENDERERS.services = renderServices;
+
+async function renderQuickFullEditor(key, title){
+  const { value } = await api('/service-config/' + key);
+  document.getElementById('svcContent').innerHTML = `
+    <form class="panel" id="svcForm" data-key="${key}">
+      <h3>${title}</h3>
+      <div class="form-field" style="max-width:220px"><label>Starting Price (EGP)</label><input type="number" name="price" min="0" value="${value.price ?? 0}"></div>
+      <div class="form-field"><label>Checklist Items</label>${listEditorHTML(value.checklist)}</div>
+      <div class="form-field"><label>Available Slots</label>${slotsEditorHTML(value.slots)}</div>
+      <div class="modal-actions"><button type="submit" class="btn primary">Save Changes</button></div>
+    </form>`;
+  document.getElementById('svcForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const fd = new FormData(form);
+    const payload = {
+      price: Number(fd.get('price')),
+      checklist: collectListEditor(form.querySelector('[data-list-editor]')),
+      slots: collectSlotsEditor(form.querySelector('[data-slots-editor]'))
+    };
+    try { await api('/service-config/' + key, { method: 'PUT', body: JSON.stringify({ value: payload }) }); showModalSuccessBanner(form, '✓ ' + title + ' updated'); }
+    catch (err) { toast('error', err.message); }
+  });
+}
+
+async function renderTuningEditor(){
+  const stagesRes = await api('/service-config/tuning_stages');
+  const slotsRes = await api('/service-config/tuning_slots');
+  const stages = stagesRes.value || [];
+  document.getElementById('svcContent').innerHTML = `
+    <form class="panel" id="tuningForm">
+      <h3>Tuning Stages</h3>
+      ${stages.map((s, i) => `
+        <div class="list-editor" data-stage="${escapeAttr(s.stage)}">
+          <div class="form-grid2">
+            <div class="form-field"><label>Stage Label</label><input name="stage_label" value="${escapeAttr(s.stage_label || ('Stage ' + s.stage))}"></div>
+            <div class="form-field"><label>HP Label</label><input name="hp_label" value="${escapeAttr(s.hp_label)}"></div>
+            <div class="form-field"><label>Price (EGP) — leave blank for "Contact Us"</label><input type="number" name="price" min="0" value="${s.price ?? ''}" ${s.contact_only ? 'disabled' : ''}></div>
+            <div class="form-field"><label>Contact Only</label><div class="checkbox-row"><label><input type="checkbox" name="contact_only" ${s.contact_only ? 'checked' : ''} data-contact-toggle> Contact us instead of price</label></div></div>
+          </div>
+          <div class="form-field"><label>Features</label>${listEditorHTML(s.features)}</div>
+          <div class="checkbox-row"><label><input type="checkbox" name="visible" ${s.visible ? 'checked' : ''}> Visible on site</label></div>
+        </div>`).join('<hr style="border-color:var(--border);margin:18px 0">')}
+      <div class="modal-actions"><button type="submit" class="btn primary">Save Stages</button></div>
+    </form>
+    <form class="panel" id="tuningSlotsForm">
+      <h3>Tuning Booking Slots</h3>
+      ${slotsEditorHTML(slotsRes.value)}
+      <div class="modal-actions"><button type="submit" class="btn primary">Save Slots</button></div>
+    </form>`;
+  document.querySelectorAll('[data-contact-toggle]').forEach(cb => {
+    cb.addEventListener('change', () => { cb.closest('.list-editor').querySelector('input[name="price"]').disabled = cb.checked; });
+  });
+  document.getElementById('tuningForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const blocks = Array.from(e.target.querySelectorAll('[data-stage]'));
+    const newStages = blocks.map(b => {
+      const contact_only = b.querySelector('[data-contact-toggle]').checked;
+      return {
+        stage: b.dataset.stage,
+        stage_label: b.querySelector('[name="stage_label"]').value,
+        hp_label: b.querySelector('[name="hp_label"]').value,
+        price: contact_only ? null : Number(b.querySelector('[name="price"]').value) || 0,
+        features: collectListEditor(b.querySelector('[data-list-editor]')),
+        contact_only,
+        visible: b.querySelector('[name="visible"]').checked
+      };
+    });
+    try { await api('/service-config/tuning_stages', { method: 'PUT', body: JSON.stringify({ value: newStages }) }); showModalSuccessBanner(e.target, '✓ Tuning stages updated'); }
+    catch (err) { toast('error', err.message); }
+  });
+  document.getElementById('tuningSlotsForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try { await api('/service-config/tuning_slots', { method: 'PUT', body: JSON.stringify({ value: collectSlotsEditor(e.target.querySelector('[data-slots-editor]')) }) }); showModalSuccessBanner(e.target, '✓ Tuning slots updated'); }
+    catch (err) { toast('error', err.message); }
+  });
+}
+
+async function renderPickupEditor(){
+  const tiersRes = await api('/service-config/pickup_tiers');
+  const slotsRes = await api('/service-config/pickup_slots');
+  const tiers = tiersRes.value || [];
+  document.getElementById('svcContent').innerHTML = `
+    <form class="panel" id="tiersForm">
+      <h3>Delivery Pricing Tiers</h3>
+      ${tiers.map((t, i) => `
+        <div class="list-editor" data-tier-index="${i}">
+          <div class="form-grid2">
+            <div class="form-field"><label>Range Label</label><input name="range_label" dir-auto value="${escapeAttr(t.range_label)}"></div>
+            <div class="form-field"><label>Price (EGP)</label><input type="number" name="price_egp" min="0" value="${t.price_egp ?? 0}"></div>
+            <div class="form-field"><label>Free Above Threshold</label><div class="checkbox-row"><label><input type="checkbox" name="is_free_threshold" ${t.is_free_threshold ? 'checked' : ''}> This tier is free above a threshold</label></div></div>
+            <div class="form-field"><label>Threshold (EGP)</label><input type="number" name="threshold_egp" min="0" value="${t.threshold_egp ?? ''}"></div>
+          </div>
+        </div>`).join('<hr style="border-color:var(--border);margin:14px 0">')}
+      <div class="modal-actions"><button type="submit" class="btn primary">Save Tiers</button></div>
+    </form>
+    <form class="panel" id="pickupSlotsForm">
+      <h3>Pickup Booking Slots</h3>
+      ${slotsEditorHTML(slotsRes.value)}
+      <div class="modal-actions"><button type="submit" class="btn primary">Save Slots</button></div>
+    </form>`;
+  document.getElementById('tiersForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const blocks = Array.from(e.target.querySelectorAll('[data-tier-index]'));
+    const newTiers = blocks.map(b => ({
+      range_label: b.querySelector('[name="range_label"]').value,
+      price_egp: Number(b.querySelector('[name="price_egp"]').value) || 0,
+      is_free_threshold: b.querySelector('[name="is_free_threshold"]').checked,
+      threshold_egp: b.querySelector('[name="threshold_egp"]').value ? Number(b.querySelector('[name="threshold_egp"]').value) : null
+    }));
+    try { await api('/service-config/pickup_tiers', { method: 'PUT', body: JSON.stringify({ value: newTiers }) }); showModalSuccessBanner(e.target, '✓ Delivery tiers updated'); }
+    catch (err) { toast('error', err.message); }
+  });
+  document.getElementById('pickupSlotsForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try { await api('/service-config/pickup_slots', { method: 'PUT', body: JSON.stringify({ value: collectSlotsEditor(e.target.querySelector('[data-slots-editor]')) }) }); showModalSuccessBanner(e.target, '✓ Pickup slots updated'); }
+    catch (err) { toast('error', err.message); }
+  });
+}
+
+// ═══════════════════════ BANNERS / HERO ═══════════════════════
+async function renderBanners(){
+  try {
+    const s = await api('/settings');
+    setContent(`
+      <form class="panel" id="bannersForm">
+        <h3>Hero Section</h3>
+        <div class="form-field"><label>Overline Badge Text</label><input name="hero_overline" dir-auto value="${escapeAttr(s.hero_overline)}"></div>
+        <div class="form-grid2">
+          <div class="form-field"><label>Headline Line 1</label><input name="hero_line1" value="${escapeAttr(s.hero_line1)}"></div>
+          <div class="form-field"><label>Headline Line 2</label><input name="hero_line2" value="${escapeAttr(s.hero_line2)}"></div>
+        </div>
+        <div class="form-field"><label>Tagline</label><input name="hero_tagline" value="${escapeAttr(s.hero_tagline)}"></div>
+        <div class="form-field"><label>Description</label><textarea name="hero_desc" dir-auto rows="2">${escapeHtml(s.hero_desc)}</textarea></div>
+        <div class="form-field"><label>Hero Car Image URL</label><input name="hero_car_img" value="${escapeAttr(s.hero_car_img)}"></div>
+        <div class="form-grid2">
+          <div class="form-field"><label>CTA 1 Text</label><input name="hero_cta1_text" dir-auto value="${escapeAttr(s.hero_cta1_text)}"></div>
+          <div class="form-field"><label>CTA 1 Link</label><input name="hero_cta1_href" value="${escapeAttr(s.hero_cta1_href)}"></div>
+          <div class="form-field"><label>CTA 2 Text</label><input name="hero_cta2_text" dir-auto value="${escapeAttr(s.hero_cta2_text)}"></div>
+          <div class="form-field"><label>CTA 2 Link</label><input name="hero_cta2_href" value="${escapeAttr(s.hero_cta2_href)}"></div>
+        </div>
+        <h3 style="margin-top:24px">Hero Mini Stats</h3>
+        <div class="form-grid2">
+          ${[1, 2, 3].map(n => `
+            <div class="form-field"><label>Stat ${n} Value</label><input name="hero_stat${n}_value" value="${escapeAttr(s['hero_stat' + n + '_value'])}"></div>
+            <div class="form-field"><label>Stat ${n} Label</label><input name="hero_stat${n}_label" dir-auto value="${escapeAttr(s['hero_stat' + n + '_label'])}"></div>`).join('')}
+        </div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save Hero Section</button></div>
+      </form>`);
+    document.getElementById('bannersForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const settings = Object.fromEntries(fd.entries());
+      try { await api('/settings/batch', { method: 'PUT', body: JSON.stringify({ settings }) }); showModalSuccessBanner(e.target, '✓ Hero section updated'); }
+      catch (err) { toast('error', err.message); }
+    });
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.banners = renderBanners;
+
+// ═══════════════════════ MEDIA LIBRARY ═══════════════════════
+async function renderMedia(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    const items = await api('/media');
+    setContent(`
+      <div class="dropzone" id="dropzone">
+        <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px;margin-bottom:10px;display:block"></i>
+        Drag & drop images here, or click to choose files<br><small class="muted">JPEG / PNG / WebP, max 5MB each</small>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+      </div>
+      <div class="media-grid">
+        ${items.length ? items.map(mediaItem).join('') : '<div class="empty">No media uploaded yet</div>'}
+      </div>`);
+    const dz = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    dz.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => uploadFiles(fileInput.files));
+    ['dragover', 'dragleave', 'drop'].forEach(evt => dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.toggle('drag', evt === 'dragover'); }));
+    dz.addEventListener('drop', e => uploadFiles(e.dataTransfer.files));
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.media = renderMedia;
+
+function mediaItem(m){
+  return `<div class="media-item" data-id="${m.id}">
+    <img src="${BACKEND_ORIGIN + m.url}" loading="lazy">
+    <div class="media-meta">
+      <div class="fn">${escapeHtml(m.original_name)}</div>
+      <div class="muted">${formatBytes(m.size_bytes)} · ${formatDate(m.uploaded_at)}</div>
+    </div>
+    <div class="media-actions">
+      <button class="btn outline sm" data-action="media-copy" data-url="${escapeAttr(BACKEND_ORIGIN + m.url)}">Copy URL</button>
+      <button class="btn danger sm" data-action="media-delete" data-id="${m.id}">Delete</button>
+    </div>
+  </div>`;
+}
+
+async function uploadFiles(fileList){
+  if (!fileList.length) return;
+  const fd = new FormData();
+  Array.from(fileList).forEach(f => fd.append('files', f));
+  try { await api('/media/upload', { method: 'POST', body: fd }); toast('success', fileList.length + ' file(s) uploaded'); renderMedia(true); }
+  catch (err) { toast('error', err.message); }
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  if (action === 'media-copy') {
+    try { await navigator.clipboard.writeText(btn.dataset.url); toast('success', 'URL copied'); }
+    catch { toast('error', 'Could not copy — copy manually: ' + btn.dataset.url); }
+  }
+  if (action === 'media-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Delete this file? If it is used elsewhere on the site, those images will break.'))) return;
+    try { await api(`/media/${btn.dataset.id}`, { method: 'DELETE' }); toast('success', 'Deleted'); renderMedia(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ SITE SETTINGS ═══════════════════════
+async function renderSettings(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    const [s, newsletterList] = await Promise.all([api('/settings'), api('/newsletter')]);
+    setContent(`
+      <form class="panel" id="settingsForm">
+        <h3>Contact</h3>
+        <div class="form-grid2">
+          <div class="form-field"><label>Phone (display)</label><input name="phone" value="${escapeAttr(s.phone)}"></div>
+          <div class="form-field"><label>WhatsApp Number (e.g. 201000000000)</label><input name="whatsapp" value="${escapeAttr(s.whatsapp)}"></div>
+          <div class="form-field"><label>Email</label><input name="email" value="${escapeAttr(s.email)}"></div>
+          <div class="form-field"><label>Google Maps URL</label><input name="maps_url" value="${escapeAttr(s.maps_url)}"></div>
+        </div>
+        <div class="form-field"><label>Address</label><input name="address" dir-auto value="${escapeAttr(s.address)}"></div>
+
+        <h3 style="margin-top:24px">Hours</h3>
+        <div class="form-grid2">
+          <div class="form-field"><label>Weekdays</label><input name="hours_weekdays" dir-auto value="${escapeAttr(s.hours_weekdays)}"></div>
+          <div class="form-field"><label>Friday</label><input name="hours_friday" dir-auto value="${escapeAttr(s.hours_friday)}"></div>
+        </div>
+
+        <h3 style="margin-top:24px">Social Links</h3>
+        <div class="form-grid2">
+          <div class="form-field"><label>Instagram</label><input name="social_instagram" value="${escapeAttr(s.social_instagram)}"></div>
+          <div class="form-field"><label>TikTok</label><input name="social_tiktok" value="${escapeAttr(s.social_tiktok)}"></div>
+          <div class="form-field"><label>YouTube</label><input name="social_youtube" value="${escapeAttr(s.social_youtube)}"></div>
+          <div class="form-field"><label>Facebook</label><input name="social_facebook" value="${escapeAttr(s.social_facebook)}"></div>
+        </div>
+
+        <h3 style="margin-top:24px">Stats Bar</h3>
+        <div class="form-grid2">
+          <div class="form-field"><label>Clients</label><input name="stats_clients" type="number" value="${escapeAttr(s.stats_clients)}"></div>
+          <div class="form-field"><label>Years</label><input name="stats_years" type="number" value="${escapeAttr(s.stats_years)}"></div>
+          <div class="form-field"><label>Cars Modified</label><input name="stats_cars_modded" type="number" value="${escapeAttr(s.stats_cars_modded)}"></div>
+        </div>
+
+        <h3 style="margin-top:24px">Branding</h3>
+        <div class="form-grid2">
+          <div class="form-field"><label>Site Title</label><input name="site_title" value="${escapeAttr(s.site_title)}"></div>
+          <div class="form-field"><label>Tagline</label><input name="tagline" value="${escapeAttr(s.tagline)}"></div>
+        </div>
+        <div class="form-field"><label>About Body</label><textarea name="about_body" dir-auto rows="3">${escapeHtml(s.about_body)}</textarea></div>
+        <div class="form-field"><label>Footer Copyright</label><input name="footer_copyright" value="${escapeAttr(s.footer_copyright)}"></div>
+        <div class="form-field"><label>Privacy Strip Text</label><textarea name="privacy_text" dir-auto rows="2">${escapeHtml(s.privacy_text)}</textarea></div>
+
+        <h3 style="margin-top:32px"><i class="fa-solid fa-credit-card" style="color:var(--accent-cyan);margin-right:8px"></i> Payment Methods</h3>
+        <div class="form-grid2" style="margin-bottom:16px">
+          <div class="form-field"><label>Enable Cash Payments</label>
+            <select name="payment_cash_enabled">
+              <option value="true"  ${s.payment_cash_enabled !== 'false' ? 'selected' : ''}>Enabled</option>
+              <option value="false" ${s.payment_cash_enabled === 'false' ? 'selected' : ''}>Disabled</option>
+            </select>
+          </div>
+          <div class="form-field"><label>Enable Bank Transfer</label>
+            <select name="payment_bank_enabled">
+              <option value="true"  ${s.payment_bank_enabled === 'true' ? 'selected' : ''}>Enabled</option>
+              <option value="false" ${s.payment_bank_enabled !== 'true' ? 'selected' : ''}>Disabled</option>
+            </select>
+          </div>
+          <div class="form-field"><label>Enable Mobile Wallet (InstaPay / Vodafone Cash)</label>
+            <select name="payment_wallet_enabled">
+              <option value="true"  ${s.payment_wallet_enabled === 'true' ? 'selected' : ''}>Enabled</option>
+              <option value="false" ${s.payment_wallet_enabled !== 'true' ? 'selected' : ''}>Disabled</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;background:var(--bg-primary)">
+          <div style="font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--accent-cyan);margin-bottom:14px">BANK TRANSFER DETAILS</div>
+          <div class="form-grid2">
+            <div class="form-field"><label>Bank Name</label><input name="payment_bank_name" value="${escapeAttr(s.payment_bank_name || '')}" placeholder="e.g. CIB / NBE / Banque Misr"></div>
+            <div class="form-field"><label>Account Holder Name</label><input name="payment_bank_holder" value="${escapeAttr(s.payment_bank_holder || '')}" placeholder="Name as on account"></div>
+            <div class="form-field"><label>Account Number</label><input name="payment_bank_account" value="${escapeAttr(s.payment_bank_account || '')}" placeholder="Account number" style="font-family:monospace;letter-spacing:1px"></div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:24px;background:var(--bg-primary)">
+          <div style="font-family:Rajdhani;font-size:12px;letter-spacing:2px;color:var(--accent-gold);margin-bottom:14px">MOBILE WALLET DETAILS</div>
+          <div class="form-grid2">
+            <div class="form-field"><label>Wallet Provider</label><input name="payment_wallet_provider" value="${escapeAttr(s.payment_wallet_provider || 'Vodafone Cash / InstaPay')}" placeholder="e.g. Vodafone Cash / InstaPay"></div>
+            <div class="form-field"><label>Wallet Number</label><input name="payment_wallet_number" value="${escapeAttr(s.payment_wallet_number || '')}" placeholder="01X XXXX XXXX" style="font-family:monospace;letter-spacing:1px"></div>
+          </div>
+        </div>
+
+        <div class="modal-actions"><button type="submit" class="btn primary">Save All Settings</button></div>
+      </form>
+
+      <div class="panel">
+        <h3>Newsletter Subscribers (${newsletterList.length})</h3>
+        <div class="toolbar"><button class="btn outline sm" id="nlExport"><i class="fa-solid fa-file-csv"></i> Export CSV</button></div>
+        <table class="data-table">
+          <thead><tr><th>Email</th><th>Subscribed</th><th>Actions</th></tr></thead>
+          <tbody>${newsletterList.length ? newsletterList.map(n => `<tr data-id="${n.id}"><td>${escapeHtml(n.email)}</td><td>${formatDate(n.subscribed_at)}</td><td><button class="btn danger sm" data-action="nl-delete" data-id="${n.id}">Delete</button></td></tr>`).join('') : '<tr><td colspan="3" class="empty">No subscribers yet</td></tr>'}</tbody>
+        </table>
+      </div>`);
+    document.getElementById('settingsForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const settings = Object.fromEntries(fd.entries());
+      try { await api('/settings/batch', { method: 'PUT', body: JSON.stringify({ settings }) }); showModalSuccessBanner(e.target, '✓ Settings saved'); }
+      catch (err) { toast('error', err.message); }
+    });
+    document.getElementById('nlExport').onclick = async () => {
+      try { downloadBlob(await apiBlob('/newsletter/export'), 'newsletter.csv'); }
+      catch (err) { toast('error', err.message); }
+    };
+    if (preserveScroll) restoreScroll();
+  } catch (err) { setContent(errorBlock(err.message)); }
+}
+TAB_RENDERERS.settings = renderSettings;
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  if (btn.dataset.action === 'nl-delete') {
+    if (!(await confirmDialog('هل أنت متأكد؟ لا يمكن التراجع — Remove this subscriber?'))) return;
+    try { await api(`/newsletter/${btn.dataset.id}`, { method: 'DELETE' }); toast('success', 'Removed'); renderSettings(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ CUSTOMERS (VIN) ═══════════════════════
+let cachedCustomers = [];
+
+async function renderCustomers(preserveScroll = false) {
+  if (preserveScroll) saveScroll();
+  try {
+    cachedCustomers = await api('/customers');
+    setContent(`
+      <div class="toolbar">
+        <button class="btn primary" data-action="cust-add">
+          <i class="fa-solid fa-plus"></i> Add Customer
+        </button>
+        <button class="btn outline sm" id="custExport" style="margin-right:auto">
+          <i class="fa-solid fa-file-csv"></i> Export CSV
+        </button>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>VIN</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Car Model</th>
+              <th>Total Spent</th>
+              <th>Car Status</th>
+              <th>Last Service</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${cachedCustomers.length
+              ? cachedCustomers.map(customerRow).join('')
+              : '<tr><td colspan="9" class="empty">No customers yet — add the first one</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `);
+
+    document.getElementById('custExport')?.addEventListener('click', async () => {
+      try {
+        const blob = await apiBlob('/customers/export');
+        downloadBlob(blob, 'customers.csv');
+      } catch (err) { toast('error', err.message); }
+    });
+
+    if (preserveScroll) restoreScroll();
+  } catch (err) {
+    setContent(errorBlock(err.message));
+  }
+}
+TAB_RENDERERS.customers = renderCustomers;
+
+function customerRow(c) {
+  const isInService = c.car_status === 'in_service';
+  const statusBtn = isInService
+    ? `<button class="btn sm" data-action="cust-toggle-status" data-id="${c.id}"
+         style="background:rgba(255,153,0,.12);border:1px solid rgba(255,153,0,.4);color:#ff9900;white-space:nowrap">
+         🔧 في الصيانة</button>`
+    : `<button class="btn success sm" data-action="cust-toggle-status" data-id="${c.id}"
+         style="white-space:nowrap">✅ جاهزة</button>`;
+
+  return `<tr data-id="${c.id}">
+    <td style="font-family:monospace;font-size:12px;letter-spacing:2px;color:var(--accent-cyan)">
+      ${escapeHtml(c.vin)}
+    </td>
+    <td style="font-family:Cairo;font-size:14px">${escapeHtml(c.customer_name || '—')}</td>
+    <td style="font-family:Rajdhani;font-size:12px;letter-spacing:1px">${escapeHtml(c.customer_phone || '—')}</td>
+    <td>${escapeHtml(c.car_model || '—')}</td>
+    <td style="font-family:'Bebas Neue';font-size:18px;color:var(--accent-gold)">
+      ${Number(c.total_spent_egp || 0).toLocaleString('en-US')} EGP
+    </td>
+    <td>${statusBtn}</td>
+    <td style="font-family:Rajdhani;font-size:13px;color:var(--text-muted)">
+      ${escapeHtml(c.last_service_date || '—')}
+    </td>
+    <td style="max-width:180px;color:var(--text-secondary);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escapeAttr(c.notes || '')}">
+      ${escapeHtml((c.notes || '').slice(0, 55))}${(c.notes || '').length > 55 ? '…' : ''}
+    </td>
+    <td>
+      <button class="btn outline sm" data-action="cust-edit" data-id="${c.id}">Edit</button>
+      <button class="btn danger sm" data-action="cust-delete" data-id="${c.id}">Delete</button>
+    </td>
+  </tr>`;
+}
+
+function openCustomerModal(customer) {
+  const isEdit = !!customer;
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>${isEdit ? 'Edit Customer' : 'Add New Customer'}</h3>
+        <button class="modal-x" data-close>✕</button>
+      </div>
+      <form class="modal-body" id="custForm" novalidate>
+        <div class="form-field" id="vinField">
+          <label>VIN — رقم الشاسيه (17 characters)</label>
+          <input name="vin" required minlength="17" maxlength="17"
+            style="font-family:monospace;letter-spacing:3px;text-transform:uppercase;font-size:15px"
+            placeholder="WBA3A5C51CF256985"
+            value="${escapeAttr(customer?.vin || '')}"
+            ${isEdit ? 'readonly style="opacity:0.6;cursor:not-allowed;font-family:monospace;letter-spacing:3px"' : ''}>
+          <span class="field-error">يجب أن يكون 17 حرف بالضبط — بدون أحرف I أو O أو Q</span>
+        </div>
+        <div class="form-field">
+          <label>Customer Name — اسم العميل</label>
+          <input name="customer_name" placeholder="Ahmed Mohamed" value="${escapeAttr(customer?.customer_name || '')}">
+        </div>
+        <div class="form-field">
+          <label>Customer Phone — رقم الهاتف</label>
+          <input name="customer_phone" type="tel" placeholder="01012345678" value="${escapeAttr(customer?.customer_phone || '')}">
+        </div>
+        <div class="form-grid2">
+          <div class="form-field">
+            <label>Car Model + Year</label>
+            <input name="car_model" placeholder="BMW 330i 2022"
+              value="${escapeAttr(customer?.car_model || '')}">
+          </div>
+          <div class="form-field">
+            <label>Total Spent (EGP)</label>
+            <input type="number" name="total_spent_egp" min="0" step="1"
+              value="${customer?.total_spent_egp ?? 0}">
+          </div>
+          <div class="form-field">
+            <label>Car Status — حالة العربية</label>
+            <select name="car_status">
+              <option value="ready" ${!customer || customer.car_status === 'ready' ? 'selected' : ''}>
+                ✅ جاهزة — Ready for pickup
+              </option>
+              <option value="in_service" ${customer?.car_status === 'in_service' ? 'selected' : ''}>
+                🔧 في الصيانة — Currently in service
+              </option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Last Service Date</label>
+            <input type="date" name="last_service_date"
+              value="${escapeAttr(customer?.last_service_date || '')}">
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Admin Notes — ملاحظات داخلية</label>
+          <textarea name="notes" rows="4" dir-auto
+            placeholder="ملاحظات خاصة بالعميل أو العربية — لا يراها العميل...">${escapeHtml(customer?.notes || '')}</textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn primary">
+            <i class="fa-solid fa-floppy-disk"></i> Save Customer
+          </button>
+        </div>
+      </form>
+    </div>`);
+
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+
+  // Live VIN validation (only for new customer)
+  if (!isEdit) {
+    const vinInput = top.querySelector('[name="vin"]');
+    vinInput.addEventListener('input', () => {
+      vinInput.value = vinInput.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
+      const field = document.getElementById('vinField');
+      const isValid = vinInput.value.length === 0 || vinInput.value.length === 17;
+      field.classList.toggle('invalid', !isValid);
+    });
+  }
+
+  top.querySelector('#custForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const vin = fd.get('vin').toUpperCase().trim();
+
+    if (!isEdit && (vin.length !== 17 || /[IOQ]/.test(vin))) {
+      document.getElementById('vinField').classList.add('invalid');
+      return;
+    }
+
+    const payload = {
+      vin,
+      customer_name: fd.get('customer_name').trim(),
+      customer_phone: fd.get('customer_phone').trim(),
+      car_model: fd.get('car_model').trim(),
+      total_spent_egp: Number(fd.get('total_spent_egp')) || 0,
+      car_status: fd.get('car_status'),
+      last_service_date: fd.get('last_service_date') || null,
+      notes: fd.get('notes').trim()
+    };
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+      if (isEdit) {
+        await api(`/customers/${customer.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      } else {
+        await api('/customers', { method: 'POST', body: JSON.stringify(payload) });
+      }
+      showModalSuccessBanner(top, isEdit ? 'Customer updated ✓' : 'Customer added ✓');
+      renderCustomers(true);
+      if (isEdit) setTimeout(closeTopModal, 1500);
+      else e.target.reset();
+    } catch (err) {
+      toast('error', err.message);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+
+  if (action === 'cust-add') { openCustomerModal(null); return; }
+
+  if (action === 'cust-edit') {
+    const customer = cachedCustomers.find(c => String(c.id) === id);
+    if (customer) openCustomerModal(customer);
+    return;
+  }
+
+  if (action === 'cust-toggle-status') {
+    const c = cachedCustomers.find(x => String(x.id) === id);
+    if (!c) return;
+    const newStatus = c.car_status === 'in_service' ? 'ready' : 'in_service';
+    try {
+      await api(`/customers/${id}`, { method: 'PUT', body: JSON.stringify({ car_status: newStatus }) });
+      toast('success', newStatus === 'ready' ? '✅ تم تحديث الحالة: جاهزة' : '🔧 تم تحديث الحالة: في الصيانة');
+      renderCustomers(true);
+    } catch (err) { toast('error', err.message); }
+    return;
+  }
+
+  if (action === 'cust-delete') {
+    const c = cachedCustomers.find(x => String(x.id) === id);
+    if (!(await confirmDialog(`هل أنت متأكد من حذف هذا العميل؟\nVIN: ${c?.vin}\n\nلا يمكن التراجع.`))) return;
+    try {
+      await api(`/customers/${id}`, { method: 'DELETE' });
+      toast('success', 'Customer deleted');
+      renderCustomers(true);
+    } catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ CATALOG: SERIES & ENGINES (spare-parts.html) ═══════════════════════
+let cachedSeries = [];
+let cachedEngineMap = {};
+
+async function renderCatalog(preserveScroll = false){
+  if (preserveScroll) saveScroll();
+  try {
+    const [seriesRes, engineRes] = await Promise.all([
+      api('/service-config/catalog_series'),
+      api('/service-config/catalog_engine_map')
+    ]);
+    cachedSeries = seriesRes.value || [];
+    cachedEngineMap = engineRes.value || {};
+    window.cachedSeries = cachedSeries;
+    window.catalogDataLoaded = true;
+    setContent(`
+      <p class="muted" style="margin-bottom:20px">This data drives the Series → Model → Engine drill-down on spare-parts.html. "Keywords" are the substrings matched against BMW model/trim names (e.g. "330i" matches series "3" and engine "B58").</p>
+      <div class="panel">
+        <div class="toolbar"><h3 style="margin:0">BMW Series</h3><button class="btn primary sm" data-action="series-add" style="margin-right:auto"><i class="fa-solid fa-plus"></i> Add Series</button></div>
+        <table class="data-table">
+          <thead><tr><th>ID</th><th>Name</th><th>Tag</th><th>Color</th><th>Keywords</th><th>Actions</th></tr></thead>
+          <tbody>${cachedSeries.length ? cachedSeries.map(seriesRow).join('') : '<tr><td colspan="6" class="empty">No series defined yet</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="toolbar"><h3 style="margin:0">Engine Map</h3><button class="btn primary sm" data-action="engine-add" style="margin-right:auto"><i class="fa-solid fa-plus"></i> Add Engine</button></div>
+        <table class="data-table">
+          <thead><tr><th>Engine Code</th><th>Matches (keywords)</th><th>Actions</th></tr></thead>
+          <tbody>${Object.keys(cachedEngineMap).length ? Object.entries(cachedEngineMap).map(engineRow).join('') : '<tr><td colspan="3" class="empty">No engines defined yet</td></tr>'}</tbody>
+        </table>
+      </div>`);
+    if (preserveScroll) restoreScroll();
+  } catch (err) {
+    setContent(errorBlock(err.message));
+  }
+}
+TAB_RENDERERS.catalog = renderCatalog;
+
+function seriesRow(s){
+  return `<tr data-id="${escapeAttr(s.id)}">
+    <td style="font-family:'Bebas Neue';font-size:18px">${escapeHtml(s.id)}</td>
+    <td>${escapeHtml(s.name)}</td>
+    <td>${escapeHtml(s.tag || '')}</td>
+    <td><span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:${escapeAttr(s.tagColor || '#888')};vertical-align:middle;margin-right:6px"></span><span class="muted" style="font-size:12px">${escapeHtml(s.tagColor || '')}</span></td>
+    <td>${(s.keywords || []).slice(0, 6).map(k => `<span class="tag-chip">${escapeHtml(k)}</span>`).join('')}${(s.keywords || []).length > 6 ? `<span class="muted">+${s.keywords.length - 6} more</span>` : ''}</td>
+    <td><button class="btn outline sm" data-action="series-edit" data-id="${escapeAttr(s.id)}">Edit</button> <button class="btn danger sm" data-action="series-delete" data-id="${escapeAttr(s.id)}">Delete</button></td>
+  </tr>`;
+}
+function engineRow([code, keywords]){
+  return `<tr data-id="${escapeAttr(code)}">
+    <td style="font-family:'Bebas Neue';font-size:18px">${escapeHtml(code)}</td>
+    <td>${(keywords || []).slice(0, 8).map(k => `<span class="tag-chip">${escapeHtml(k)}</span>`).join('')}${(keywords || []).length > 8 ? `<span class="muted">+${keywords.length - 8} more</span>` : ''}</td>
+    <td><button class="btn outline sm" data-action="engine-edit" data-id="${escapeAttr(code)}">Edit</button> <button class="btn danger sm" data-action="engine-delete" data-id="${escapeAttr(code)}">Delete</button></td>
+  </tr>`;
+}
+
+async function saveCatalogSeries(){
+  await api('/service-config/catalog_series', { method: 'PUT', body: JSON.stringify({ value: cachedSeries }) });
+  window.cachedSeries = cachedSeries;
+  window.catalogDataLoaded = true;
+}
+async function saveEngineMap(){
+  await api('/service-config/catalog_engine_map', { method: 'PUT', body: JSON.stringify({ value: cachedEngineMap }) });
+}
+
+function openSeriesModal(series){
+  const isEdit = !!series;
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} BMW Series</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="seriesForm">
+        <div class="form-grid2">
+          <div class="form-field"><label>Series ID (short code, e.g. 3, X, M)</label>
+            <input name="id" required maxlength="4" value="${escapeAttr(series?.id || '')}" ${isEdit ? 'readonly style="opacity:.6;cursor:not-allowed"' : ''}>
+          </div>
+          <div class="form-field"><label>Name</label><input name="name" required value="${escapeAttr(series?.name || '')}" placeholder="3 Series"></div>
+          <div class="form-field"><label>Tag Label</label><input name="tag" value="${escapeAttr(series?.tag || '')}" placeholder="Most Popular"></div>
+          <div class="form-field"><label>Tag Color (CSS color or hex)</label><input name="tagColor" value="${escapeAttr(series?.tagColor || '#1c6cfc')}" placeholder="#1c6cfc"></div>
+        </div>
+        <div class="form-field"><label>Keywords (model/trim substrings that belong to this series)</label>${listEditorHTML(series?.keywords)}</div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#seriesForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const id = fd.get('id').trim();
+    if (!isEdit && cachedSeries.some(s => s.id.toLowerCase() === id.toLowerCase())) {
+      toast('error', `Series "${id}" already exists`); return;
+    }
+    const updated = {
+      id, name: fd.get('name').trim(), tag: fd.get('tag').trim(), tagColor: fd.get('tagColor').trim(),
+      keywords: collectListEditor(e.target.querySelector('[data-list-editor]'))
+    };
+    if (isEdit) {
+      const idx = cachedSeries.findIndex(s => s.id === series.id);
+      cachedSeries[idx] = updated;
+    } else {
+      cachedSeries.push(updated);
+    }
+    try {
+      await saveCatalogSeries();
+      showModalSuccessBanner(top, isEdit ? 'Series updated ✓' : 'Series added ✓');
+      renderCatalog(true);
+      if (isEdit) {
+        setTimeout(closeTopModal, 1500);
+      } else {
+        e.target.reset();
+        const listWrap = e.target.querySelector('[data-list-editor]');
+        if (listWrap) listWrap.outerHTML = listEditorHTML([]);
+      }
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+function openEngineModal(code, keywords){
+  const isEdit = !!code;
+  openModal(`
+    <div class="modal-box">
+      <div class="modal-head"><h3>${isEdit ? 'Edit' : 'Add'} Engine</h3><button class="modal-x" data-close>✕</button></div>
+      <form class="modal-body" id="engineForm">
+        <div class="form-field"><label>Engine Code</label>
+          <input name="code" required maxlength="10" style="font-family:monospace;text-transform:uppercase" value="${escapeAttr(code || '')}" ${isEdit ? 'readonly style="opacity:.6;cursor:not-allowed;font-family:monospace"' : ''}>
+        </div>
+        <div class="form-field"><label>Keywords (model/trim substrings that use this engine)</label>${listEditorHTML(keywords)}</div>
+        <div class="modal-actions"><button type="submit" class="btn primary">Save</button></div>
+      </form>
+    </div>`);
+  const top = modalRoot.lastElementChild;
+  top.querySelector('[data-close]').onclick = closeTopModal;
+  top.querySelector('#engineForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newCode = fd.get('code').trim().toUpperCase();
+    if (!isEdit && cachedEngineMap[newCode]) { toast('error', `Engine "${newCode}" already exists`); return; }
+    cachedEngineMap[newCode] = collectListEditor(e.target.querySelector('[data-list-editor]'));
+    try {
+      await saveEngineMap();
+      showModalSuccessBanner(top, isEdit ? 'Engine updated ✓' : 'Engine added ✓');
+      renderCatalog(true);
+      if (isEdit) {
+        setTimeout(closeTopModal, 1500);
+      } else {
+        e.target.reset();
+        const listWrap = e.target.querySelector('[data-list-editor]');
+        if (listWrap) listWrap.outerHTML = listEditorHTML([]);
+      }
+    } catch (err) { toast('error', err.message); }
+  });
+}
+
+document.getElementById('content').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+
+  if (action === 'series-add') { openSeriesModal(null); return; }
+  if (action === 'series-edit') { openSeriesModal(cachedSeries.find(s => s.id === id)); return; }
+  if (action === 'series-delete') {
+    if (!(await confirmDialog(`Delete series "${id}"? This cannot be undone.`))) return;
+    cachedSeries = cachedSeries.filter(s => s.id !== id);
+    try { await saveCatalogSeries(); toast('success', 'Series deleted'); renderCatalog(true); }
+    catch (err) { toast('error', err.message); }
+    return;
+  }
+  if (action === 'engine-add') { openEngineModal(null, []); return; }
+  if (action === 'engine-edit') { openEngineModal(id, cachedEngineMap[id]); return; }
+  if (action === 'engine-delete') {
+    if (!(await confirmDialog(`Delete engine "${id}"? This cannot be undone.`))) return;
+    delete cachedEngineMap[id];
+    try { await saveEngineMap(); toast('success', 'Engine deleted'); renderCatalog(true); }
+    catch (err) { toast('error', err.message); }
+  }
+});
+
+// ═══════════════════════ BOOTSTRAP ═══════════════════════
+if (isAuthed()) showApp(); else showLogin();
+</script>
+</body>
+</html>
